@@ -1,0 +1,73 @@
+/* Burrow Whispers (series menu) — base.css V1.0
+   Page foundation for the series games menu. Unlike the game's
+   base.css there is no fixed 20:9 stage: this is a normal page that
+   scrolls, so the menu can grow as more pets and games are added. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  min-height: 100%;
+  background: var(--night);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--cream);
+  font-family: var(--font-story);
+  background:
+    radial-gradient(ellipse at 50% 0%, var(--forest) 0%, rgba(31, 58, 51, 0) 65%),
+    linear-gradient(to bottom, var(--night) 0%, var(--night-deep) 100%);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Soft glowing moss at the foot of the page, behind everything */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 110%, var(--moss-glow) 0%, rgba(140, 190, 140, 0) 55%),
+    radial-gradient(ellipse at 85% 10%, rgba(157, 184, 214, 0.14) 0%, rgba(157, 184, 214, 0) 45%);
+}
+
+/* Page content: centered column, above the backdrop */
+.page {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding:
+    max(6vh, 24px)
+    max(20px, env(safe-area-inset-right))
+    40px
+    max(20px, env(safe-area-inset-left));
+  text-align: center;
+}
+
+a { color: inherit; }
+
+button {
+  font-family: var(--font-ui);
+  color: inherit;
+  cursor: pointer;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--silver);
+  outline-offset: 3px;
+}
+
+.hidden { display: none !important; }
+
+/* Reduced motion: calm everything down for players who ask for it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+  }
+}
