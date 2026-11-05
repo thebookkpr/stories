@@ -1,0 +1,74 @@
+/* The Book Keeper's Library (site menu) — effects.css V1.0
+   Candlelit library effects: drifting gold dust motes, a warm candle
+   glow that flickers softly, and a slow haze like pipe-smoke in lamplight.
+   Restrained: nothing here should overpower the books on the shelf. */
+
+/* Effects layer: fixed behind the page content, never blocks clicks */
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Dust motes: JS sets left, top, --dur, --delay, --drift per mote */
+.mote {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-bright) 0%, rgba(240, 213, 138, 0) 70%);
+  box-shadow: 0 0 8px 2px var(--candle-glow);
+  opacity: 0;
+  animation:
+    mote-glow var(--dur, 7s) ease-in-out var(--delay, 0s) infinite,
+    mote-drift calc(var(--dur, 7s) * 2) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes mote-glow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.8; }
+}
+@keyframes mote-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(var(--drift, 20px), -40px); }
+}
+
+/* Candle glow: a soft warm pool of light that flickers gently.
+   Position with inline left, top, width, height in percent. */
+.candle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--candle-glow) 0%, rgba(255, 207, 122, 0) 70%);
+  animation: candle-flicker 5s ease-in-out infinite;
+}
+@keyframes candle-flicker {
+  0%, 100% { opacity: 0.55; transform: scale(0.97); }
+  18%      { opacity: 0.8;  transform: scale(1.02); }
+  37%      { opacity: 0.6;  transform: scale(0.99); }
+  62%      { opacity: 0.9;  transform: scale(1.04); }
+  80%      { opacity: 0.65; transform: scale(1); }
+}
+
+/* Lamplit haze: two slow layers drifting, warm amber */
+.haze {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 30%;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 207, 122, 0.1) 0%,
+    rgba(255, 207, 122, 0) 70%);
+  animation: haze-drift 45s ease-in-out infinite alternate;
+}
+.haze.one { bottom: 25%; }
+.haze.two { bottom: 5%; animation-duration: 60s; animation-direction: alternate-reverse; }
+@keyframes haze-drift {
+  0%   { transform: translateX(-4%); }
+  100% { transform: translateX(4%); }
+}
+
+/* Reduced motion: hide the moving effects for visitors who ask for it */
+@media (prefers-reduced-motion: reduce) {
+  .mote, .candle, .haze { display: none; }
+}
