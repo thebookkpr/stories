@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<!-- The Book Keeper's Library (site menu) — index.html V1.3 · Part 1 of 2
-     V1.3: candle glows removed (they read as ghostly blobs over the painting).
-     V1.2: label position matched to the real book sprite (2:3).
-     V1.1: pet art removed. Painted room background (images/library-bg.jpg) and a
-           closed-book sprite per world (images/book-*.png) with the title as live text
-           on the book's label plate. Missing sprite falls back to a CSS leather book.
+<!-- The Book Keeper's Library (site menu) — index.html V1.4 · Part 1 of 2
+     V1.4: new hobbit-hole library room (images/library-bg.jpg) and new green
+           moon-rabbit book (images/book-burrow-whispers.png). Text overlay on the
+           book removed (the cover art carries the title). New animations: gentle
+           book float, golden cover shimmer, warm lantern-light breathing, soft
+           fade-in for the page. All motion is switched off for reduced-motion.
+     V1.3: candle glows removed.
+     V1.2: label position matched to the book sprite.
+     V1.1: painted room background and closed-book sprite per world.
      V1.0: first release.
      Lives at stories/index.html.
      Uses css/variables.css, css/base.css and css/effects.css from this same folder.
@@ -21,15 +24,42 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/effects.css">
   <style>
-    /* Painted room behind everything; a soft dark wash keeps text readable */
+    /* Painted room behind everything; a soft dark wash keeps text readable.
+       The art is tall (portrait), so it is anchored near the top to keep the
+       round door in view on wide screens. */
     .room {
       position: fixed;
       inset: 0;
       z-index: var(--z-bg);
       pointer-events: none;
       background:
-        linear-gradient(rgba(18, 10, 7, 0.25), rgba(18, 10, 7, 0.5)),
-        url("images/library-bg.jpg") center / cover no-repeat;
+        linear-gradient(rgba(18, 10, 7, 0.2), rgba(18, 10, 7, 0.45)),
+        url("images/library-bg.jpg") center 25% / cover no-repeat;
+    }
+
+    /* Lantern-light breathing: a warm glow that slowly swells and settles */
+    .lantern-light {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-bg);
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 30%,
+        rgba(255, 190, 90, 0.22) 0%,
+        rgba(255, 190, 90, 0) 65%);
+      mix-blend-mode: screen;
+      animation: lantern-breathe 7s ease-in-out infinite;
+    }
+    @keyframes lantern-breathe {
+      0%, 100% { opacity: 0.45; }
+      35%      { opacity: 0.9; }
+      55%      { opacity: 0.7; }
+    }
+
+    /* The page content eases in */
+    .page { animation: page-in 1.6s var(--ease-gentle) both; }
+    @keyframes page-in {
+      0%   { opacity: 0; transform: translateY(14px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     .library-title {
@@ -81,40 +111,50 @@
     .book-cover {
       position: relative;
       width: 100%;
-      container-type: inline-size;
+      overflow: hidden;            /* keeps the shimmer inside the book */
+      border-radius: 4px 12px 12px 4px;
     }
+
+    /* The book floats gently, as if resting on a breath of air */
     .book-sprite {
       display: block;
       width: 100%;
       height: auto;
       filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
-      transition: transform var(--fade-fast) var(--ease-gentle),
-                  filter var(--fade-fast) var(--ease-gentle);
+      animation: book-float 6s ease-in-out infinite;
+      transition: filter var(--fade-fast) var(--ease-gentle);
     }
+    @keyframes book-float {
+      0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+      50%      { transform: translateY(-7px) rotate(0.4deg); }
+    }
+
+    /* A slow golden shimmer sweeps across the cover now and then */
+    .book-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(105deg,
+        rgba(255, 224, 150, 0) 38%,
+        rgba(255, 224, 150, 0.28) 50%,
+        rgba(255, 224, 150, 0) 62%);
+      transform: translateX(-120%);
+      animation: cover-shimmer 9s ease-in-out 2s infinite;
+    }
+    @keyframes cover-shimmer {
+      0%, 60% { transform: translateX(-120%); }
+      100%    { transform: translateX(120%); }
+    }
+
+    /* Hover: the book lifts and its gold glows */
     a.book:hover .book-sprite,
     a.book:focus-visible .book-sprite {
-      transform: translateY(-6px);
-      filter: drop-shadow(0 14px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 16px var(--gold-glow));
+      animation-play-state: paused;
+      transform: translateY(-10px) scale(1.03);
+      filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
     }
     a.book:focus-visible { outline: none; }
-
-    /* Title text on the book's label plate (position set per world in WORLDS) */
-    .book-label {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-style: italic;
-      font-size: 1.1rem;
-      font-size: 6.4cqw;
-      line-height: 1.15;
-      letter-spacing: 0.04em;
-      text-wrap: balance;
-      color: var(--gold-bright);
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-      pointer-events: none;
-    }
 
     .book-kind {
       margin: 0;
@@ -123,7 +163,7 @@
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
     .book-desc {
       margin: 0;
@@ -140,10 +180,8 @@
         linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) 14px),
         linear-gradient(145deg, #2f5a45, #1f3b2d);
       border: 1px solid var(--gold-line);
-      border-radius: 3px 10px 10px 3px;
       box-shadow: var(--shadow-soft);
     }
-    .book.fallback .book-label { border: 1px solid var(--gold-line); }
 
     /* Placeholder: an empty space on the shelf, not clickable */
     .book.soon {
@@ -171,13 +209,20 @@
       color: var(--brass);
       opacity: 0.7;
     }
-    @media (prefers-reduced-motion: reduce) { .book-sprite { transition: none; } }
+
+    /* Calm everything for players who ask for reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .lantern-light, .page, .book-sprite, .book-cover::after { animation: none; }
+      .book-cover::after { display: none; }
+      .lantern-light { opacity: 0.6; }
+    }
   </style>
-  
-  </head>
+</head>
+
 <body>
 
   <div class="room"></div>
+  <div class="lantern-light"></div>
   <div class="backdrop"></div>
   <div class="fx-layer" id="fx"></div>
 
@@ -188,21 +233,20 @@
     <p class="library-tag">Choose a volume</p>
     <ul class="shelf" id="shelf"></ul>
     <p class="keeper">Kept by The Book Keeper</p>
-    <p class="version">V1.3</p>
+    <p class="version">V1.4</p>
   </main>
 
   <script>
     /* ---------- Add new worlds here ----------
-       label = where the title sits on the book, in percent of the book image:
-       top, left, w (width), h (height). Adjust to line up with the label plate. */
+       The cover art carries the title, so no label position is needed.
+       The title is still used as the image's alt text for screen readers. */
     const WORLDS = [
       {
         title: "Burrow Whispers",
         kind: "Volume I · Gentle Fantasy",
         desc: "A quiet world of little lives and moonlit woods, where small pets find wonder close to home.",
         url: "burrow-whispers/",
-        sprite: "images/book-burrow-whispers.png",
-        label: { top: 26, left: 29, w: 49, h: 12 }
+        sprite: "images/book-burrow-whispers.png"
       }
     ];
     const SHOW_COMING_SOON = true;   /* set false to hide the empty space on the shelf */
@@ -216,21 +260,20 @@
       return n;
     };
 
-    WORLDS.forEach(w => {
-      const L = Object.assign({ top: 26, left: 29, w: 49, h: 12 }, w.label);
+    WORLDS.forEach((w, i) => {
       const li = el("li");
       const a = el("a", "book");
       a.href = w.url;
+      a.setAttribute("aria-label", w.title + " — " + w.kind);
 
       const cover = el("div", "book-cover");
       const img = new Image();
       img.className = "book-sprite";
-      img.alt = "";
+      img.alt = w.title;
+      img.style.animationDelay = (-i * 1.5) + "s";   /* books bob out of step */
       img.onerror = () => a.classList.add("fallback");
       img.src = w.sprite;
-      const label = el("span", "book-label", w.title);
-      label.style.cssText = `top:${L.top}%;left:${L.left}%;width:${L.w}%;height:${L.h}%`;
-      cover.append(img, label);
+      cover.append(img);
 
       a.append(cover, el("p", "book-kind", w.kind), el("p", "book-desc", w.desc));
       li.appendChild(a);
