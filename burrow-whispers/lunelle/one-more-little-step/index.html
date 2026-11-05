@@ -1,0 +1,69 @@
+<!-- One More Little Step — index.html V1.4
+     V1.4: game moved into the one-more-little-step/ folder.
+     V1.3: service worker registered (sw.js) for offline play and install. Manifest linked.
+     V1.2: script tags use ?v=14 cache-busting. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta name="color-scheme" content="dark">
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1b1830">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+    <link rel="preload" as="image" href="images/title-screen.jpg">
+  <title>One More Little Step</title>
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/title.css">
+     <link rel="stylesheet" href="css/scene.css?v=15">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+  
+<body>
+
+  <div id="game">
+
+    <section id="title-screen" class="screen active">
+      <div class="bg"></div>
+      <div class="title-block">
+        <h1 class="game-title">ONE MORE LITTLE STEP</h1>
+        <p class="game-subtitle">A Burrow Whispers Story</p>
+      </div>
+      <nav class="menu">
+        <button class="menu-btn primary" id="btn-start">Start Journey</button>
+        <button class="menu-btn" id="btn-continue" disabled>Continue</button>
+        <button class="menu-btn" id="btn-settings">Settings</button>
+        <button class="menu-btn" id="btn-credits">Credits</button>
+      </nav>
+      
+       <p class="version">V1.4</p>
+      
+    </section>
+
+  </div>
+
+  <script src="js/scenes.js?v=14"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/audio.js"></script>
+<script src="js/game.js?v=14"></script>
+  <script src="js/save.js"></script>
+
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () =>
+      navigator.serviceWorker.register("sw.js"));
+  }
+  </script>
+  
+</body>
+</html>
