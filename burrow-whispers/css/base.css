@@ -1,73 +1,409 @@
-/* Burrow Whispers (series menu) — base.css V1.0
-   Page foundation for the series games menu. Unlike the game's
-   base.css there is no fixed 20:9 stage: this is a normal page that
-   scrolls, so the menu can grow as more pets and games are added. */
-*, *::before, *::after { box-sizing: border-box; }
+
+/* =========================================
+   THE BOOK KEEPER
+   Burrow Whispers — Base Styles
+   Version 1.0
+   ========================================= */
+
+
+/* -----------------------------------------
+   1. Canonical Color Palette
+   ----------------------------------------- */
+
+:root {
+    --color-round-door-green: #496A46;
+    --color-mosswood: #6C5640;
+    --color-warm-oak: #A68056;
+    --color-parchment: #EEE6D2;
+    --color-firelight-gold: #D7B46A;
+    --color-tea-brown: #4C3828;
+    --color-moonroot-blue: #667A8E;
+
+    --color-background: var(--color-tea-brown);
+    --color-surface: var(--color-mosswood);
+    --color-text: var(--color-parchment);
+    --color-text-accent: var(--color-firelight-gold);
+
+    --font-body: Georgia, "Times New Roman", serif;
+
+    --content-width: 72rem;
+    --page-padding: 1.25rem;
+
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+    --space-xl: 5rem;
+
+    --radius-soft: 0.5rem;
+    --radius-book: 0.25rem;
+
+    --transition-gentle: 220ms ease;
+}
+
+
+/* -----------------------------------------
+   2. Reset and Foundation
+   ----------------------------------------- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 
 html {
-  min-height: 100%;
-  background: var(--night);
+    min-height: 100%;
+    scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  color: var(--cream);
-  font-family: var(--font-story);
-  background:
-    radial-gradient(ellipse at 50% 0%, var(--forest) 0%, rgba(31, 58, 51, 0) 65%),
-    linear-gradient(to bottom, var(--night) 0%, var(--night-deep) 100%);
-  background-attachment: fixed;
-  -webkit-tap-highlight-color: transparent;
+    min-height: 100vh;
+    margin: 0;
+
+    background-color: var(--color-background);
+    color: var(--color-text);
+
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Soft glowing moss at the foot of the page, behind everything */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-bg);
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 110%, var(--moss-glow) 0%, rgba(140, 190, 140, 0) 55%),
-    radial-gradient(ellipse at 85% 10%, rgba(157, 184, 214, 0.14) 0%, rgba(157, 184, 214, 0) 45%);
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
-/* Page content: centered column, above the backdrop */
-.page {
-  position: relative;
-  z-index: 2;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding:
-    max(6vh, 24px)
-    max(20px, env(safe-area-inset-right))
-    40px
-    max(20px, env(safe-area-inset-left));
-  text-align: center;
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
-a { color: inherit; }
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
 
 button {
-  font-family: var(--font-ui);
-  color: inherit;
-  cursor: pointer;
+    font: inherit;
 }
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--color-text-accent);
+    font-weight: normal;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: clamp(2.25rem, 8vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.75rem, 6vw, 2.5rem);
+}
+
+h3 {
+    font-size: 1.35rem;
+}
+
+
+/* -----------------------------------------
+   3. Accessibility
+   ----------------------------------------- */
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--silver);
-  outline-offset: 3px;
+    outline: 3px solid var(--color-firelight-gold);
+    outline-offset: 5px;
+    border-radius: var(--radius-soft);
 }
 
-.hidden { display: none !important; }
+::selection {
+    background: var(--color-firelight-gold);
+    color: var(--color-tea-brown);
+}
 
-/* Reduced motion: calm everything down for players who ask for it */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.2s !important;
-  }
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* -----------------------------------------
+   4. Page Structure
+   ----------------------------------------- */
+
+body > header {
+    width: 100%;
+    padding: var(--space-sm) var(--page-padding);
+}
+
+main {
+    width: min(
+        100% - (var(--page-padding) * 2),
+        var(--content-width)
+    );
+
+    margin-inline: auto;
+}
+
+header nav {
+    max-width: var(--content-width);
+    margin-inline: auto;
+}
+
+header nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+
+    color: var(--color-parchment);
+    opacity: 0.85;
+
+    transition:
+        opacity var(--transition-gentle),
+        color var(--transition-gentle);
+}
+
+header nav a:hover {
+    color: var(--color-firelight-gold);
+    opacity: 1;
+}
+
+
+/* -----------------------------------------
+   5. Collection Introduction
+   ----------------------------------------- */
+
+.collection-introduction {
+    max-width: 52rem;
+    margin-inline: auto;
+
+    padding-block: var(--space-lg);
+
+    text-align: center;
+}
+
+.collection-introduction h1 {
+    margin-bottom: var(--space-sm);
+}
+
+.collection-subtitle {
+    color: var(--color-firelight-gold);
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-style: italic;
+}
+
+.collection-description {
+    max-width: 44rem;
+    margin: var(--space-lg) auto 0;
+
+    text-align: left;
+}
+
+.collection-description p {
+    margin-bottom: var(--space-md);
+}
+
+
+/* -----------------------------------------
+   6. Story Shelf
+   ----------------------------------------- */
+
+.story-shelf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: var(--space-lg);
+
+    padding-block: var(--space-lg) var(--space-xl);
+}
+
+.story-shelf > h2 {
+    margin-bottom: 0;
+    text-align: center;
+}
+
+
+/* -----------------------------------------
+   7. Individual Story Volumes
+   ----------------------------------------- */
+
+.story-volume {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+    max-width: 34rem;
+
+    padding: var(--space-md) var(--space-sm);
+
+    text-align: center;
+}
+
+
+/* -----------------------------------------
+   8. Available Story
+   ----------------------------------------- */
+
+.story-volume-available {
+    min-height: 25rem;
+}
+
+.story-book-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    max-width: 18rem;
+    min-height: 44px;
+
+    gap: var(--space-sm);
+
+    padding: var(--space-sm);
+
+    border-radius: var(--radius-book);
+
+    transition:
+        transform var(--transition-gentle),
+        filter var(--transition-gentle);
+}
+
+.story-book-sprite {
+    width: min(100%, 16rem);
+    aspect-ratio: 1 / 1;
+
+    object-fit: contain;
+
+    filter: drop-shadow(
+        0 0.75rem 0.75rem rgb(0 0 0 / 25%)
+    );
+}
+
+.story-title {
+    color: var(--color-parchment);
+    font-size: 1.5rem;
+}
+
+.story-action {
+    color: var(--color-firelight-gold);
+    font-size: 1rem;
+}
+
+.story-description {
+    max-width: 22rem;
+    margin-top: var(--space-sm);
+
+    color: var(--color-parchment);
+    opacity: 0.85;
+}
+
+
+/* -----------------------------------------
+   9. Coming Soon Volumes
+   ----------------------------------------- */
+
+.story-volume-coming-soon {
+    min-height: 18rem;
+
+    opacity: 0.85;
+}
+
+.story-volume-coming-soon .story-book-sprite {
+    width: min(100%, 11rem);
+}
+
+.story-volume-coming-soon h3 {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.story-volume-coming-soon p {
+    margin-bottom: 0;
+
+    color: var(--color-parchment);
+    font-style: italic;
+    opacity: 0.75;
+}
+
+
+/* -----------------------------------------
+   10. Responsive Layout
+   ----------------------------------------- */
+
+@media (min-width: 48rem) {
+
+    :root {
+        --page-padding: 2rem;
+    }
+
+    .collection-introduction {
+        padding-block: var(--space-xl);
+    }
+
+    .story-shelf {
+        gap: var(--space-xl);
+    }
+
+    .story-volume-available {
+        min-height: 30rem;
+    }
+
+    .story-book-link {
+        max-width: 22rem;
+    }
+
+    .story-book-sprite {
+        width: min(100%, 20rem);
+    }
+
+    .story-volume-coming-soon .story-book-sprite {
+        width: min(100%, 13rem);
+    }
+}
+
+
+/* -----------------------------------------
+   11. Book Interaction
+   ----------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .story-book-link:hover {
+        transform: translateY(-6px);
+        filter: drop-shadow(
+            0 0 1rem rgb(215 180 106 / 20%)
+        );
+    }
+
+    .story-book-link:hover .story-action {
+        color: #F0D69B;
+    }
+}
+
+.story-book-link:active {
+    transform: scale(0.98);
 }
