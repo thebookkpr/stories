@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!-- Burrow Whispers Series Menu — index.html V1.0 · Part 1 of 1
+     Lives at games/burrow-whispers/index.html.
+     Uses css/variables.css, css/base.css and css/effects.css from this same folder.
+     To add a pet: add one entry to the PETS list near the bottom. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#121c1a">
+  <title>Burrow Whispers</title>
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <style>
+    .series-title {
+      margin: 0;
+      font-weight: normal;
+      font-size: clamp(2rem, 7vw, 4rem);
+      letter-spacing: 0.2em;
+      text-indent: 0.2em;
+      text-shadow: 0 0 18px var(--firefly-glow), 0 2px 8px rgba(8, 14, 13, 0.6);
+    }
+    .series-motto {
+      margin: 0.9em 0 0;
+      font-style: italic;
+      font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+      color: var(--sage);
+    }
+    .series-tag {
+      margin: 1.6em 0 2em;
+      font-family: var(--font-ui);
+      font-size: clamp(0.7rem, 1.8vw, 0.95rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--moon-blue);
+    }
+
+    /* Pet cards: each pet keeps its own accent color */
+    .pets {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
+      justify-content: center;
+      gap: 22px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+    }
+    .pet {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      background: rgba(31, 58, 51, 0.6);
+      border: 1px solid rgba(183, 205, 176, 0.45);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(4px);
+      transition: transform var(--fade-fast) var(--ease-gentle),
+                  box-shadow var(--fade-fast) var(--ease-gentle);
+    }
+    a.pet:hover, a.pet:focus-visible {
+      transform: translateY(-4px);
+      box-shadow: 0 0 22px var(--silver-glow);
+      outline: none;
+    }
+    .pet-art {
+      aspect-ratio: 20 / 9;
+      background: var(--forest) center / cover no-repeat;
+      border-bottom: 3px solid var(--accent, var(--moss));
+    }
+    .pet-body { display: flex; flex-direction: column; gap: 8px; flex: 1; padding: 16px 18px 18px; }
+    .pet-kind {
+      margin: 0;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent, var(--sage));
+    }
+    .pet-name { margin: 0; font-weight: normal; font-size: 1.4rem; letter-spacing: 0.1em; }
+    .pet-desc { margin: 0; flex: 1; font-size: 0.95rem; line-height: 1.5; opacity: 0.9; }
+    .pet-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--sage);
+    }
+    .pet-go {
+      padding: 0.55em 1.2em;
+      letter-spacing: 0.08em;
+      color: var(--cream);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--accent, var(--moss));
+      border-radius: var(--radius);
+    }
+
+    /* Placeholder: quiet and not clickable */
+    .pet.soon {
+      justify-content: center;
+      align-items: center;
+      min-height: 240px;
+      padding: 20px;
+      text-align: center;
+      font-style: italic;
+      background: rgba(31, 58, 51, 0.2);
+      border-style: dashed;
+      box-shadow: none;
+      opacity: 0.7;
+    }
+
+    .version {
+      margin: 2.5em 0 0;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--sage);
+      opacity: 0.6;
+    }
+    @media (prefers-reduced-motion: reduce) { .pet { transition: none; } }
+  </style>
+</head>
+<body>
+
+  <div class="backdrop"></div>
+  <div class="fx-layer" id="fx"></div>
+
+  <main class="page">
+    <h1 class="series-title">BURROW WHISPERS</h1>
+    <p class="series-motto">Many little lives, one shared world.</p>
+    <p class="series-tag">Choose a pet to visit</p>
+    <ul class="pets" id="pets"></ul>
+    <p class="version">V1.0</p>
+  </main>
+
+  <script>
+    /* ---------- Add new pets here ---------- */
+    const PETS = [
+      {
+        name: "Lunelle",
+        kind: "Pet #001 · Moonroot Wilds",
+        desc: "A gentle dreamer with quiet curiosity, who finds courage one small step at a time.",
+        url: "lunelle/",
+        art: "lunelle/one-more-little-step/images/title-screen.jpg",
+        accent: "#cdbfe8",
+        games: 1
+      }
+    ];
+    const SHOW_COMING_SOON = true;   /* set false to hide the placeholder card */
+
+    /* ---------- Build the menu ---------- */
+    const list = document.getElementById("pets");
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text) n.textContent = text;
+      return n;
+    };
+
+    PETS.forEach(p => {
+      const li = el("li");
+      const a = el("a", "pet");
+      a.href = p.url;
+      a.style.setProperty("--accent", p.accent);
+      const art = el("div", "pet-art");
+      art.style.backgroundImage = `url("${p.art}")`;
+      const meta = el("div", "pet-meta");
+      meta.append(el("span", "", p.games === 1 ? "1 game" : p.games + " games"), el("span", "pet-go", "Visit"));
+      const body = el("div", "pet-body");
+      body.append(el("p", "pet-kind", p.kind), el("h2", "pet-name", p.name), el("p", "pet-desc", p.desc), meta);
+      a.append(art, body);
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+
+    if (SHOW_COMING_SOON) {
+      const li = el("li");
+      li.appendChild(el("div", "pet soon", "More little lives are on their way."));
+      list.appendChild(li);
+    }
+
+    /* ---------- Gentle effects (styles come from effects.css) ---------- */
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const fx = document.getElementById("fx");
+    function add(cls, style, vars) {
+      const d = el("div", cls);
+      if (style) d.style.cssText = style;
+      if (vars) Object.entries(vars).forEach(([k, v]) => d.style.setProperty(k, v));
+      fx.appendChild(d);
+    }
+    add("fog one"); add("fog two");
+    [[8, 72, 30, 26], [40, 80, 28, 24], [68, 70, 30, 28]].forEach(([x, y, w, h], i) => {
+      add("moss-glow", `left:${x}%;top:${y}%;width:${w}%;height:${h}%`,
+        { "animation-delay": (-i * 2.5) + "s" });
+    });
+    for (let i = 0; i < 12; i++)
+      add("firefly", `left:${rand(5, 95).toFixed(1)}%;top:${rand(10, 85).toFixed(1)}%`, {
+        "--dur": rand(3, 6).toFixed(1) + "s",
+        "--delay": (-rand(0, 6)).toFixed(1) + "s",
+        "--drift": rand(-40, 40).toFixed(0) + "px"
+      });
+    for (let i = 0; i < 10; i++)
+      add("particle", `left:${rand(5, 95).toFixed(1)}%;top:${rand(35, 95).toFixed(1)}%`, {
+        "--dur": rand(10, 18).toFixed(1) + "s",
+        "--delay": (-rand(0, 14)).toFixed(1) + "s"
+      });
+  </script>
+
+</body>
+</html>
