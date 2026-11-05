@@ -1,0 +1,260 @@
+/* One More Little Step — scene.css V1.4
+   V1.4: Lunelle fades out smoothly when she vanishes (transition and .gone rule).
+   V1.3: petal hint (blinking text and arrow) and a gentle glow on the hinted petal.
+   V1.2 */
+
+.scene .bg {
+  transition: filter var(--fade-slow) var(--ease-gentle);
+}
+
+/* Scene name card: fades in briefly when a scene opens */
+.scene-name {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-ui);
+  padding: 0.4em 1.4em;
+  font-size: clamp(0.8rem, 2vw, 1.3rem);
+  letter-spacing: 0.2em;
+  color: var(--ivory);
+  text-shadow: 0 0 12px var(--silver-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+.scene.active .scene-name {
+  animation: name-fade 4s var(--ease-gentle) 0.6s both;
+}
+@keyframes name-fade {
+  0%   { opacity: 0; }
+  25%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Lunelle sprite: placed by percentage so it matches the art */
+.lunelle {
+  position: absolute;
+  z-index: var(--z-lunelle);
+  left: 10%;
+  bottom: 4%;
+  width: 28%;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 6px 10px rgba(27, 24, 48, 0.35));
+   transition: opacity 2s var(--ease-gentle);
+}
+   .lunelle.gone {
+  opacity: 0;
+   }
+
+/* Hotspots: invisible hit areas, positioned inline with
+   left, top, width, height in percent */
+.hotspot {
+  position: absolute;
+  z-index: var(--z-hotspot);
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: box-shadow var(--fade-slow) var(--ease-gentle),
+              background var(--fade-slow) var(--ease-gentle);
+}
+
+/* Gentle hint on hover or focus, never a puzzle marker */
+.hotspot:hover,
+.hotspot:focus-visible {
+  background: radial-gradient(circle,
+    rgba(230, 235, 242, 0.28) 0%,
+    rgba(230, 235, 242, 0) 70%);
+  box-shadow: 0 0 22px var(--silver-glow);
+}
+
+/* After discovery: stays softly lit, no longer needs a hint */
+.hotspot.found {
+  cursor: default;
+  background: radial-gradient(circle,
+    rgba(205, 191, 232, 0.2) 0%,
+    rgba(205, 191, 232, 0) 70%);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+/* Soft ripple where the player clicked */
+.hotspot-ripple {
+  position: absolute;
+  z-index: var(--z-fx);
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 2px solid var(--silver);
+  opacity: 0;
+  pointer-events: none;
+  animation: ripple 1.2s var(--ease-gentle) forwards;
+}
+@keyframes ripple {
+  0%   { opacity: 0.8; transform: scale(0.4); }
+  100% { opacity: 0;   transform: scale(2.4); }
+}
+
+/* Hidden Silver Lotus Petal: very faint until found */
+.petal {
+  position: absolute;
+  z-index: var(--z-hotspot);
+  width: 4%;
+  min-width: 36px;
+  aspect-ratio: 1;
+  background: url("../images/sprites/silver-petal.png") center / contain no-repeat;
+  border: 0;
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity var(--fade-slow) var(--ease-gentle),
+              transform var(--fade-slow) var(--ease-gentle);
+}
+.petal:hover,
+.petal:focus-visible {
+  opacity: 0.7;
+}
+
+/* Collected: floats up and fades away */
+.petal.collected {
+  opacity: 0;
+  transform: translateY(-30px) scale(1.2);
+  pointer-events: none;
+}
+
+/* Gentle response text for any hotspot, shown near the bottom */
+.whisper {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  z-index: var(--z-ui);
+  max-width: 70%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-style: italic;
+  color: var(--ivory);
+  text-shadow: 0 2px 8px rgba(27, 24, 48, 0.7);
+  opacity: 0;
+  transition: opacity var(--fade-slow) var(--ease-gentle);
+  pointer-events: none;
+}
+.whisper.show { opacity: 1; }
+
+/* Tap-through safety: decorative layers never catch taps */
+.scene .bg,
+.scene .fx-layer,
+.scene .hud,
+.scene .crest,
+.scene .scene-name,
+.scene .whisper,
+.scene .lunelle {
+  pointer-events: none;
+}
+
+/* Hotspots always above decoration */
+.scene .hotspot,
+.scene .petal {
+  z-index: 35;
+}
+
+
+.scene .hotspot,
+.scene .petal,
+.next-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fade-overlay {
+  pointer-events: none;
+}
+
+/* Gentle tutorial hint */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  z-index: var(--z-ui);
+  max-width: 70%;
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font-style: italic;
+  font-size: clamp(0.85rem, 2vw, 1.2rem);
+  color: var(--ivory);
+  text-shadow: 0 2px 8px rgba(27, 24, 48, 0.7);
+  opacity: 0;
+  transition: opacity var(--fade-slow) var(--ease-gentle);
+  pointer-events: none;
+}
+.hint.show { opacity: 1; }
+
+/* First-time glow: a soft pulse, never a puzzle marker */
+.hotspot.hint-glow {
+  animation: hint-glow 2.4s ease-in-out 2;
+}
+@keyframes hint-glow {
+  0%, 100% { background: transparent; box-shadow: none; }
+  50% {
+    background: radial-gradient(circle,
+      rgba(230, 235, 242, 0.28) 0%,
+      rgba(230, 235, 242, 0) 70%);
+    box-shadow: 0 0 22px var(--silver-glow);
+  }
+}
+
+/* Petal hint: blinking text and a bobbing arrow pointing at the hidden petal */
+.petal-hint-text,
+.petal-hint-arrow {
+  position: absolute;
+  z-index: var(--z-ui);
+  transform: translateX(-50%);
+  text-align: center;
+  color: var(--ivory);
+  text-shadow: 0 0 12px var(--silver-glow), 0 2px 8px rgba(27, 24, 48, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fade-slow) var(--ease-gentle);
+}
+.petal-hint-text {
+  font-style: italic;
+  font-size: clamp(0.85rem, 2vw, 1.2rem);
+  white-space: nowrap;
+}
+.petal-hint-arrow {
+  font-size: clamp(1.2rem, 3.2vw, 2rem);
+  line-height: 1;
+  color: var(--silver);
+}
+.petal-hint-text.show,
+.petal-hint-arrow.show {
+  opacity: 1;
+  animation: petal-blink 1.8s ease-in-out infinite;
+}
+.petal-hint-arrow.show {
+  animation: petal-blink 1.8s ease-in-out infinite,
+             arrow-bob 1.2s ease-in-out infinite;
+}
+@keyframes petal-blink {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
+}
+@keyframes arrow-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* The hinted petal shows itself gently */
+.petal.hinted {
+  opacity: 0.9;
+  animation: petal-glow 1.8s ease-in-out infinite;
+}
+@keyframes petal-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--silver-glow)); }
+  50%      { filter: drop-shadow(0 0 16px var(--silver-glow)); }
+}
