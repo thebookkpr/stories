@@ -1,51 +1,135 @@
-/* Burrow Whispers (series menu) — variables.css V1.0
-   Series-level theme for the Burrow Whispers games menu.
-   Palette is drawn from the Home & Environment Codex references
-   (natural greens, woodland tones, moonlit blues, soft silvers,
-   gentle floral colors, muted magical luminosity).
-   The universal palette is still PENDING in canon, so treat these
-   colors as a provisional menu style, not canon.
-   Lunelle's ivory/lavender/violet palette is NOT used here. */
+
+/* =========================================
+   THE BOOK KEEPER
+   Burrow Whispers — Design Variables
+   Version 1.0
+   ========================================= */
+
+
+/* -----------------------------------------
+   1. Canonical Color Palette
+   ----------------------------------------- */
+
 :root {
-  /* Woodland night */
-  --night: #121c1a;
-  --night-deep: #0b1311;
-  --forest: #1f3a33;
-  --moss: #6f9a74;
-  --sage: #b7cdb0;
 
-  /* Moonlight and magic */
-  --moon-blue: #9db8d6;
-  --silver: #e6ebf2;
-  --blush: #e8c4cf;
-  --firefly: #f6e7a8;
-  --cream: #f4f1e6;
+    /* Signature Colors */
 
-  /* Glows (soft, never harsh) */
-  --silver-glow: rgba(230, 235, 242, 0.6);
-  --moss-glow: rgba(140, 190, 140, 0.45);
-  --firefly-glow: rgba(246, 231, 168, 0.5);
+    --color-round-door-green: #496A46;
+    --color-mosswood: #6C5640;
+    --color-warm-oak: #A68056;
+    --color-parchment: #EEE6D2;
+    --color-firelight-gold: #D7B46A;
+    --color-tea-brown: #4C3828;
+    --color-moonroot-blue: #667A8E;
 
-  /* Type */
-  --font-story: Georgia, "Times New Roman", serif;
-  --font-ui: "Trebuchet MS", system-ui, sans-serif;
 
-  /* Shape and spacing */
-  --radius: 18px;
-  --gap: 12px;
-  --pad: 16px;
+    /* Semantic Colors */
 
-  /* Soft shadows, no harsh contrast */
-  --shadow-soft: 0 6px 24px rgba(8, 14, 13, 0.4);
+    --color-background: var(--color-tea-brown);
+    --color-surface: var(--color-mosswood);
+    --color-text: var(--color-parchment);
+    --color-text-accent: var(--color-firelight-gold);
 
-  /* Motion */
-  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
-  --fade-slow: 1.2s;
-  --fade-fast: 0.4s;
+    --color-interactive: var(--color-round-door-green);
+    --color-interactive-hover: var(--color-firelight-gold);
 
-  /* Layers */
-  --z-bg: 0;
-  --z-fx: 30;
-  --z-ui: 40;
-  --z-overlay: 50;
+    --color-focus: var(--color-firelight-gold);
+    --color-selection-background: var(--color-firelight-gold);
+    --color-selection-text: var(--color-tea-brown);
+
+
+    /* -------------------------------------
+       2. Typography
+       ------------------------------------- */
+
+    --font-body: Georgia, "Times New Roman", serif;
+    --font-heading: Georgia, "Times New Roman", serif;
+
+    --font-size-small: 0.875rem;
+    --font-size-body: 1rem;
+    --font-size-subtitle: 1.25rem;
+    --font-size-title: 2.25rem;
+
+    --line-height-body: 1.7;
+    --line-height-heading: 1.3;
+
+
+    /* -------------------------------------
+       3. Layout
+       ------------------------------------- */
+
+    --content-width: 72rem;
+    --reading-width: 44rem;
+
+    --page-padding: 1.25rem;
+
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 3rem;
+    --space-xl: 5rem;
+
+
+    /* -------------------------------------
+       4. Book Dimensions
+       ------------------------------------- */
+
+    --book-size-mobile: 16rem;
+    --book-size-desktop: 20rem;
+
+    --book-size-coming-soon: 11rem;
+
+    --book-hover-elevation: -6px;
+    --book-active-scale: 0.98;
+
+
+    /* -------------------------------------
+       5. Shape and Depth
+       ------------------------------------- */
+
+    --radius-soft: 0.5rem;
+    --radius-book: 0.25rem;
+    --radius-round: 50%;
+
+    --shadow-book:
+        0 0.75rem 0.75rem rgb(0 0 0 / 25%);
+
+    --shadow-book-hover:
+        0 0.75rem 1rem rgb(0 0 0 / 30%);
+
+
+    /* -------------------------------------
+       6. Atmospheric Effects
+       ------------------------------------- */
+
+    --effect-glow-gold: rgb(215 180 106 / 35%);
+    --effect-glow-soft: rgb(215 180 106 / 15%);
+
+    --effect-lantern-glow: rgb(215 180 106 / 18%);
+
+    --effect-transition: 280ms ease;
+    --transition-gentle: 220ms ease;
+
+
+    /* -------------------------------------
+       7. Layering
+       ------------------------------------- */
+
+    --z-background: -1;
+    --z-content: 1;
+    --z-overlay: 10;
+    --z-navigation: 20;
+}
+
+
+/* -----------------------------------------
+   8. Responsive Variables
+   ----------------------------------------- */
+
+@media (min-width: 48rem) {
+
+    :root {
+        --page-padding: 2rem;
+    }
+
 }
