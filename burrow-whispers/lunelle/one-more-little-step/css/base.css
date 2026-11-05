@@ -1,0 +1,61 @@
+/* One More Little Step — base.css V1.1 */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  height: 100dvh;
+  background: var(--night);
+  color: var(--ivory);
+  font-family: var(--font-story);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* The game stage: 20:9 (set in variables.css), centered, scales to fit */
+#game {
+  position: relative;
+  width: min(100vw, calc(100dvh * var(--stage-ratio-num)));
+  aspect-ratio: var(--stage-ratio);
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+  overflow: hidden;
+  background: var(--night);
+}
+
+/* Each screen fills the stage and fades in and out */
+.screen {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade-slow) var(--ease-gentle),
+              visibility var(--fade-slow);
+}
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Background art layer */
+.bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: var(--z-bg);
+}
+
+button {
+  font-family: var(--font-ui);
+  color: inherit;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 2px solid var(--silver);
+  outline-offset: 3px;
+}
+
+.hidden { display: none !important; }
