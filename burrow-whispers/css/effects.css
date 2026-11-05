@@ -1,0 +1,90 @@
+/* Burrow Whispers (series menu) — effects.css V1.0
+   Gentle woodland effects for the series menu: fireflies, floating
+   particles, drifting fog and glowing moss. Retinted from the game's
+   effects to firefly gold, silver and moonlit blue.
+   Magical but restrained: nothing here should overpower the pet cards.
+   Class names match the Lunelle menu, so the same effects code works. */
+
+/* Effects layer: fixed behind the page content, never blocks clicks */
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Fireflies: JS sets left, top, --dur, --delay, --drift per firefly */
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--firefly) 0%, rgba(246, 231, 168, 0) 70%);
+  box-shadow: 0 0 10px 3px var(--firefly-glow);
+  opacity: 0;
+  animation:
+    firefly-glow var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
+    firefly-drift calc(var(--dur, 4s) * 2) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes firefly-glow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.9; }
+}
+@keyframes firefly-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(var(--drift, 30px), -24px); }
+}
+
+/* Floating particles: faint magical dust rising slowly */
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--silver);
+  opacity: 0;
+  animation: particle-float var(--dur, 12s) linear var(--delay, 0s) infinite;
+}
+@keyframes particle-float {
+  0%   { opacity: 0; transform: translateY(0); }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-80px); }
+}
+
+/* Soft fog: two slow layers drifting, tinted moonlit blue */
+.fog {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 30%;
+  background: radial-gradient(ellipse at center,
+    rgba(157, 184, 214, 0.18) 0%,
+    rgba(157, 184, 214, 0) 70%);
+  animation: fog-drift 40s ease-in-out infinite alternate;
+}
+.fog.one { bottom: 20%; }
+.fog.two { bottom: 8%; animation-duration: 55s; animation-direction: alternate-reverse; }
+@keyframes fog-drift {
+  0%   { transform: translateX(-4%); }
+  100% { transform: translateX(4%); }
+}
+
+/* Glowing moss: soft green patches that breathe slowly.
+   Position with inline left, top, width, height in percent. */
+.moss-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--moss-glow) 0%, rgba(140, 190, 140, 0) 70%);
+  animation: moss-breathe 8s ease-in-out infinite;
+}
+@keyframes moss-breathe {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50%      { opacity: 0.85; transform: scale(1.05); }
+}
+
+/* Reduced motion: hide the moving effects for players who ask for it */
+@media (prefers-reduced-motion: reduce) {
+  .firefly, .particle, .fog, .moss-glow { display: none; }
+}
