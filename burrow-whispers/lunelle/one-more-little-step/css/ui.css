@@ -1,0 +1,162 @@
+/* One More Little Step — ui.css V1.0 */
+
+/* HUD: sits at the top of every scene */
+.hud {
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  right: 3%;
+  z-index: var(--z-ui);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap);
+  pointer-events: none;
+}
+
+/* Courage Meter */
+.courage {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-ui);
+  font-size: clamp(0.65rem, 1.5vw, 0.95rem);
+  letter-spacing: 0.1em;
+  color: var(--ivory);
+  text-shadow: 0 1px 6px rgba(27, 24, 48, 0.7);
+}
+
+.courage-bar {
+  position: relative;
+  width: clamp(110px, 20vw, 240px);
+  height: 12px;
+  overflow: hidden;
+  background: rgba(27, 24, 48, 0.45);
+  border: 1px solid rgba(230, 235, 242, 0.5);
+  border-radius: 999px;
+}
+
+.courage-fill {
+  height: 100%;
+  width: 0%;
+  background-color: var(--lavender);
+  background-image: linear-gradient(90deg, var(--lavender), var(--silver));
+  border-radius: 999px;
+  box-shadow: 0 0 10px var(--silver-glow);
+  transition: width var(--fade-slow) var(--ease-gentle);
+}
+
+/* Full meter: gentle glow to show the next scene is ready */
+.courage.full .courage-bar {
+  box-shadow: 0 0 16px var(--silver-glow);
+}
+
+/* Petal counter */
+.petals {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.petal-slot {
+  width: clamp(14px, 2.2vw, 24px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(230, 235, 242, 0.5);
+  border-radius: 50%;
+  background: rgba(27, 24, 48, 0.35);
+  transition: background var(--fade-slow) var(--ease-gentle),
+              box-shadow var(--fade-slow) var(--ease-gentle);
+}
+.petal-slot.got {
+  background: radial-gradient(circle, var(--ivory), var(--silver));
+  box-shadow: 0 0 10px var(--silver-glow);
+}
+
+/* Next scene button: appears when courage is full */
+.next-btn {
+  position: absolute;
+  right: 5%;
+  bottom: 6%;
+  z-index: var(--z-ui);
+  padding: 0.7em 1.4em;
+  font-size: clamp(0.8rem, 1.8vw, 1.1rem);
+  letter-spacing: 0.08em;
+  background: rgba(205, 191, 232, 0.5);
+  border: 1px solid rgba(230, 235, 242, 0.6);
+  border-radius: var(--radius);
+  box-shadow: 0 0 16px var(--silver-glow);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade-slow) var(--ease-gentle),
+              visibility var(--fade-slow);
+}
+.next-btn.ready {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Dialogue box: short, gentle lines from Lunelle */
+.dialogue {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  z-index: var(--z-ui);
+  width: min(80%, 640px);
+  transform: translateX(-50%);
+  padding: var(--pad) calc(var(--pad) * 1.5);
+  font-size: clamp(0.85rem, 2vw, 1.2rem);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ivory);
+  background: rgba(27, 24, 48, 0.55);
+  border: 1px solid rgba(205, 191, 232, 0.5);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade-slow) var(--ease-gentle),
+              visibility var(--fade-slow);
+}
+.dialogue.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Panels: Settings and Credits */
+.panel {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(27, 24, 48, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade-slow) var(--ease-gentle),
+              visibility var(--fade-slow);
+}
+.panel.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.panel-card {
+  width: min(86%, 460px);
+  padding: calc(var(--pad) * 1.6);
+  text-align: center;
+  color: var(--ivory);
+  background: rgba(60, 52, 100, 0.85);
+  border: 1px solid rgba(205, 191, 232, 0.5);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+.panel-card h2 {
+  margin: 0 0 0.6em;
+  font-weight: normal;
+  letter-spacing: 0.15em;
+}
+.panel-card .menu-btn {
+  margin-top: var(--pad);
+}
