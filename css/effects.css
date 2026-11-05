@@ -1,13 +1,17 @@
-/* The Book Keeper's Library (site menu) — effects.css V1.0
+/* The Book Keeper's Library (site menu) — effects.css V1.1
+   V1.1: effects layer moved in front of the page content so dust and glow
+         drift over the painted room and the books; candle glow and haze now
+         add light to the painting (screen blend) instead of fading into it.
+   V1.0: first release.
    Candlelit library effects: drifting gold dust motes, a warm candle
    glow that flickers softly, and a slow haze like pipe-smoke in lamplight.
    Restrained: nothing here should overpower the books on the shelf. */
 
-/* Effects layer: fixed behind the page content, never blocks clicks */
+/* Effects layer: fixed in front of the page, never blocks taps or clicks */
 .fx-layer {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 3;
   overflow: hidden;
   pointer-events: none;
 }
@@ -40,6 +44,7 @@
   position: absolute;
   border-radius: 50%;
   background: radial-gradient(circle, var(--candle-glow) 0%, rgba(255, 207, 122, 0) 70%);
+  mix-blend-mode: screen;
   animation: candle-flicker 5s ease-in-out infinite;
 }
 @keyframes candle-flicker {
@@ -57,8 +62,9 @@
   width: 140%;
   height: 30%;
   background: radial-gradient(ellipse at center,
-    rgba(255, 207, 122, 0.1) 0%,
+    rgba(255, 207, 122, 0.16) 0%,
     rgba(255, 207, 122, 0) 70%);
+  mix-blend-mode: screen;
   animation: haze-drift 45s ease-in-out infinite alternate;
 }
 .haze.one { bottom: 25%; }
