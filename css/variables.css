@@ -1,0 +1,54 @@
+/* The Book Keeper's Library (site menu) — variables.css V1.0
+   Top-level theme for games/index.html: luxurious dark wood,
+   leather-bound books, antique gold and candlelight.
+   A storybook mood, family friendly, with a British library feel.
+   Each world linked from here keeps its own theme. */
+:root {
+  /* Wood */
+  --night: #120a07;
+  --wood-deep: #1a0f0a;
+  --wood: #2e1a10;
+  --walnut: #4a2c1a;
+  --mahogany: #6b3a22;
+
+  /* Leather and lamp */
+  --leather: #5a1a22;
+  --leather-light: #7d2a33;
+  --lamp-green: #1f3b2d;
+
+  /* Gold and paper */
+  --brass: #b8924a;
+  --gold: #d9b45f;
+  --gold-bright: #f0d58a;
+  --parchment: #f1e4c3;
+  --ink: #2a1a10;
+  --candle: #ffcf7a;
+
+  /* Glows (warm, soft, never harsh) */
+  --gold-glow: rgba(217, 180, 95, 0.55);
+  --candle-glow: rgba(255, 207, 122, 0.45);
+  --gold-line: rgba(217, 180, 95, 0.5);
+
+  /* Type */
+  --font-story: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --font-ui: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+
+  /* Shape and spacing: crisp book corners, not bubbly */
+  --radius: 6px;
+  --gap: 12px;
+  --pad: 16px;
+
+  /* Warm shadows */
+  --shadow-soft: 0 8px 28px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+  --fade-slow: 1.2s;
+  --fade-fast: 0.4s;
+
+  /* Layers */
+  --z-bg: 0;
+  --z-fx: 30;
+  --z-ui: 40;
+  --z-overlay: 50;
+}
