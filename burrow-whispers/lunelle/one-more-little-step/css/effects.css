@@ -1,0 +1,140 @@
+/* One More Little Step — effects.css V1.0 */
+
+/* Effects layer: sits above art, never blocks clicks */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-fx);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Fireflies: JS sets left, top, --dur, --delay, --drift per firefly */
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe0 0%, rgba(255, 251, 224, 0) 70%);
+  box-shadow: 0 0 10px 3px rgba(255, 251, 224, 0.45);
+  opacity: 0;
+  animation:
+    firefly-glow var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
+    firefly-drift calc(var(--dur, 4s) * 2) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes firefly-glow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.9; }
+}
+@keyframes firefly-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(var(--drift, 30px), -24px); }
+}
+
+/* Floating particles: pollen and dust, slow and faint */
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--silver);
+  opacity: 0;
+  animation: particle-float var(--dur, 12s) linear var(--delay, 0s) infinite;
+}
+@keyframes particle-float {
+  0%   { opacity: 0; transform: translateY(0); }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-80px); }
+}
+
+/* Soft fog: two slow layers drifting across the scene */
+.fog {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 30%;
+  background: radial-gradient(ellipse at center,
+    rgba(230, 235, 242, 0.22) 0%,
+    rgba(230, 235, 242, 0) 70%);
+  animation: fog-drift 40s ease-in-out infinite alternate;
+}
+.fog.one { bottom: 20%; }
+.fog.two { bottom: 8%; animation-duration: 55s; animation-direction: alternate-reverse; }
+@keyframes fog-drift {
+  0%   { transform: translateX(-4%); }
+  100% { transform: translateX(4%); }
+}
+
+/* Water sparkle: small shimmering points on the pond */
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ivory);
+  opacity: 0;
+  animation: sparkle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
+}
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.6); }
+  50%      { opacity: 0.8; transform: scale(1.2); }
+}
+
+/* Silver reflection pulse: the story hook on the pond.
+   Position it with inline left, top, width, height in percent. */
+.silver-reflection {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(230, 235, 242, 0.55) 0%,
+    rgba(230, 235, 242, 0) 70%);
+  animation: reflection-pulse 6s ease-in-out infinite;
+}
+@keyframes reflection-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.95); }
+  50%      { opacity: 0.9;  transform: scale(1.05); }
+}
+
+/* Moon Lotus crest overlay: position it over the crest on the sprite */
+.crest {
+  position: absolute;
+  z-index: calc(var(--z-lunelle) + 1);
+  width: 6%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(205, 191, 232, 0.8) 0%,
+    rgba(205, 191, 232, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+.crest.shimmer {
+  animation: crest-shimmer 2.4s var(--ease-gentle) 1;
+}
+@keyframes crest-shimmer {
+  0%   { opacity: 0;   transform: scale(0.8); }
+  35%  { opacity: 1;   transform: scale(1.4); box-shadow: 0 0 24px var(--silver-glow); }
+  100% { opacity: 0;   transform: scale(1.8); }
+}
+
+/* Faint glow breathing on Moon Lotus blooms */
+.lotus-glow {
+  animation: lotus-breathe 7s ease-in-out infinite;
+}
+@keyframes lotus-breathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(205, 191, 232, 0.3)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(205, 191, 232, 0.7)); }
+}
+
+/* Fade overlay between scenes */
+.fade-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: calc(var(--z-overlay) + 1);
+  background: var(--night);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fade-slow) var(--ease-gentle);
+}
+.fade-overlay.on { opacity: 1; }
