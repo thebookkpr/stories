@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<!-- The Book Keeper's Library (site menu) — index.html V1.2 · Part 1 of 2
+<!-- The Book Keeper's Library (site menu) — index.html V1.3 · Part 1 of 2
+     V1.3: candle glows removed (they read as ghostly blobs over the painting).
      V1.2: label position matched to the real book sprite (2:3).
      V1.1: pet art removed. Painted room background (images/library-bg.jpg) and a
            closed-book sprite per world (images/book-*.png) with the title as live text
            on the book's label plate. Missing sprite falls back to a CSS leather book.
      V1.0: first release.
-     Lives at games/index.html.
+     Lives at stories/index.html.
      Uses css/variables.css, css/base.css and css/effects.css from this same folder.
      To add a world: add one entry to the WORLDS list near the bottom. -->
 <html lang="en">
@@ -187,7 +188,7 @@
     <p class="library-tag">Choose a volume</p>
     <ul class="shelf" id="shelf"></ul>
     <p class="keeper">Kept by The Book Keeper</p>
-    <p class="version">V1.2</p>
+    <p class="version">V1.3</p>
   </main>
 
   <script>
@@ -252,8 +253,6 @@
       fx.appendChild(d);
     }
     add("haze one"); add("haze two");
-    [[4, 2, 34, 40, 0], [66, 0, 34, 40, 2.2]].forEach(([x, y, w, h, d]) =>
-      add("candle", `left:${x}%;top:${y}%;width:${w}%;height:${h}%`, { "animation-delay": -d + "s" }));
     for (let i = 0; i < 16; i++)
       add("mote", `left:${rand(5, 95).toFixed(1)}%;top:${rand(10, 90).toFixed(1)}%`, {
         "--dur": rand(5, 9).toFixed(1) + "s",
