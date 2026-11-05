@@ -1,0 +1,65 @@
+/* One More Little Step — responsive.css V1.0 */
+
+/* Small screens: tighten spacing so nothing crowds the art */
+@media (max-width: 700px) {
+  :root {
+    --pad: 10px;
+    --gap: 8px;
+    --radius: 14px;
+  }
+
+  .menu { right: 4%; bottom: 6%; width: 38%; }
+  .menu-btn { padding: 0.55em 0.8em; }
+
+  .dialogue { width: 90%; bottom: 3%; }
+  .whisper { max-width: 88%; }
+
+  .courage-bar { height: 9px; }
+  .next-btn { right: 3%; bottom: 4%; }
+}
+
+/* Short landscape screens (phones turned sideways) */
+@media (max-height: 420px) {
+  .title-block { top: 3%; }
+  .menu { bottom: 4%; gap: 6px; }
+  .menu-btn { padding: 0.4em 0.8em; }
+  .hud { top: 2%; }
+}
+
+/* Portrait phones: gentle hint to turn the device */
+@media (orientation: portrait) and (max-width: 700px) {
+  body::after {
+    content: "Turn your device sideways for the best view";
+    position: fixed;
+    left: 50%;
+    bottom: 6%;
+    z-index: 100;
+    transform: translateX(-50%);
+    width: 80%;
+    padding: 0.7em 1em;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ivory);
+    background: rgba(27, 24, 48, 0.7);
+    border: 1px solid rgba(205, 191, 232, 0.5);
+    border-radius: var(--radius);
+    pointer-events: none;
+  }
+}
+
+/* Touch screens: no hover, so make hints visible and targets larger */
+@media (hover: none) {
+  .hotspot { min-width: 52px; min-height: 52px; }
+  .menu-btn:hover { transform: none; }
+}
+
+/* Reduced motion: calm everything down for players who ask for it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.2s !important;
+  }
+  .firefly, .particle, .fog { display: none; }
+}
