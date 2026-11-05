@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<!-- The Book Keeper's Library (site menu) — index.html V1.2 · Part 1 of 2
+     V1.2: label position matched to the real book sprite (2:3).
+     V1.1: pet art removed. Painted room background (images/library-bg.jpg) and a
+           closed-book sprite per world (images/book-*.png) with the title as live text
+           on the book's label plate. Missing sprite falls back to a CSS leather book.
+     V1.0: first release.
+     Lives at games/index.html.
+     Uses css/variables.css, css/base.css and css/effects.css from this same folder.
+     To add a world: add one entry to the WORLDS list near the bottom. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#120a07">
+  <title>The Book Keeper's Library</title>
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <style>
+    /* Painted room behind everything; a soft dark wash keeps text readable */
+    .room {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-bg);
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(18, 10, 7, 0.25), rgba(18, 10, 7, 0.5)),
+        url("images/library-bg.jpg") center / cover no-repeat;
+    }
+
+    .library-title {
+      margin: 0;
+      font-weight: normal;
+      font-size: clamp(1.7rem, 6vw, 3.6rem);
+      letter-spacing: 0.2em;
+      text-indent: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.8);
+    }
+    .library-motto {
+      margin: 1em 0 0;
+      font-style: italic;
+      font-size: clamp(1rem, 2.4vw, 1.3rem);
+      color: var(--parchment);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    .library-tag {
+      margin: 0;
+      font-family: var(--font-ui);
+      font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    /* The shelf: each world is a closed book */
+    .shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+      justify-content: center;
+      gap: 34px 28px;
+      margin: 2em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .book {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--parchment);
+      text-decoration: none;
+      text-align: center;
+    }
+    .book-cover {
+      position: relative;
+      width: 100%;
+      container-type: inline-size;
+    }
+    .book-sprite {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
+      transition: transform var(--fade-fast) var(--ease-gentle),
+                  filter var(--fade-fast) var(--ease-gentle);
+    }
+    a.book:hover .book-sprite,
+    a.book:focus-visible .book-sprite {
+      transform: translateY(-6px);
+      filter: drop-shadow(0 14px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 16px var(--gold-glow));
+    }
+    a.book:focus-visible { outline: none; }
+
+    /* Title text on the book's label plate (position set per world in WORLDS) */
+    .book-label {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-style: italic;
+      font-size: 1.1rem;
+      font-size: 6.4cqw;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      text-wrap: balance;
+      color: var(--gold-bright);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+
+    .book-kind {
+      margin: 0;
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    .book-desc {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Fallback: if the sprite is missing, show a leather book drawn in CSS */
+    .book.fallback .book-sprite { display: none; }
+    .book.fallback .book-cover {
+      aspect-ratio: 2 / 3;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0, rgba(0, 0, 0, 0) 14px),
+        linear-gradient(145deg, #2f5a45, #1f3b2d);
+      border: 1px solid var(--gold-line);
+      border-radius: 3px 10px 10px 3px;
+      box-shadow: var(--shadow-soft);
+    }
+    .book.fallback .book-label { border: 1px solid var(--gold-line); }
+
+    /* Placeholder: an empty space on the shelf, not clickable */
+    .book.soon {
+      justify-content: center;
+      aspect-ratio: 2 / 3;
+      padding: 20px;
+      font-style: italic;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px dashed var(--gold-line);
+      border-radius: 3px 10px 10px 3px;
+      opacity: 0.7;
+    }
+
+    .keeper {
+      margin: 3em 0 0;
+      font-style: italic;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+    .version {
+      margin: 0.8em 0 0;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--brass);
+      opacity: 0.7;
+    }
+    @media (prefers-reduced-motion: reduce) { .book-sprite { transition: none; } }
+  </style>
+  
+  </head>
+<body>
+
+  <div class="room"></div>
+  <div class="backdrop"></div>
+  <div class="fx-layer" id="fx"></div>
+
+  <main class="page">
+    <h1 class="library-title">The Book Keeper's Library</h1>
+    <p class="library-motto">Storybook worlds, kept with care.</p>
+    <div class="rule"></div>
+    <p class="library-tag">Choose a volume</p>
+    <ul class="shelf" id="shelf"></ul>
+    <p class="keeper">Kept by The Book Keeper</p>
+    <p class="version">V1.2</p>
+  </main>
+
+  <script>
+    /* ---------- Add new worlds here ----------
+       label = where the title sits on the book, in percent of the book image:
+       top, left, w (width), h (height). Adjust to line up with the label plate. */
+    const WORLDS = [
+      {
+        title: "Burrow Whispers",
+        kind: "Volume I · Gentle Fantasy",
+        desc: "A quiet world of little lives and moonlit woods, where small pets find wonder close to home.",
+        url: "burrow-whispers/",
+        sprite: "images/book-burrow-whispers.png",
+        label: { top: 26, left: 29, w: 49, h: 12 }
+      }
+    ];
+    const SHOW_COMING_SOON = true;   /* set false to hide the empty space on the shelf */
+
+    /* ---------- Build the shelf ---------- */
+    const shelf = document.getElementById("shelf");
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text) n.textContent = text;
+      return n;
+    };
+
+    WORLDS.forEach(w => {
+      const L = Object.assign({ top: 26, left: 29, w: 49, h: 12 }, w.label);
+      const li = el("li");
+      const a = el("a", "book");
+      a.href = w.url;
+
+      const cover = el("div", "book-cover");
+      const img = new Image();
+      img.className = "book-sprite";
+      img.alt = "";
+      img.onerror = () => a.classList.add("fallback");
+      img.src = w.sprite;
+      const label = el("span", "book-label", w.title);
+      label.style.cssText = `top:${L.top}%;left:${L.left}%;width:${L.w}%;height:${L.h}%`;
+      cover.append(img, label);
+
+      a.append(cover, el("p", "book-kind", w.kind), el("p", "book-desc", w.desc));
+      li.appendChild(a);
+      shelf.appendChild(li);
+    });
+
+    if (SHOW_COMING_SOON) {
+      const li = el("li");
+      li.appendChild(el("div", "book soon", "More volumes are being written."));
+      shelf.appendChild(li);
+    }
+
+    /* ---------- Candlelit effects (styles come from effects.css) ---------- */
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const fx = document.getElementById("fx");
+    function add(cls, style, vars) {
+      const d = el("div", cls);
+      if (style) d.style.cssText = style;
+      if (vars) Object.entries(vars).forEach(([k, v]) => d.style.setProperty(k, v));
+      fx.appendChild(d);
+    }
+    add("haze one"); add("haze two");
+    [[4, 2, 34, 40, 0], [66, 0, 34, 40, 2.2]].forEach(([x, y, w, h, d]) =>
+      add("candle", `left:${x}%;top:${y}%;width:${w}%;height:${h}%`, { "animation-delay": -d + "s" }));
+    for (let i = 0; i < 16; i++)
+      add("mote", `left:${rand(5, 95).toFixed(1)}%;top:${rand(10, 90).toFixed(1)}%`, {
+        "--dur": rand(5, 9).toFixed(1) + "s",
+        "--delay": (-rand(0, 9)).toFixed(1) + "s",
+        "--drift": rand(-30, 30).toFixed(0) + "px"
+      });
+  </script>
+
+</body>
+</html>
