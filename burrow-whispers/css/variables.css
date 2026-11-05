@@ -1,0 +1,51 @@
+/* Burrow Whispers (series menu) — variables.css V1.0
+   Series-level theme for the Burrow Whispers games menu.
+   Palette is drawn from the Home & Environment Codex references
+   (natural greens, woodland tones, moonlit blues, soft silvers,
+   gentle floral colors, muted magical luminosity).
+   The universal palette is still PENDING in canon, so treat these
+   colors as a provisional menu style, not canon.
+   Lunelle's ivory/lavender/violet palette is NOT used here. */
+:root {
+  /* Woodland night */
+  --night: #121c1a;
+  --night-deep: #0b1311;
+  --forest: #1f3a33;
+  --moss: #6f9a74;
+  --sage: #b7cdb0;
+
+  /* Moonlight and magic */
+  --moon-blue: #9db8d6;
+  --silver: #e6ebf2;
+  --blush: #e8c4cf;
+  --firefly: #f6e7a8;
+  --cream: #f4f1e6;
+
+  /* Glows (soft, never harsh) */
+  --silver-glow: rgba(230, 235, 242, 0.6);
+  --moss-glow: rgba(140, 190, 140, 0.45);
+  --firefly-glow: rgba(246, 231, 168, 0.5);
+
+  /* Type */
+  --font-story: Georgia, "Times New Roman", serif;
+  --font-ui: "Trebuchet MS", system-ui, sans-serif;
+
+  /* Shape and spacing */
+  --radius: 18px;
+  --gap: 12px;
+  --pad: 16px;
+
+  /* Soft shadows, no harsh contrast */
+  --shadow-soft: 0 6px 24px rgba(8, 14, 13, 0.4);
+
+  /* Motion */
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+  --fade-slow: 1.2s;
+  --fade-fast: 0.4s;
+
+  /* Layers */
+  --z-bg: 0;
+  --z-fx: 30;
+  --z-ui: 40;
+  --z-overlay: 50;
+}
