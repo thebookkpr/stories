@@ -1,11 +1,9 @@
-/* The Book Keeper's Library (site menu) — effects.css V1.1
-   V1.1: effects layer moved in front of the page content so dust and glow
-         drift over the painted room and the books; candle glow and haze now
-         add light to the painting (screen blend) instead of fading into it.
-   V1.0: first release.
-   Candlelit library effects: drifting gold dust motes, a warm candle
-   glow that flickers softly, and a slow haze like pipe-smoke in lamplight.
-   Restrained: nothing here should overpower the books on the shelf. */
+/* Burrow Whispers series menu: effects.css V1.0
+   Lives at stories/burrow-whispers/css/effects.css
+   Based on the Library's effects.css V1.1. Added: lantern-light
+   breathing, floating books, golden shimmer and hover lift.
+   Restrained: nothing here should overpower the books on the shelf.
+   Needs variables.css loaded first. */
 
 /* Effects layer: fixed in front of the page, never blocks taps or clicks */
 .fx-layer {
@@ -38,12 +36,11 @@
   100% { transform: translate(var(--drift, 20px), -40px); }
 }
 
-/* Candle glow: a soft warm pool of light that flickers gently.
-   Position with inline left, top, width, height in percent. */
+/* Candle glow: a soft warm pool of light that flickers gently */
 .candle {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--candle-glow) 0%, rgba(255, 207, 122, 0) 70%);
+  background: radial-gradient(circle, var(--candle-glow) 0%, rgba(255, 224, 138, 0) 70%);
   mix-blend-mode: screen;
   animation: candle-flicker 5s ease-in-out infinite;
 }
@@ -55,15 +52,15 @@
   80%      { opacity: 0.65; transform: scale(1); }
 }
 
-/* Lamplit haze: two slow layers drifting, warm amber */
+/* Lamplit haze: two slow layers drifting */
 .haze {
   position: absolute;
   left: -20%;
   width: 140%;
   height: 30%;
   background: radial-gradient(ellipse at center,
-    rgba(255, 207, 122, 0.16) 0%,
-    rgba(255, 207, 122, 0) 70%);
+    rgba(255, 224, 138, 0.14) 0%,
+    rgba(255, 224, 138, 0) 70%);
   mix-blend-mode: screen;
   animation: haze-drift 45s ease-in-out infinite alternate;
 }
@@ -74,7 +71,84 @@
   100% { transform: translateX(4%); }
 }
 
-/* Reduced motion: hide the moving effects for visitors who ask for it */
+/* Lantern-light breathing: a warm glow that slowly swells and settles */
+.lantern-light {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%,
+    rgba(255, 224, 138, 0.20) 0%,
+    rgba(255, 224, 138, 0) 65%);
+  mix-blend-mode: screen;
+  animation: lantern-breathe 7s ease-in-out infinite;
+}
+@keyframes lantern-breathe {
+  0%, 100% { opacity: 0.45; }
+  35%      { opacity: 0.9; }
+  55%      { opacity: 0.7; }
+}
+
+/* The page content eases in */
+.page { animation: page-in 1.6s var(--ease-gentle) both; }
+@keyframes page-in {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Books float gently, as if resting on a breath of air */
+.book-sprite {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
+  animation: book-float 6s ease-in-out infinite;
+  transition: filter var(--fade-fast) var(--ease-gentle);
+}
+@keyframes book-float {
+  0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+  50%      { transform: translateY(-7px) rotate(0.4deg); }
+}
+
+/* A slow golden shimmer sweeps across the cover now and then */
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg,
+    rgba(255, 224, 150, 0) 38%,
+    rgba(255, 224, 150, 0.28) 50%,
+    rgba(255, 224, 150, 0) 62%);
+  transform: translateX(-120%);
+  animation: cover-shimmer 9s ease-in-out 2s infinite;
+}
+@keyframes cover-shimmer {
+  0%, 60% { transform: translateX(-120%); }
+  100%    { transform: translateX(120%); }
+}
+
+/* Hover (mouse only), keyboard focus and press: lift and glow */
+@media (hover: hover) {
+  a.book:hover .book-sprite {
+    animation-play-state: paused;
+    transform: translateY(-10px) scale(1.03);
+    filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
+  }
+}
+a.book:focus-visible .book-sprite {
+  animation-play-state: paused;
+  transform: translateY(-10px) scale(1.03);
+  filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
+}
+a.book:active .book-sprite {
+  filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 28px rgba(216, 194, 106, 0.85));
+}
+
+/* Reduced motion: hide or still the moving effects */
 @media (prefers-reduced-motion: reduce) {
   .mote, .candle, .haze { display: none; }
+  .lantern-light, .page, .book-sprite { animation: none; }
+  .book-cover::after { display: none; }
+  .lantern-light { opacity: 0.6; }
 }
