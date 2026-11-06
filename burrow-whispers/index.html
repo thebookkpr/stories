@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Series Menu — index.html V1.0 · Part 1 of 1
-     Lives at stories/burrow-whispers/index.html.
-     Uses css/variables.css, css/base.css and css/effects.css from this same folder.
-     To add a story volume, add a story entry to the series shelf. -->
+<!-- Burrow Whispers Series Menu: index.html V2.0 · Part 1 of 1
+     Lives at stories/burrow-whispers/index.html
+     Uses css/variables.css, css/base.css and css/effects.css.
+     To add a story: change a "Volume Unwritten" shelf into an
+     available one (copy the Lunelle shelf, swap name, link, sprite). -->
 
 <html lang="en">
 <head>
@@ -10,152 +11,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Burrow Whispers | The Book Keeper</title>
+    <meta name="description" content="A collection of stories gathered from the Moonroot Wilds.">
 
-    <meta
-        name="description"
-        content="A collection of stories gathered from the Moonroot Wilds."
-    >
-
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="./css/variables.css">
     <link rel="stylesheet" href="./css/base.css">
     <link rel="stylesheet" href="./css/effects.css">
-   
 </head>
 
 <body>
 
-    <!-- Return Navigation -->
     <header>
         <nav aria-label="Main navigation">
-            <a href="../../index.html">
-                ← Return to Library
-            </a>
+            <a href="../index.html">← Return to Library</a>
         </nav>
     </header>
 
     <main>
 
-        <!-- Collection Introduction -->
-        <section class="collection-introduction">
+        <h1>Burrow Whispers</h1>
+        <p class="collection-subtitle">
+            A collection of stories gathered from the Moonroot Wilds.
+        </p>
 
-            <h1>Burrow Whispers</h1>
-
-            <p class="collection-subtitle">
-                A collection of stories gathered from the Moonroot Wilds.
-            </p>
-
-            <div class="collection-description">
-
-                <p>
-                    Beyond winding roots and quiet woodland paths lies
-                    a world of small lives and gentle wonder.
-                </p>
-
-                <p>
-                    Burrow Whispers is a cozy fantasy setting where
-                    magical animal companions make their homes among
-                    forests, ponds, flowers, lantern-lit corners,
-                    and hidden places waiting to be discovered.
-                </p>
-
-                <p>
-                    Some spend their days exploring. Others study,
-                    play, garden, rest, collect stories, or simply
-                    enjoy the comforts of home.
-                </p>
-
-                <p>
-                    Though each character is unique, they all belong
-                    to the same living world, where nature and
-                    everyday life exist side by side.
-                </p>
-
-                <p>
-                    Within these stories you may discover moonlit
-                    ponds, ancient roots, glowing moss, drifting
-                    fireflies, woodland pathways, quiet burrows,
-                    and the small adventures that grow from
-                    ordinary moments.
-                </p>
-
-                <p>
-                    Each volume upon this shelf preserves one
-                    glimpse into that world.
-                </p>
-
-                <p>
-                    Choose a story and begin your journey.
-                </p>
-
-            </div>
-
-        </section>
-
-        <!-- Story Shelf -->
         <section class="story-shelf" aria-labelledby="story-shelf-title">
 
-            <h2 id="story-shelf-title">
-                Story Volumes
-            </h2>
+            <h2 id="story-shelf-title">Story Volumes</h2>
 
-            <!-- Available Story -->
+            <!-- Shelf 1: Available -->
             <article class="story-volume story-volume-available">
-
-                <a
-                    class="story-book-link"
-                    href="./lunelle/index.html"
-                    aria-label="Open Lunelle"
-                >
-                    <img
-                        class="story-book-sprite"
-                        src="./assets/lunelle-book.png"
-                        alt="Lunelle storybook"
-                    >
-
-                    <span class="story-title">
-                        Lunelle
-                    </span>
-
-                    <span class="story-action">
-                        Open Volume →
-                    </span>
+                <a class="story-book-link"
+                   href="./lunelle/index.html"
+                   aria-label="Open Lunelle">
+                    <img class="story-book-sprite"
+                         src="./images/lunelle-book.png"
+                         alt="Lunelle storybook">
+                    <span class="story-title">Lunelle</span>
+                    <span class="story-action">Open Volume →</span>
                 </a>
-
-                <p class="story-description">
-                    A quiet story from the Moonroot Wilds.
-                </p>
-
             </article>
 
-            <!-- Future Story Volume -->
+            <!-- Shelf 2: Coming Soon -->
             <article class="story-volume story-volume-coming-soon">
-
-                <img
-                    class="story-book-sprite"
-                    src="./assets/unwritten-book.png"
-                    alt="An unwritten storybook"
-                >
-
-                <h3>Volume Unwritten</h3>
-
-                <p>Coming Soon</p>
-
+                <div class="story-book-link">
+                    <img class="story-book-sprite"
+                         src="./images/unwritten-book.png"
+                         alt="An unwritten storybook">
+                    <span class="story-title">Volume Unwritten</span>
+                    <span class="story-action">Coming Soon</span>
+                </div>
             </article>
 
-            <!-- Future Story Volume -->
+            <!-- Shelf 3: Coming Soon -->
             <article class="story-volume story-volume-coming-soon">
-
-                <img
-                    class="story-book-sprite"
-                    src="./assets/unwritten-book.png"
-                    alt="An unwritten storybook"
-                >
-
-                <h3>Volume Unwritten</h3>
-
-                <p>Coming Soon</p>
-
+                <div class="story-book-link">
+                    <img class="story-book-sprite"
+                         src="./images/unwritten-book.png"
+                         alt="An unwritten storybook">
+                    <span class="story-title">Volume Unwritten</span>
+                    <span class="story-action">Coming Soon</span>
+                </div>
             </article>
 
         </section>
