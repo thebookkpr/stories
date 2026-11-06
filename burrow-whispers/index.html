@@ -160,6 +160,24 @@
     filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
   }
 }
+       /* Small link to the About page */
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 0.4em;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  transition: text-shadow var(--fade-fast) var(--ease-gentle);
+}
+@media (hover: hover) {
+  .about-link:hover { text-shadow: 0 0 12px var(--gold-glow); }
+}
   </style>
 </head>
 
@@ -178,7 +196,8 @@
     <div class="head">
       <h1 class="page-title">Burrow Whispers</h1>
       <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
-      <div class="rule"></div>
+<a class="about-link" href="about/">About This World →</a>
+<div class="rule"></div>
     </div>
 
     <ul class="shelf" id="shelf" aria-label="Story volumes"></ul>
