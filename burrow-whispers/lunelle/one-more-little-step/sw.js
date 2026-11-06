@@ -1,11 +1,11 @@
-/* One More Little Step — sw.js V1.4
+/* One More Little Step — sw.js V1.5
    V1.4: site moved to the stories repository; cache name bumped to omls-v4. No path changes needed (all paths are relative).
    V1.3: game moved into the one-more-little-step/ folder; cache name bumped to omls-v3. No path changes needed (all paths are relative).
    V1.1: cache name bumped to omls-v2 so old saved files are replaced (scene.css fade fix for Lunelle).
    V1.0: network-first: online = newest files, offline = cached copy.
    Bump VERSION when you update the game (good habit, not required). */
 
-const VERSION = "omls-v4";
+const VERSION = "omls-v5";
 
 const FILES = [
   "./",
