@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Series Menu: index.html V1.5 · Part 1 of 1
+<!-- Burrow Whispers Series Menu: index.html V1.6 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
      Uses css/variables.css, css/base.css and css/effects.css from this folder.
-     V5.0: sprite size fixed, one transparent "more stories" spot,
-           unwritten-book sprite removed, footer line added.
+     V1.6: padding added around each book so the float, tilt and glow are not clipped.
+     V1.5: about link, book animation kept in the page, sprite size fixed,
+           one transparent "more stories" spot, footer line added.
      To add a story: add an entry to the STORIES list near the bottom. -->
 <html lang="en">
 <head>
@@ -53,7 +54,7 @@
     /* Books */
     .shelf {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 332px));
       justify-content: center;
       align-items: center;
       gap: 36px 28px;
@@ -74,7 +75,8 @@
     .book-cover {
       position: relative;
       width: 100%;
-      max-width: 260px;
+      max-width: 332px;
+      padding: 36px;                       /* empty room for float, tilt and glow */
       margin: 0 auto;
       overflow: hidden;
       border-radius: 4px 12px 12px 4px;
@@ -123,61 +125,62 @@
       color: var(--gold);
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
-       
-       /* Book float, shimmer and hover (kept here so the page never depends on effects.css) */
-.book-sprite {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
-  animation: book-float 6s ease-in-out infinite;
-  transition: filter var(--fade-fast) var(--ease-gentle);
-}
-@keyframes book-float {
-  0%, 100% { transform: translateY(0) rotate(-0.4deg); }
-  50%      { transform: translateY(-7px) rotate(0.4deg); }
-}
-.book-cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(105deg,
-    rgba(255, 224, 150, 0) 38%,
-    rgba(255, 224, 150, 0.28) 50%,
-    rgba(255, 224, 150, 0) 62%);
-  transform: translateX(-120%);
-  animation: cover-shimmer 9s ease-in-out 2s infinite;
-}
-@keyframes cover-shimmer {
-  0%, 60% { transform: translateX(-120%); }
-  100%    { transform: translateX(120%); }
-}
-@media (hover: hover) {
-  a.book:hover .book-sprite {
-    animation-play-state: paused;
-    transform: translateY(-10px) scale(1.03);
-    filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
-  }
-}
-       /* Small link to the About page */
-.about-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 48px;
-  margin-top: 0.4em;
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--gold);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-  transition: text-shadow var(--fade-fast) var(--ease-gentle);
-}
-@media (hover: hover) {
-  .about-link:hover { text-shadow: 0 0 12px var(--gold-glow); }
-}
+
+    /* Book float, shimmer and hover (kept here so the page never depends on effects.css) */
+    .book-sprite {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
+      animation: book-float 6s ease-in-out infinite;
+      transition: filter var(--fade-fast) var(--ease-gentle);
+    }
+    @keyframes book-float {
+      0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+      50%      { transform: translateY(-7px) rotate(0.4deg); }
+    }
+    .book-cover::after {
+      content: "";
+      position: absolute;
+      inset: 36px;                         /* keep equal to .book-cover padding */
+      pointer-events: none;
+      background: linear-gradient(105deg,
+        rgba(255, 224, 150, 0) 38%,
+        rgba(255, 224, 150, 0.28) 50%,
+        rgba(255, 224, 150, 0) 62%);
+      transform: translateX(-120%);
+      animation: cover-shimmer 9s ease-in-out 2s infinite;
+    }
+    @keyframes cover-shimmer {
+      0%, 60% { transform: translateX(-120%); }
+      100%    { transform: translateX(120%); }
+    }
+    @media (hover: hover) {
+      a.book:hover .book-sprite {
+        animation-play-state: paused;
+        transform: translateY(-10px) scale(1.03);
+        filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
+      }
+    }
+
+    /* Small link to the About page */
+    .about-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      margin-top: 0.4em;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+      transition: text-shadow var(--fade-fast) var(--ease-gentle);
+    }
+    @media (hover: hover) {
+      .about-link:hover { text-shadow: 0 0 12px var(--gold-glow); }
+    }
   </style>
 </head>
 
@@ -196,8 +199,8 @@
     <div class="head">
       <h1 class="page-title">Burrow Whispers</h1>
       <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
-<a class="about-link" href="about/">About This World →</a>
-<div class="rule"></div>
+      <a class="about-link" href="about/">About This World →</a>
+      <div class="rule"></div>
     </div>
 
     <ul class="shelf" id="shelf" aria-label="Story volumes"></ul>
