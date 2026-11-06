@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Series Menu: index.html V4.0 · Part 1 of 1
+<!-- Burrow Whispers Series Menu: index.html V1.5 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
      Uses css/variables.css, css/base.css and css/effects.css from this folder.
-     V4.0: matches the Library page style, with a woodland palette.
-     To add a story: edit the STORIES list near the bottom. -->
+     V5.0: sprite size fixed, one transparent "more stories" spot,
+           unwritten-book sprite removed, footer line added.
+     To add a story: add an entry to the STORIES list near the bottom. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -54,11 +55,14 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
       justify-content: center;
+      align-items: center;
       gap: 36px 28px;
       margin: 2em 0 0;
       padding: 0;
       list-style: none;
     }
+    .shelf > li { min-width: 0; }          /* lets large sprites shrink to fit */
+
     .book {
       display: flex;
       flex-direction: column;
@@ -70,9 +74,13 @@
     .book-cover {
       position: relative;
       width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
       overflow: hidden;
       border-radius: 4px 12px 12px 4px;
     }
+    .book-sprite { max-width: 100%; }
+
     .book-title {
       margin: 0;
       font-size: 1.25rem;
@@ -88,18 +96,32 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
 
-    /* Coming Soon: quieter, not tappable */
-    .book.soon { opacity: 0.72; pointer-events: none; }
-    .book.soon .book-cover { width: 78%; }
-    .book.soon .book-title { font-size: 0.95rem; }
+    /* The one empty spot: no sprite, no background, just a quiet line */
+    .more-note {
+      margin: 0;
+      padding: 20px;
+      font-style: italic;
+      text-align: center;
+      color: var(--parchment);
+      opacity: 0.8;
+      background: none;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
 
-    /* Fallback if a sprite is missing */
+    /* If a real sprite is missing: outline only, never a colored block */
     .book.fallback .book-sprite { display: none; }
     .book.fallback .book-cover {
       aspect-ratio: 2 / 3;
-      background: linear-gradient(145deg, #496A46, #2c4529);
-      border: 1px solid var(--gold-line);
-      box-shadow: var(--shadow-soft);
+      background: none;
+      border: 1px dashed var(--gold-line);
+    }
+
+    /* Footer */
+    .keeper {
+      margin: 3em 0 0;
+      font-style: italic;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
   </style>
 </head>
@@ -123,18 +145,18 @@
     </div>
 
     <ul class="shelf" id="shelf" aria-label="Story volumes"></ul>
+
+    <p class="keeper">Kept by the Book Keeper</p>
   </main>
 
   <script>
     /* ---------- Add stories here ----------
-       soon: true makes a quiet, untappable "Volume Unwritten" book.
-       To publish one, replace { soon: true } with a full entry. */
+       Copy a line, change the title, link and sprite.
+       Sprites live in the assets/ folder. */
     const STORIES = [
-      { title: "Lunelle", url: "lunelle/", sprite: "assets/lunelle-book.png", alt: "Lunelle storybook" },
-      { soon: true },
-      { soon: true }
+      { title: "Lunelle", url: "lunelle/", sprite: "assets/lunelle-book.png", alt: "Lunelle storybook" }
     ];
-    const UNWRITTEN = "assets/unwritten-book.png";
+    const SHOW_MORE_NOTE = true;   /* set false to hide the "more stories" spot */
 
     const el = (tag, cls, text) => {
       const n = document.createElement(tag);
@@ -147,29 +169,33 @@
     const shelf = document.getElementById("shelf");
     STORIES.forEach((s, i) => {
       const li = el("li");
-      const book = s.soon ? el("div", "book soon") : el("a", "book");
-      if (!s.soon) {
-        book.href = s.url;
-        book.setAttribute("aria-label", "Open " + s.title);
-      }
+      const book = el("a", "book");
+      book.href = s.url;
+      book.setAttribute("aria-label", "Open " + s.title);
 
       const cover = el("div", "book-cover");
       const img = new Image();
       img.className = "book-sprite";
-      img.alt = s.soon ? "An unwritten storybook" : s.alt;
+      img.alt = s.alt;
       img.style.animationDelay = (-i * 1.5) + "s";   /* books bob out of step */
       img.onerror = () => book.classList.add("fallback");
-      img.src = s.soon ? UNWRITTEN : s.sprite;
+      img.src = s.sprite;
       cover.append(img);
 
       book.append(
         cover,
-        el("p", "book-title", s.soon ? "Volume Unwritten" : s.title),
-        el("p", "book-action", s.soon ? "Coming Soon" : "Open Volume →")
+        el("p", "book-title", s.title),
+        el("p", "book-action", "Open Volume →")
       );
       li.appendChild(book);
       shelf.appendChild(li);
     });
+
+    if (SHOW_MORE_NOTE) {
+      const li = el("li");
+      li.appendChild(el("p", "more-note", "More stories are being written."));
+      shelf.appendChild(li);
+    }
 
     /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
     const rand = (a, b) => a + Math.random() * (b - a);
