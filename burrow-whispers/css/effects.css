@@ -1,191 +1,96 @@
+/* ==========================================================
+   Burrow Whispers: effects.css  V1.0  ·  Part 1 of 1
+   Lives at stories/burrow-whispers/css/effects.css
+   Motion and glow only. Needs variables.css loaded first.
+   ========================================================== */
 
-/* =========================================
-   THE BOOK KEEPER
-   Burrow Whispers — Effects
-   Version 1.0
-   ========================================= */
-
-
-/* -----------------------------------------
-   1. Atmospheric Transitions
-   ----------------------------------------- */
-
-:root {
-    --effect-glow-gold: rgb(215 180 106 / 35%);
-    --effect-glow-soft: rgb(215 180 106 / 15%);
-    --effect-shadow-book: rgb(0 0 0 / 30%);
-    --effect-transition: 280ms ease;
-}
-
-
-/* -----------------------------------------
-   2. Book Resting State
-   ----------------------------------------- */
-
-.story-book-link {
-    position: relative;
-    isolation: isolate;
-
+/* ---------- Book: resting state ---------- */
+.story-book-sprite {
     transition:
-        transform var(--effect-transition),
-        filter var(--effect-transition),
-        background-color var(--effect-transition);
+        transform var(--lift-time) var(--ease-soft),
+        filter var(--glow-time) var(--ease-soft);
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5));
 }
 
-.story-book-link::before {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    z-index: -1;
-
-    border-radius: 50%;
-
-    background: radial-gradient(
-        ellipse at center,
-        var(--effect-glow-soft),
-        transparent 70%
-    );
-
-    opacity: 0;
-
-    transition: opacity var(--effect-transition);
-
-    pointer-events: none;
-}
-
-
-/* -----------------------------------------
-   3. Hover — A Book Stirs
-   ----------------------------------------- */
-
-@media (hover: hover) and (pointer: fine) {
-
-    .story-book-link:hover {
-        transform: translateY(-6px);
-
-        filter: drop-shadow(
-            0 0.75rem 1rem var(--effect-shadow-book)
-        );
-    }
-
-    .story-book-link:hover::before {
-        opacity: 1;
-    }
-
+/* ---------- Book: hover (mouse only) ----------
+   Wrapped in a hover media query so phones don't leave
+   a book stuck in the lifted state after a tap. */
+@media (hover: hover) {
     .story-book-link:hover .story-book-sprite {
+        transform: translateY(var(--book-lift));
         filter:
-            drop-shadow(0 0 0.75rem var(--effect-glow-gold))
-            drop-shadow(0 0.75rem 0.75rem var(--effect-shadow-book));
+            drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 0 14px var(--book-glow));
     }
 
-    .story-book-link:hover .story-title {
-        color: var(--color-firelight-gold);
+    .story-book-link:hover .story-action {
+        text-shadow: 0 0 10px var(--book-glow);
     }
 }
 
-
-/* -----------------------------------------
-   4. Selected — A Story Awaits
-   ----------------------------------------- */
-
-.story-book-link.is-selected {
-    transform: translateY(-3px);
+/* ---------- Book: keyboard focus (same lift as hover) ---------- */
+.story-book-link:focus-visible .story-book-sprite {
+    transform: translateY(var(--book-lift));
+    filter:
+        drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 14px var(--book-glow));
 }
 
-.story-book-link.is-selected::before {
-    opacity: 1;
-
-    background: radial-gradient(
-        ellipse at center,
-        var(--effect-glow-gold),
-        transparent 72%
-    );
-}
-
-.story-book-link.is-selected .story-book-sprite {
-    filter: drop-shadow(
-        0 0 1.25rem var(--effect-glow-gold)
-    );
-}
-
-
-/* -----------------------------------------
-   5. Touch Feedback
-   ----------------------------------------- */
-
-.story-book-link:active {
-    transform: scale(0.98);
-}
-
+/* ---------- Book: pressed / selected ----------
+   Warm golden glow, as if a story is waiting inside. */
 .story-book-link:active .story-book-sprite {
-    filter: drop-shadow(
-        0 0 0.5rem var(--effect-glow-gold)
-    );
+    transform: translateY(var(--book-lift)) scale(1.03);
+    filter:
+        drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 26px var(--book-glow-open));
 }
 
-
-/* -----------------------------------------
-   6. Focus — Accessible Interaction
-   ----------------------------------------- */
-
-.story-book-link:focus-visible {
-    outline: 3px solid var(--color-firelight-gold);
-    outline-offset: 6px;
-}
-
-.story-book-link:focus-visible::before {
-    opacity: 1;
-}
-
-
-/* -----------------------------------------
-   7. Gentle Lantern Atmosphere
-   ----------------------------------------- */
-
-.lantern-glow {
-    position: relative;
-}
-
-.lantern-glow::after {
-    content: "";
-
-    position: absolute;
-    inset: -30%;
-
-    z-index: -1;
-
-    border-radius: 50%;
-
-    background: radial-gradient(
-        circle,
-        rgb(215 180 106 / 18%),
-        transparent 70%
-    );
-
-    opacity: 0.8;
-
+/* ---------- Coming Soon books ----------
+   Visible, but quiet and not tappable. */
+.story-volume-coming-soon {
     pointer-events: none;
 }
 
+.story-volume-coming-soon .story-book-sprite {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45)) saturate(0.85);
+}
 
-/* -----------------------------------------
-   8. Reduced Motion
-   ----------------------------------------- */
+/* ---------- Drifting gold dust ----------
+   One fixed layer in front of the page. It uses html::before
+   because body::before and body::after are used by base.css. */
+html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0.55;
+    background-image:
+        radial-gradient(circle, rgba(215, 180, 106, 0.9) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle, rgba(238, 230, 210, 0.7) 0 1px, transparent 2px),
+        radial-gradient(circle, rgba(215, 180, 106, 0.6) 0 1px, transparent 2px);
+    background-size: 180px 220px, 260px 300px, 340px 380px;
+    background-position: 0 0, 60px 90px, 130px 40px;
+    animation: dust-drift 60s linear infinite;
+}
 
+@keyframes dust-drift {
+    from {
+        background-position: 0 0, 60px 90px, 130px 40px;
+    }
+    to {
+        background-position: 30px -220px, 90px -300px, 100px -380px;
+    }
+}
+
+/* ---------- Reduced motion ----------
+   Respect visitors who turn animation off. */
 @media (prefers-reduced-motion: reduce) {
-
-    .story-book-link,
-    .story-book-link::before,
-    .story-book-link .story-book-sprite,
-    .story-book-link .story-title {
-        transition: none;
+    html::before {
+        animation: none;
     }
 
-    .story-book-link:hover,
-    .story-book-link:active,
-    .story-book-link.is-selected {
-        transform: none;
+    .story-book-sprite {
+        transition: none;
     }
 }
