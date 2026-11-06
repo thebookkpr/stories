@@ -1,50 +1,9 @@
-
-/* =========================================
-   THE BOOK KEEPER
-   Burrow Whispers — Base Styles
-   Version 1.0
-   ========================================= */
-
-
-/* -----------------------------------------
-   1. Canonical Color Palette
-   ----------------------------------------- */
-
-:root {
-    --color-round-door-green: #496A46;
-    --color-mosswood: #6C5640;
-    --color-warm-oak: #A68056;
-    --color-parchment: #EEE6D2;
-    --color-firelight-gold: #D7B46A;
-    --color-tea-brown: #4C3828;
-    --color-moonroot-blue: #667A8E;
-
-    --color-background: var(--color-tea-brown);
-    --color-surface: var(--color-mosswood);
-    --color-text: var(--color-parchment);
-    --color-text-accent: var(--color-firelight-gold);
-
-    --font-body: Georgia, "Times New Roman", serif;
-
-    --content-width: 72rem;
-    --page-padding: 1.25rem;
-
-    --space-xs: 0.5rem;
-    --space-sm: 1rem;
-    --space-md: 2rem;
-    --space-lg: 3rem;
-    --space-xl: 5rem;
-
-    --radius-soft: 0.5rem;
-    --radius-book: 0.25rem;
-
-    --transition-gentle: 220ms ease;
-}
-
-
-/* -----------------------------------------
-   2. Reset and Foundation
-   ----------------------------------------- */
+/* ==========================================================
+   Burrow Whispers: base.css  V1.0  ·  Part 1 of 1
+   Lives at stories/burrow-whispers/css/base.css
+   Layout only. Hover and glow live in effects.css.
+   Needs variables.css loaded first.
+   ========================================================== */
 
 *,
 *::before,
@@ -53,369 +12,186 @@
 }
 
 html {
-    min-height: 100%;
-    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    min-height: 100vh;
     margin: 0;
-
-    background-color: var(--color-background);
-    color: var(--color-text);
-
+    min-height: 100vh;
+    background: var(--page-bg);
+    color: var(--text-main);
     font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1.7;
-
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Painted background */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-background);
-  pointer-events: none;
-  background:
-    linear-gradient(rgb(18 10 7 / 25%), rgb(18 10 7 / 50%)),
-    url("../images/burrow-whispers-bg.jpg") center / cover no-repeat;
-}
-
-img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-button,
-a {
-    -webkit-tap-highlight-color: transparent;
-}
-
-button {
-    font: inherit;
-}
-
-h1,
-h2,
-h3,
-p {
-    margin-top: 0;
-}
-
-h1,
-h2,
-h3 {
-    color: var(--color-text-accent);
-    font-weight: normal;
-    line-height: 1.3;
-}
-
-h1 {
-    font-size: clamp(2.25rem, 8vw, 4rem);
-}
-
-h2 {
-    font-size: clamp(1.75rem, 6vw, 2.5rem);
-}
-
-h3 {
-    font-size: 1.35rem;
-}
-
-
-/* -----------------------------------------
-   3. Accessibility
-   ----------------------------------------- */
-
-a:focus-visible,
-button:focus-visible {
-    outline: 3px solid var(--color-firelight-gold);
-    outline-offset: 5px;
-    border-radius: var(--radius-soft);
-}
-
-::selection {
-    background: var(--color-firelight-gold);
-    color: var(--color-tea-brown);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-
-/* -----------------------------------------
-   4. Page Structure
-   ----------------------------------------- */
-
-body > header {
-    width: 100%;
-    padding: var(--space-sm) var(--page-padding);
-}
-
-main {
-    width: min(
-        100% - (var(--page-padding) * 2),
-        var(--content-width)
-    );
-
-    margin-inline: auto;
-}
-
-header nav {
-    max-width: var(--content-width);
-    margin-inline: auto;
-}
-
-header nav a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-
-    color: var(--color-parchment);
-    opacity: 0.85;
-
-    transition:
-        opacity var(--transition-gentle),
-        color var(--transition-gentle);
-}
-
-header nav a:hover {
-    color: var(--color-firelight-gold);
-    opacity: 1;
-}
-
-
-/* -----------------------------------------
-   5. Collection Introduction
-   ----------------------------------------- */
-
-.collection-introduction {
-    max-width: 52rem;
-    margin-inline: auto;
-
-    padding-block: var(--space-lg);
-
     text-align: center;
+    position: relative;
 }
 
-.collection-introduction h1 {
-    margin-bottom: var(--space-sm);
+/* ---------- Painted background ----------
+   A fixed layer instead of background-attachment: fixed,
+   which is unreliable on phones. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background: url("../images/burrow-whispers-bg.jpg") center / cover no-repeat;
 }
 
-.collection-subtitle {
-    color: var(--color-firelight-gold);
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    font-style: italic;
+/* Soft dark wash so labels stay readable over the painting */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        to bottom,
+        rgba(42, 31, 22, 0.55),
+        rgba(42, 31, 22, 0.35) 40%,
+        rgba(42, 31, 22, 0.65)
+    );
+    pointer-events: none;
 }
 
-.collection-description {
-    max-width: 44rem;
-    margin: var(--space-lg) auto 0;
-
+/* ---------- Return link ---------- */
+header {
+    padding: var(--space-sm) var(--space-md);
     text-align: left;
 }
 
-.collection-description p {
-    margin-bottom: var(--space-md);
+header a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    color: var(--text-accent);
+    font-size: var(--size-small);
+    text-decoration: none;
+    text-shadow: var(--text-shadow);
 }
 
+header a:focus-visible,
+.story-book-link:focus-visible {
+    outline: 2px solid var(--text-accent);
+    outline-offset: 4px;
+    border-radius: 8px;
+}
 
-/* -----------------------------------------
-   6. Story Shelf
-   ----------------------------------------- */
+/* ---------- Page ---------- */
+main {
+    padding: 0 var(--space-md) var(--space-lg);
+}
 
+h1 {
+    margin: var(--space-md) 0 var(--space-xs);
+    font-family: var(--font-title);
+    font-size: var(--size-title);
+    font-weight: normal;
+    color: var(--text-accent);
+    text-shadow: var(--text-shadow);
+}
+
+.collection-subtitle {
+    margin: 0 auto var(--space-lg);
+    max-width: 30ch;
+    font-size: var(--size-subtitle);
+    font-style: italic;
+    text-shadow: var(--text-shadow);
+}
+
+/* ---------- Shelf section ----------
+   The heading stays for screen readers but is hidden visually,
+   since the page should stay simple. */
 .story-shelf {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    gap: var(--space-lg);
-
-    padding-block: var(--space-lg) var(--space-xl);
+    gap: var(--shelf-gap);
 }
 
-.story-shelf > h2 {
-    margin-bottom: 0;
-    text-align: center;
+.story-shelf h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
 }
 
-
-/* -----------------------------------------
-   7. Individual Story Volumes
-   ----------------------------------------- */
-
+/* ---------- One shelf = one book ---------- */
 .story-volume {
     position: relative;
-
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-
-    width: 100%;
-    max-width: 34rem;
-
-    padding: var(--space-md) var(--space-sm);
-
-    text-align: center;
+    width: var(--shelf-width);
+    padding-bottom: calc(var(--shelf-plank-height) + var(--space-sm));
 }
 
-
-/* -----------------------------------------
-   8. Available Story
-   ----------------------------------------- */
-
-.story-volume-available {
-    min-height: 25rem;
+/* The wood plank under each book */
+.story-volume::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--shelf-plank-height);
+    border-radius: 4px;
+    background: linear-gradient(
+        to bottom,
+        var(--shelf-plank-top),
+        var(--shelf-plank-edge)
+    );
+    box-shadow: 0 10px 14px var(--shelf-plank-shadow);
+    z-index: 0;
 }
 
+/* ---------- Book + label ---------- */
 .story-book-link {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    width: 100%;
-    max-width: 18rem;
-    min-height: 44px;
-
-    gap: var(--space-sm);
-
-    padding: var(--space-sm);
-
-    border-radius: var(--radius-book);
-
-    transition:
-        transform var(--transition-gentle),
-        filter var(--transition-gentle);
+    min-height: var(--tap-min);
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .story-book-sprite {
-    width: min(100%, 16rem);
-    aspect-ratio: 1 / 1;
-
-    object-fit: contain;
-
-    filter: drop-shadow(
-        0 0.75rem 0.75rem rgb(0 0 0 / 25%)
-    );
-}
-
-.story-title {
-    color: var(--color-parchment);
-    font-size: 1.5rem;
-}
-
-.story-action {
-    color: var(--color-firelight-gold);
-    font-size: 1rem;
-}
-
-.story-description {
-    max-width: 22rem;
-    margin-top: var(--space-sm);
-
-    color: var(--color-parchment);
-    opacity: 0.85;
-}
-
-
-/* -----------------------------------------
-   9. Coming Soon Volumes
-   ----------------------------------------- */
-
-.story-volume-coming-soon {
-    min-height: 18rem;
-
-    opacity: 0.85;
+    display: block;
+    width: var(--book-size);
+    height: auto;
+    margin-bottom: calc(var(--space-sm) * -1);   /* book rests on the plank */
 }
 
 .story-volume-coming-soon .story-book-sprite {
-    width: min(100%, 11rem);
+    width: var(--book-size-small);
 }
 
-.story-volume-coming-soon h3 {
-    margin-top: var(--space-sm);
-    margin-bottom: var(--space-xs);
+.story-volume-coming-soon {
+    opacity: var(--book-dim);
 }
 
-.story-volume-coming-soon p {
-    margin-bottom: 0;
-
-    color: var(--color-parchment);
-    font-style: italic;
-    opacity: 0.75;
+/* Labels sit on the plank, never baked into the sprite */
+.story-title {
+    position: relative;
+    z-index: 2;
+    margin-top: var(--space-md);
+    font-size: var(--size-label);
+    color: var(--text-main);
+    text-shadow: var(--text-shadow);
 }
 
-
-/* -----------------------------------------
-   10. Responsive Layout
-   ----------------------------------------- */
-
-@media (min-width: 48rem) {
-
-    :root {
-        --page-padding: 2rem;
-    }
-
-    .collection-introduction {
-        padding-block: var(--space-xl);
-    }
-
-    .story-shelf {
-        gap: var(--space-xl);
-    }
-
-    .story-volume-available {
-        min-height: 30rem;
-    }
-
-    .story-book-link {
-        max-width: 22rem;
-    }
-
-    .story-book-sprite {
-        width: min(100%, 20rem);
-    }
-
-    .story-volume-coming-soon .story-book-sprite {
-        width: min(100%, 13rem);
-    }
+.story-action {
+    position: relative;
+    z-index: 2;
+    margin-top: var(--space-xs);
+    font-size: var(--size-action);
+    color: var(--text-accent);
+    text-shadow: var(--text-shadow);
 }
 
-
-/* -----------------------------------------
-   11. Book Interaction
-   ----------------------------------------- */
-
-@media (hover: hover) and (pointer: fine) {
-
-    .story-book-link:hover {
-        transform: translateY(-6px);
-        filter: drop-shadow(
-            0 0 1rem rgb(215 180 106 / 20%)
-        );
-    }
-
-    .story-book-link:hover .story-action {
-        color: #F0D69B;
-    }
-}
-
-.story-book-link:active {
-    transform: scale(0.98);
+.story-volume-coming-soon .story-title,
+.story-volume-coming-soon .story-action {
+    font-size: var(--size-small);
 }
