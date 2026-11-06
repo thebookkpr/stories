@@ -29,7 +29,7 @@ const FILES = [
   "images/scene-clearing.jpg",
   "images/scene-moth.jpg",
   "images/scene-hilltop.jpg",
-  "images/sprites/lunelle-pond.png",
+  "assets/lunelle-blinking.gif",
   "images/sprites/lunelle-light.png",
   "images/sprites/lunelle-clearing.png",
   "images/sprites/lunelle-moth.png",
