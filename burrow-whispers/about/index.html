@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers About Page: index.html V1.1 · Part 1 of 1
+<!-- Burrow Whispers About Page: index.html V1.2 · Part 1 of 1
      Lives at stories/burrow-whispers/about/index.html
      Uses ../css/variables.css, ../css/base.css and ../css/effects.css.
+     V1.2: calligraphy font, slanted text, nudges to follow the paper's curve.
      V1.1: text written on the moonleaf paper sprite (summarized). -->
 <html lang="en">
 <head>
@@ -15,6 +16,7 @@
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/effects.css">
+  <link href="https://fonts.googleapis.com/css2?family=Almendra:ital@0;1&display=swap" rel="stylesheet">
   <style>
     /* Page layout only. */
     .back {
@@ -68,10 +70,11 @@
       filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6));
     }
 
-    /* Safe writing area: the flat middle of the paper, away from the curls */
+    /* Safe writing area: the flat middle of the paper, away from the curls.
+       The slight rotation follows the paper's slant. */
     .paper-text {
       position: absolute;
-      top: 23%;
+      top: 24%;
       left: 25%;
       right: 21%;
       bottom: 19%;
@@ -79,14 +82,25 @@
       flex-direction: column;
       justify-content: center;
       text-align: center;
-      font-size: clamp(0.8rem, 3.9cqw, 1.3rem);
-      line-height: 1.45;
-      color: #4a3326;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+      text-wrap: balance;
+      font-family: "Almendra", Georgia, "Times New Roman", serif;
+      font-size: clamp(0.85rem, 4.3cqw, 1.4rem);
+      line-height: 1.4;
+      color: #3d2a1e;
+      transform: rotate(-4deg);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
     }
     .paper-text p { margin: 0 0 0.8em; }
     .paper-text p:last-child { margin-bottom: 0; }
-    .paper-text .closing { font-style: italic; color: #5d3f66; }
+
+    /* Nudges, like tab spaces, to follow the curve */
+    .paper-text .nudge-right { margin-left: 8%; }
+    .paper-text .nudge-left  { margin-right: 8%; }
+    .paper-text .closing {
+      font-style: italic;
+      color: #5d3f66;
+      margin-left: 10%;
+    }
 
     /* Footer */
     .keeper {
@@ -119,11 +133,11 @@
     <section class="paper" aria-label="About Burrow Whispers">
       <img class="paper-img" src="../assets/moonleaf-paper.png" alt="">
       <div class="paper-text">
-        <p>
+        <p class="nudge-left">
           Beyond winding roots and quiet woodland paths
           lies a world of small lives and gentle wonder.
         </p>
-        <p>
+        <p class="nudge-right">
           Magical animal companions make their homes here,
           among forests, ponds, and lantern-lit corners.
         </p>
