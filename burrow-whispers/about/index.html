@@ -2,6 +2,7 @@
 <!-- Burrow Whispers About Page: index.html V1.3 · Part 1 of 1
      Lives at stories/burrow-whispers/about/index.html
      Uses ../css/variables.css, ../css/base.css and ../css/effects.css.
+     V1.3: text removed from the paper (now part of the image).
      V1.2: calligraphy font, slanted text, nudges to follow the paper's curve.
      V1.1: text written on the moonleaf paper sprite (summarized). -->
 <html lang="en">
@@ -50,8 +51,7 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
 
-    /* The paper. Text scales with the paper's width (cqw units),
-       so it stays inside the paper at every screen size. */
+    /* The paper image, centered and gently floating. */
     .paper {
       position: relative;
       width: min(100%, 560px);
@@ -68,14 +68,6 @@
       width: 100%;
       height: auto;
       filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6));
-    }
-
-    .paper-text { margin-left: 8%; }
-    .paper-text  { margin-right: 8%; }
-    .paper-text {
-      font-style: italic;
-      color: #5d3f66;
-      margin-left: 10%;
     }
 
     /* Footer */
@@ -107,11 +99,7 @@
     </div>
 
     <section class="paper" aria-label="About Burrow Whispers">
-      <img class="paper-img" src="../assets/about-intro-moonleaf.png" alt="Beyond winding roots and quiet woodland paths lies a world of small lives and gentle wonder.
-
-Magical animal companions make their homes here, among forests, ponds, and lantern-lit corners.
-
-Choose a story and begin your journey.">
+      <img class="paper-img" src="../assets/about-intro-moonleaf.png" alt="Beyond winding roots and quiet woodland paths lies a world of small lives and gentle wonder. Magical animal companions make their homes here, among forests, ponds, and lantern-lit corners. Choose a story and begin your journey.">
     </section>
 
     <p class="keeper">Kept by the Book Keeper</p>
