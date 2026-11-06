@@ -29,7 +29,7 @@ const SCENES = [
     id: "pond",
     title: "Moonroot Pond",
     background: "images/scene-pond.jpg",
-    lunelle: { src: "assets/lunelle-blinking.gif", x: 4, bottom: 4, w: 14, vanishAfter: 5000 },
+    lunelle: { src: "assets/lunelle-blinking.gif", x: 4, bottom: 4, w: 14, vanishAfter: 15000 },
     courageRequired: 5,
     petalHint: "Did you forget something?",
     petalPoint: true,
