@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers About Page: index.html V1.0 · Part 1 of 1
+<!-- Burrow Whispers About Page: index.html V1.1 · Part 1 of 1
      Lives at stories/burrow-whispers/about/index.html
-     Uses ../css/variables.css, ../css/base.css and ../css/effects.css. -->
+     Uses ../css/variables.css, ../css/base.css and ../css/effects.css.
+     V1.1: text written on the moonleaf paper sprite (summarized). -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -15,7 +16,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/effects.css">
   <style>
-    /* Page layout only. Colors and motion come from the CSS files. */
+    /* Page layout only. */
     .back {
       display: inline-flex;
       align-items: center;
@@ -47,23 +48,45 @@
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     }
 
-    /* Reading panel: soft dark glass so the text stays easy to read
-       while the painted background still shows through */
-    .about-text {
-      max-width: 36rem;
-      margin: 0 auto;
-      padding: 1.5em 1.4em;
-      text-align: left;
-      font-size: clamp(1rem, 3.8vw, 1.15rem);
-      line-height: 1.75;
-      background: rgba(10, 18, 16, 0.55);
-      border: 1px solid var(--gold-line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-soft);
+    /* The paper. Text scales with the paper's width (cqw units),
+       so it stays inside the paper at every screen size. */
+    .paper {
+      position: relative;
+      width: min(100%, 560px);
+      margin: 1.5em auto 0;
+      container-type: inline-size;
+      animation: paper-float 7s ease-in-out infinite;
     }
-    .about-text p { margin: 0 0 1.1em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); }
-    .about-text p:last-child { margin-bottom: 0; }
-    .about-text .closing { font-style: italic; color: var(--gold-bright); }
+    @keyframes paper-float {
+      0%, 100% { transform: translateY(0) rotate(-0.3deg); }
+      50%      { transform: translateY(-6px) rotate(0.3deg); }
+    }
+    .paper-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6));
+    }
+
+    /* Safe writing area: the flat middle of the paper, away from the curls */
+    .paper-text {
+      position: absolute;
+      top: 23%;
+      left: 25%;
+      right: 21%;
+      bottom: 19%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: clamp(0.8rem, 3.9cqw, 1.3rem);
+      line-height: 1.45;
+      color: #4a3326;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .paper-text p { margin: 0 0 0.8em; }
+    .paper-text p:last-child { margin-bottom: 0; }
+    .paper-text .closing { font-style: italic; color: #5d3f66; }
 
     /* Footer */
     .keeper {
@@ -93,41 +116,21 @@
       <div class="rule"></div>
     </div>
 
-    <section class="about-text" aria-label="About Burrow Whispers">
-      <p>
-        Beyond winding roots and quiet woodland paths lies
-        a world of small lives and gentle wonder.
-      </p>
-      <p>
-        Burrow Whispers is a cozy fantasy setting where
-        magical animal companions make their homes among
-        forests, ponds, flowers, lantern-lit corners,
-        and hidden places waiting to be discovered.
-      </p>
-      <p>
-        Some spend their days exploring. Others study,
-        play, garden, rest, collect stories, or simply
-        enjoy the comforts of home.
-      </p>
-      <p>
-        Though each character is unique, they all belong
-        to the same living world, where nature and
-        everyday life exist side by side.
-      </p>
-      <p>
-        Within these stories you may discover moonlit
-        ponds, ancient roots, glowing moss, drifting
-        fireflies, woodland pathways, quiet burrows,
-        and the small adventures that grow from
-        ordinary moments.
-      </p>
-      <p>
-        Each volume upon this shelf preserves one
-        glimpse into that world.
-      </p>
-      <p class="closing">
-        Choose a story and begin your journey.
-      </p>
+    <section class="paper" aria-label="About Burrow Whispers">
+      <img class="paper-img" src="../assets/moonleaf-paper.png" alt="">
+      <div class="paper-text">
+        <p>
+          Beyond winding roots and quiet woodland paths
+          lies a world of small lives and gentle wonder.
+        </p>
+        <p>
+          Magical animal companions make their homes here,
+          among forests, ponds, and lantern-lit corners.
+        </p>
+        <p class="closing">
+          Choose a story and begin your journey.
+        </p>
+      </div>
     </section>
 
     <p class="keeper">Kept by the Book Keeper</p>
