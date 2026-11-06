@@ -1,135 +1,61 @@
-
-/* =========================================
-   THE BOOK KEEPER
-   Burrow Whispers — Design Variables
-   Version 1.0
-   ========================================= */
-
-
-/* -----------------------------------------
-   1. Canonical Color Palette
-   ----------------------------------------- */
+/* ==========================================================
+   Burrow Whispers: variables.css  V1.0  ·  Part 1 of 1
+   Lives at stories/burrow-whispers/css/variables.css
+   Values only. No layout rules in this file.
+   ========================================================== */
 
 :root {
 
-    /* Signature Colors */
+    /* ---------- Book Keeper palette (Theme Canon v2.0) ---------- */
+    --round-door-green: #496A46;
+    --mosswood:         #6C5640;
+    --warm-oak:         #A68056;
+    --parchment:        #EEE6D2;
+    --firelight-gold:   #D7B46A;   /* accent only */
+    --tea-brown:        #4C3828;
+    --moonroot-blue:    #667A8E;   /* sparing, evening touches */
 
-    --color-round-door-green: #496A46;
-    --color-mosswood: #6C5640;
-    --color-warm-oak: #A68056;
-    --color-parchment: #EEE6D2;
-    --color-firelight-gold: #D7B46A;
-    --color-tea-brown: #4C3828;
-    --color-moonroot-blue: #667A8E;
+    /* ---------- Page ---------- */
+    --page-bg:          #2a1f16;   /* fallback behind the painted background */
+    --text-main:        var(--parchment);
+    --text-accent:      var(--firelight-gold);
+    --text-shadow:      0 2px 6px rgba(0, 0, 0, 0.7);
 
+    /* ---------- Shelf ---------- */
+    --shelf-width:      min(92vw, 420px);
+    --shelf-plank-height: 22px;
+    --shelf-plank-top:  var(--warm-oak);
+    --shelf-plank-edge: var(--mosswood);
+    --shelf-plank-shadow: rgba(0, 0, 0, 0.55);
+    --shelf-gap:        2.5rem;    /* space between shelves */
 
-    /* Semantic Colors */
+    /* ---------- Books ---------- */
+    --book-size:        min(62vw, 260px);
+    --book-size-small:  min(46vw, 190px);
+    --book-lift:        -6px;      /* hover rise, per Website Canon */
+    --book-glow:        rgba(215, 180, 106, 0.55);
+    --book-glow-open:   rgba(215, 180, 106, 0.85);
+    --book-dim:         0.78;      /* Coming Soon books sit quieter */
 
-    --color-background: var(--color-tea-brown);
-    --color-surface: var(--color-mosswood);
-    --color-text: var(--color-parchment);
-    --color-text-accent: var(--color-firelight-gold);
+    /* ---------- Type ---------- */
+    --font-title:       Georgia, "Times New Roman", serif;
+    --font-body:        Georgia, "Times New Roman", serif;
+    --size-title:       clamp(2rem, 8vw, 3rem);
+    --size-subtitle:    clamp(0.95rem, 3.6vw, 1.15rem);
+    --size-heading:     1.1rem;
+    --size-label:       1.25rem;
+    --size-action:      0.95rem;
+    --size-small:       0.85rem;
 
-    --color-interactive: var(--color-round-door-green);
-    --color-interactive-hover: var(--color-firelight-gold);
+    /* ---------- Spacing ---------- */
+    --space-xs:         0.4rem;
+    --space-sm:         0.8rem;
+    --space-md:         1.5rem;
+    --space-lg:         2.5rem;
+    --tap-min:          48px;      /* minimum comfortable tap area */
 
-    --color-focus: var(--color-firelight-gold);
-    --color-selection-background: var(--color-firelight-gold);
-    --color-selection-text: var(--color-tea-brown);
-
-
-    /* -------------------------------------
-       2. Typography
-       ------------------------------------- */
-
-    --font-body: Georgia, "Times New Roman", serif;
-    --font-heading: Georgia, "Times New Roman", serif;
-
-    --font-size-small: 0.875rem;
-    --font-size-body: 1rem;
-    --font-size-subtitle: 1.25rem;
-    --font-size-title: 2.25rem;
-
-    --line-height-body: 1.7;
-    --line-height-heading: 1.3;
-
-
-    /* -------------------------------------
-       3. Layout
-       ------------------------------------- */
-
-    --content-width: 72rem;
-    --reading-width: 44rem;
-
-    --page-padding: 1.25rem;
-
-    --space-xs: 0.5rem;
-    --space-sm: 1rem;
-    --space-md: 2rem;
-    --space-lg: 3rem;
-    --space-xl: 5rem;
-
-
-    /* -------------------------------------
-       4. Book Dimensions
-       ------------------------------------- */
-
-    --book-size-mobile: 16rem;
-    --book-size-desktop: 20rem;
-
-    --book-size-coming-soon: 11rem;
-
-    --book-hover-elevation: -6px;
-    --book-active-scale: 0.98;
-
-
-    /* -------------------------------------
-       5. Shape and Depth
-       ------------------------------------- */
-
-    --radius-soft: 0.5rem;
-    --radius-book: 0.25rem;
-    --radius-round: 50%;
-
-    --shadow-book:
-        0 0.75rem 0.75rem rgb(0 0 0 / 25%);
-
-    --shadow-book-hover:
-        0 0.75rem 1rem rgb(0 0 0 / 30%);
-
-
-    /* -------------------------------------
-       6. Atmospheric Effects
-       ------------------------------------- */
-
-    --effect-glow-gold: rgb(215 180 106 / 35%);
-    --effect-glow-soft: rgb(215 180 106 / 15%);
-
-    --effect-lantern-glow: rgb(215 180 106 / 18%);
-
-    --effect-transition: 280ms ease;
-    --transition-gentle: 220ms ease;
-
-
-    /* -------------------------------------
-       7. Layering
-       ------------------------------------- */
-
-    --z-background: -1;
-    --z-content: 1;
-    --z-overlay: 10;
-    --z-navigation: 20;
-}
-
-
-/* -----------------------------------------
-   8. Responsive Variables
-   ----------------------------------------- */
-
-@media (min-width: 48rem) {
-
-    :root {
-        --page-padding: 2rem;
-    }
-
+    /* ---------- Motion ---------- */
+    --lift-time:        220ms;
+    --glow-time:        300ms;
+    --ease-soft:        cubic-bezier(0.22, 0.61, 0.36, 1);
 }
