@@ -1,80 +1,190 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Series Menu: index.html V2.0 · Part 1 of 1
+<!-- Burrow Whispers Series Menu: index.html V4.0 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
-     Uses css/variables.css, css/base.css and css/effects.css.
-     To add a story: change a "Volume Unwritten" shelf into an
-     available one (copy the Lunelle shelf, swap name, link, sprite). -->
-
+     Uses css/variables.css, css/base.css and css/effects.css from this folder.
+     V4.0: matches the Library page style, with a woodland palette.
+     To add a story: edit the STORIES list near the bottom. -->
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a1210">
+  <title>Burrow Whispers | The Book Keeper</title>
+  <meta name="description" content="A collection of stories gathered from the Moonroot Wilds.">
 
-    <title>Burrow Whispers | The Book Keeper</title>
-    <meta name="description" content="A collection of stories gathered from the Moonroot Wilds.">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <style>
+    /* Page layout only. Colors and motion come from the CSS files. */
+    .back {
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      float: left;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+    .head { clear: both; padding-top: 1em; }
 
-    <link rel="stylesheet" href="./css/variables.css">
-    <link rel="stylesheet" href="./css/base.css">
-    <link rel="stylesheet" href="./css/effects.css">
+    .page-title {
+      margin: 0;
+      font-weight: normal;
+      font-size: clamp(2rem, 8vw, 3.4rem);
+      letter-spacing: 0.12em;
+      text-indent: 0.12em;
+      color: var(--gold-bright);
+      text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.8);
+    }
+    .page-subtitle {
+      margin: 0.8em auto 0;
+      max-width: 30ch;
+      font-style: italic;
+      font-size: clamp(1rem, 3.6vw, 1.2rem);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Books */
+    .shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
+      justify-content: center;
+      gap: 36px 28px;
+      margin: 2em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .book {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--parchment);
+      text-decoration: none;
+    }
+    .book-cover {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 4px 12px 12px 4px;
+    }
+    .book-title {
+      margin: 0;
+      font-size: 1.25rem;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+    .book-action {
+      margin: 0;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Coming Soon: quieter, not tappable */
+    .book.soon { opacity: 0.72; pointer-events: none; }
+    .book.soon .book-cover { width: 78%; }
+    .book.soon .book-title { font-size: 0.95rem; }
+
+    /* Fallback if a sprite is missing */
+    .book.fallback .book-sprite { display: none; }
+    .book.fallback .book-cover {
+      aspect-ratio: 2 / 3;
+      background: linear-gradient(145deg, #496A46, #2c4529);
+      border: 1px solid var(--gold-line);
+      box-shadow: var(--shadow-soft);
+    }
+  </style>
 </head>
 
 <body>
 
-    <header>
-        <nav aria-label="Main navigation">
-            <a href="../index.html">← Return to Library</a>
-        </nav>
-    </header>
+  <div class="room"></div>
+  <div class="lantern-light"></div>
+  <div class="backdrop"></div>
+  <div class="fx-layer" id="fx"></div>
 
-    <main>
+  <main class="page">
+    <nav aria-label="Main navigation">
+      <a class="back" href="../index.html">← Return to Library</a>
+    </nav>
 
-        <h1>Burrow Whispers</h1>
-        <p class="collection-subtitle">
-            A collection of stories gathered from the Moonroot Wilds.
-        </p>
+    <div class="head">
+      <h1 class="page-title">Burrow Whispers</h1>
+      <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
+      <div class="rule"></div>
+    </div>
 
-        <section class="story-shelf" aria-labelledby="story-shelf-title">
+    <ul class="shelf" id="shelf" aria-label="Story volumes"></ul>
+  </main>
 
-            <h2 id="story-shelf-title">Story Volumes</h2>
+  <script>
+    /* ---------- Add stories here ----------
+       soon: true makes a quiet, untappable "Volume Unwritten" book.
+       To publish one, replace { soon: true } with a full entry. */
+    const STORIES = [
+      { title: "Lunelle", url: "lunelle/", sprite: "assets/lunelle-book.png", alt: "Lunelle storybook" },
+      { soon: true },
+      { soon: true }
+    ];
+    const UNWRITTEN = "assets/unwritten-book.png";
 
-            <!-- Shelf 1: Available -->
-            <article class="story-volume story-volume-available">
-                <a class="story-book-link"
-                   href="./lunelle/index.html"
-                   aria-label="Open Lunelle">
-                    <img class="story-book-sprite"
-                         src="./assets/lunelle-book.png"
-                         alt="Lunelle storybook">
-                    <span class="story-title">Lunelle</span>
-                    <span class="story-action">Open Volume →</span>
-                </a>
-            </article>
+    const el = (tag, cls, text) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text) n.textContent = text;
+      return n;
+    };
 
-            <!-- Shelf 2: Coming Soon -->
-            <article class="story-volume story-volume-coming-soon">
-                <div class="story-book-link">
-                    <img class="story-book-sprite"
-                         src="./assets/unwritten-book.png"
-                         alt="An unwritten storybook">
-                    <span class="story-title">Volume Unwritten</span>
-                    <span class="story-action">Coming Soon</span>
-                </div>
-            </article>
+    /* ---------- Build the shelf ---------- */
+    const shelf = document.getElementById("shelf");
+    STORIES.forEach((s, i) => {
+      const li = el("li");
+      const book = s.soon ? el("div", "book soon") : el("a", "book");
+      if (!s.soon) {
+        book.href = s.url;
+        book.setAttribute("aria-label", "Open " + s.title);
+      }
 
-            <!-- Shelf 3: Coming Soon -->
-            <article class="story-volume story-volume-coming-soon">
-                <div class="story-book-link">
-                    <img class="story-book-sprite"
-                         src="./assets/unwritten-book.png"
-                         alt="An unwritten storybook">
-                    <span class="story-title">Volume Unwritten</span>
-                    <span class="story-action">Coming Soon</span>
-                </div>
-            </article>
+      const cover = el("div", "book-cover");
+      const img = new Image();
+      img.className = "book-sprite";
+      img.alt = s.soon ? "An unwritten storybook" : s.alt;
+      img.style.animationDelay = (-i * 1.5) + "s";   /* books bob out of step */
+      img.onerror = () => book.classList.add("fallback");
+      img.src = s.soon ? UNWRITTEN : s.sprite;
+      cover.append(img);
 
-        </section>
+      book.append(
+        cover,
+        el("p", "book-title", s.soon ? "Volume Unwritten" : s.title),
+        el("p", "book-action", s.soon ? "Coming Soon" : "Open Volume →")
+      );
+      li.appendChild(book);
+      shelf.appendChild(li);
+    });
 
-    </main>
+    /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const fx = document.getElementById("fx");
+    fx.append(el("div", "haze one"), el("div", "haze two"));
+    for (let i = 0; i < 16; i++) {
+      const m = el("div", "mote");
+      m.style.left = rand(5, 95).toFixed(1) + "%";
+      m.style.top = rand(10, 90).toFixed(1) + "%";
+      m.style.setProperty("--dur", rand(5, 9).toFixed(1) + "s");
+      m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
+      m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
+      fx.appendChild(m);
+    }
+  </script>
 
 </body>
 </html>
