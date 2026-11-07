@@ -1,7 +1,7 @@
-/* Burrow Whispers About Page: variables.css V1.0 · Part 1 of 1
+/* Burrow Whispers About Page: variables.css V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/about/css/variables.css
    Colors, fonts, and the paper/mailbox animation settings.
-   Tune the mailbox numbers below to match the mailbox in the background. */
+   V1.1: mailbox position now follows the background painting. */
 
 :root {
   /* Woodland palette */
@@ -26,17 +26,21 @@
   --paper-width:      min(100%, 560px);
   --paper-float-time: 7s;
 
-  /* Mailbox: where the paper flies to and from.
-     Offset from the paper's center, in px.
-     Negative X = left, negative Y = up. */
+  /* Mailbox position inside the background painting.
+     The painting is about 1161 × 2576 (ratio 0.4507) and is drawn with
+     "cover", so these follow the same scaling and cropping.
+     The mailbox sits near 89.6% across and 59.4% down the painting.
+     If your final image has a different size, change 0.4507 and 2.219. */
+  --img-w: max(100vw, calc(100dvh * 0.4507));
+  --img-h: max(calc(100vw * 2.219), 100dvh);
+  --mailbox-cx:   calc(50vw  + var(--img-w) * 0.396);
+  --mailbox-cy:   calc(50dvh + var(--img-h) * 0.094);
+  --mailbox-size: max(56px, calc(var(--img-w) * 0.19));
+
+  /* Paper flight offset (center of paper to center of mailbox).
+     The script measures this each time, these are only fallbacks. */
   --mailbox-shift-x: 120px;
   --mailbox-shift-y: 260px;
-
-  /* Mailbox tap target, placed over the background.
-     Percent of the screen. Adjust until it sits on the mailbox. */
-  --mailbox-left:   72%;
-  --mailbox-bottom: 14%;
-  --mailbox-size:   88px;
 
   /* Paper in/out animation */
   --paper-out-time: 0.6s;
