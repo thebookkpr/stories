@@ -127,3 +127,190 @@
     const SECRET_URL = null;               /* set a folder here, e.g. "secret/" */
 
     /* ---- Part 2 of 2 continues here ---- */
+
+   /* ============ Part 2 of 2: behaviour ============ */
+
+    const $ = (id) => document.getElementById(id);
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const el = (tag, cls) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      return n;
+    };
+
+    const stage      = $("stage");
+    const fx         = $("fx");
+    const hintEl     = $("hint");
+    const panel      = $("panel");
+    const panelTitle = $("panel-title");
+    const panelText  = $("panel-text");
+    const panelGo    = $("panel-go");
+    const panelClose = $("panel-close");
+
+    let openKey = null;        /* place currently shown in the panel */
+    let hintTimer = null;      /* waits before the next idle hint */
+    let hideTimer = null;      /* hides the hint that is showing */
+    let swapTimer = null;      /* swaps hint words after a fade-out */
+
+    /* ---------- Light: add or remove the .lit glow ---------- */
+    function clearLit() {
+      stage.querySelectorAll(".hot.lit").forEach((n) => n.classList.remove("lit"));
+    }
+    function setLit(ids) {
+      clearLit();
+      ids.forEach((id) => {
+        const n = stage.querySelector('.hot[data-id="' + id + '"]');
+        if (n) n.classList.add("lit");
+      });
+    }
+
+    /* ---------- Stage 1: discovery panel ---------- */
+    function openPlace(key) {
+      const place = PLACES[ALIASES[key] || key];
+      if (!place) return;
+
+      stopHints();
+      openKey = ALIASES[key] || key;
+
+      panelTitle.textContent = place.title;
+      panelText.textContent = "";
+      place.text.split("\n").forEach((line, i) => {
+        if (i) panelText.appendChild(document.createElement("br"));
+        panelText.appendChild(document.createTextNode(line));
+      });
+
+      if (place.url) {                       /* stage 2 is only this button */
+        panelGo.href = place.url;
+        panelGo.textContent = place.go;
+        panelGo.style.display = "";
+      } else {
+        panelGo.removeAttribute("href");
+        panelGo.style.display = "none";
+      }
+
+      setLit(place.lights);
+      panel.classList.add("open");
+    }
+
+    function closePanel() {
+      if (!openKey) return;
+      openKey = null;
+      panel.classList.remove("open");
+      clearLit();
+      startHints();
+    }
+
+    /* ---------- Hot spot taps ---------- */
+    stage.querySelectorAll(".hot").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (id === "secret") return openSecret(btn);
+        openPlace(id);
+      });
+    });
+
+    /* Tapping bare picture, pressing Escape or the × closes the panel */
+    stage.addEventListener("click", closePanel);
+    panelClose.addEventListener("click", closePanel);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePanel();
+    });
+
+    /* Coming back with the Back button: start fresh */
+    window.addEventListener("pageshow", () => {
+      openKey = null;
+      panel.classList.remove("open");
+      clearLit();
+      startHints();
+    });
+
+    /* ---------- The secret: no label, no panel, no light ---------- */
+    function openSecret(btn) {
+      if (SECRET_URL) {
+        window.location.href = SECRET_URL;
+        return;
+      }
+      /* Nothing to open yet: a few motes drift up from the spot, then it is quiet again */
+      const r = btn.getBoundingClientRect();
+      for (let i = 0; i < 6; i++) {
+        const m = el("div", "mote");
+        m.style.left = (r.left + r.width * rand(0.25, 0.75)).toFixed(0) + "px";
+        m.style.top = (r.top + r.height * rand(0.3, 0.8)).toFixed(0) + "px";
+        m.style.setProperty("--dur", rand(2.2, 3.6).toFixed(1) + "s");
+        m.style.setProperty("--delay", rand(0, 0.5).toFixed(2) + "s");
+        m.style.setProperty("--drift", rand(-24, 24).toFixed(0) + "px");
+        m.style.animationIterationCount = "1";
+        m.style.animationFillMode = "forwards";
+        m.addEventListener("animationend", () => m.remove());
+        fx.appendChild(m);
+      }
+    }
+
+    /* ---------- Idle hints: one line every 8 to 12 seconds ---------- */
+    const HINT_ORDER = ["pond", "hill", "waystone", "trail"];
+    const HINTS = HINT_ORDER
+      .filter((k) => PLACES[k] && PLACES[k].hint)
+      .map((k) => ({ text: PLACES[k].hint, lights: PLACES[k].lights }))
+      .concat(GENERAL_HINTS.map((t) => ({ text: t, lights: [] })));
+    let hintIndex = 0;
+
+    function stopHints() {
+      clearTimeout(hintTimer);
+      clearTimeout(hideTimer);
+      clearTimeout(swapTimer);
+      hintEl.classList.remove("show");
+    }
+
+    function scheduleHint(delay) {
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(showHint, delay);
+    }
+
+    function showHint() {
+      if (openKey || document.hidden || !HINTS.length) {
+        return scheduleHint(rand(8000, 12000));
+      }
+      const h = HINTS[hintIndex % HINTS.length];
+      hintIndex++;
+
+      hintEl.textContent = h.text;
+      hintEl.classList.add("show");
+      if (h.lights.length) setLit(h.lights);
+
+      hideTimer = setTimeout(() => {
+        hintEl.classList.remove("show");
+        if (!openKey) clearLit();
+        scheduleHint(rand(8000, 12000));   /* waits after it fades out */
+      }, 5200);
+    }
+
+    function startHints() {
+      stopHints();
+      scheduleHint(rand(3500, 5500));      /* first hint comes a little sooner */
+    }
+
+    /* Pause hints while the tab is hidden */
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopHints();
+      else if (!openKey) startHints();
+    });
+
+    /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
+    fx.append(el("div", "haze one"), el("div", "haze two"));
+    for (let i = 0; i < 16; i++) {
+      const m = el("div", "mote");
+      m.style.left = rand(5, 95).toFixed(1) + "%";
+      m.style.top = rand(10, 90).toFixed(1) + "%";
+      m.style.setProperty("--dur", rand(5, 9).toFixed(1) + "s");
+      m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
+      m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
+      fx.appendChild(m);
+    }
+
+    /* ---------- Begin ---------- */
+    startHints();
+  </script>
+
+</body>
+</html>
