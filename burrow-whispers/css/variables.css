@@ -1,61 +1,74 @@
-/* ==========================================================
-   Burrow Whispers: variables.css  V1.0  ·  Part 1 of 1
+/* Burrow Whispers Crossroads: css/variables.css V2.0 · Part 1 of 1
    Lives at stories/burrow-whispers/css/variables.css
-   Values only. No layout rules in this file.
-   ========================================================== */
+   Replaces V1.0. Pairs with base.css V2.0, effects.css V2.0, index.html V1.7.
+   Every colour, timing, and hot spot position is set here.
+   Hot spot values are percent of the PICTURE, not of the screen. */
 
 :root {
+  /* ---------- Colours ---------- */
+  --night:        #0a1210;
+  --gold:         #d7b46a;
+  --gold-bright:  #f1d68e;
+  --gold-glow:    rgba(241, 214, 142, 0.55);
+  --gold-line:    rgba(215, 180, 106, 0.55);
+  --parchment:    #eee6d2;
+  --moss:         #496a46;
+  --moonroot:     #667a8e;
 
-    /* ---------- Book Keeper palette (Theme Canon v2.0) ---------- */
-    --round-door-green: #496A46;
-    --mosswood:         #6C5640;
-    --warm-oak:         #A68056;
-    --parchment:        #EEE6D2;
-    --firelight-gold:   #D7B46A;   /* accent only */
-    --tea-brown:        #4C3828;
-    --moonroot-blue:    #667A8E;   /* sparing, evening touches */
+  /* ---------- Type ---------- */
+  --font-body: Georgia, "Times New Roman", serif;
+  --font-ui:   "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
 
-    /* ---------- Page ---------- */
-    --page-bg:          #2a1f16;   /* fallback behind the painted background */
-    --text-main:        var(--parchment);
-    --text-accent:      var(--firelight-gold);
-    --text-shadow:      0 2px 6px rgba(0, 0, 0, 0.7);
+  /* ---------- Motion ---------- */
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+  --fade-fast:   0.3s;
+  --fade-medium: 0.7s;
+  --fade-slow:   1.4s;
 
-    /* ---------- Shelf ---------- */
-    --shelf-width:      min(92vw, 420px);
-    --shelf-plank-height: 22px;
-    --shelf-plank-top:  var(--warm-oak);
-    --shelf-plank-edge: var(--mosswood);
-    --shelf-plank-shadow: rgba(0, 0, 0, 0.55);
-    --shelf-gap:        2.5rem;    /* space between shelves */
+  /* ---------- Picture and stage ----------
+     Ratio is width / height of images/burrow-whispers-crossroads.jpg (9:20).
+     Phones: the picture covers the screen.
+     Wide screens: the picture fits the height (see media query below). */
+  --img-ratio: 0.45;
+  --stage-w: max(100vw, calc(100vh * var(--img-ratio)));
+  --stage-h: calc(var(--stage-w) / var(--img-ratio));
 
-    /* ---------- Books ---------- */
-    --book-size:        min(62vw, 260px);
-    --book-size-small:  min(46vw, 190px);
-    --book-lift:        -6px;      /* hover rise, per Website Canon */
-    --book-glow:        rgba(215, 180, 106, 0.55);
-    --book-glow-open:   rgba(215, 180, 106, 0.85);
-    --book-dim:         0.78;      /* Coming Soon books sit quieter */
+  /* ---------- Hot spot map (centre X/Y, width, height) ---------- */
+  --pond-x: 21%;      --pond-y: 41%;      --pond-w: 42%;      --pond-h: 11%;
+  --moon-x: 20%;      --moon-y: 23%;      --moon-w: 16%;      --moon-h: 7%;
+  --waystone-x: 51%;  --waystone-y: 46%;  --waystone-w: 25%;  --waystone-h: 17%;
+  --trail-x: 59%;     --trail-y: 33%;     --trail-w: 16%;     --trail-h: 10%;
+  --hill-x: 85%;      --hill-y: 37%;      --hill-w: 30%;      --hill-h: 20%;
+  --clearing-x: 53%;  --clearing-y: 70%;  --clearing-w: 55%;  --clearing-h: 11%;
+  --secret-x: 90%;    --secret-y: 88%;    --secret-w: 8%;     --secret-h: 5%;
 
-    /* ---------- Type ---------- */
-    --font-title:       Georgia, "Times New Roman", serif;
-    --font-body:        Georgia, "Times New Roman", serif;
-    --size-title:       clamp(2rem, 8vw, 3rem);
-    --size-subtitle:    clamp(0.95rem, 3.6vw, 1.15rem);
-    --size-heading:     1.1rem;
-    --size-label:       1.25rem;
-    --size-action:      0.95rem;
-    --size-small:       0.85rem;
+  /* ---------- Glow colours, one per place ---------- */
+  --glow-pond:     rgba(190, 205, 255, 0.50);
+  --glow-moon:     rgba(235, 238, 255, 0.55);
+  --glow-waystone: rgba(255, 235, 170, 0.55);
+  --glow-trail:    rgba(255, 214, 120, 0.50);
+  --glow-hill:     rgba(255, 170, 80, 0.45);
+  --glow-clearing: rgba(215, 230, 200, 0.30);
 
-    /* ---------- Spacing ---------- */
-    --space-xs:         0.4rem;
-    --space-sm:         0.8rem;
-    --space-md:         1.5rem;
-    --space-lg:         2.5rem;
-    --tap-min:          48px;      /* minimum comfortable tap area */
+  /* ---------- Discovery panel and hint line ---------- */
+  --panel-bg:     rgba(10, 18, 16, 0.86);
+  --panel-edge:   var(--gold-line);
+  --panel-radius: 14px;
+  --panel-max:    420px;
+  --tap-min:      48px;
+  --hint-shadow:  0 2px 8px rgba(0, 0, 0, 0.95);
+}
 
-    /* ---------- Motion ---------- */
-    --lift-time:        220ms;
-    --glow-time:        300ms;
-    --ease-soft:        cubic-bezier(0.22, 0.61, 0.36, 1);
+/* Wide screens: show the whole picture, fitted to the height, centred.
+   The dark page colour fills the sides. */
+@media (min-aspect-ratio: 3 / 5) {
+  :root { --stage-w: calc(100vh * var(--img-ratio)); }
+}
+
+/* Newer phones: use dynamic viewport height so browser bars don't shift things */
+@supports (height: 100dvh) {
+  :root { --stage-w: max(100vw, calc(100dvh * var(--img-ratio))); }
+  @media (min-aspect-ratio: 3 / 5) {
+    :root { --stage-w: calc(100dvh * var(--img-ratio)); }
+  }
 }
