@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Crossroads: index.html V2.0 · Part 1 of 1
+<!-- Burrow Whispers Crossroads: index.html V2.2 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
-     Replaces V1.9.
+     Replaces V2.1.
      Pictures: images/burrow-whispers-crossroads-916.jpg (default, 9:16)
                images/burrow-whispers-crossroads.jpg (tall phones, 9:20)
-     Uses css/variables.css V2.1, css/base.css V2.4, css/effects.css V2.0
+     Uses css/variables.css V2.2, css/base.css V2.4, css/effects.css V2.0
      and js/crossroads.js V1.1 from this folder.
+     Installable: manifest.json V1.0 and the icons in images/.
      Place text, links and hints are edited in js/crossroads.js, not here.
      Hot spot positions are edited in css/variables.css.
-     V2.0: the picture is now a <picture> element. The media query in
-           <source> must match the one in variables.css (max-aspect-ratio: 9/18). -->
+     V2.0: the picture is now a <picture> element.
+     V2.1: cutoff changed from 9/18 to 9/17 so phones with browser bars
+           showing still get the 9:20 picture. The media query in <source>
+           must match the one in variables.css (max-aspect-ratio: 9/17).
+     V2.2: added the web app manifest link and the iPhone home screen
+           icon and full screen tags. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,6 +23,14 @@
   <meta name="theme-color" content="#0a1210">
   <title>Burrow Whispers | The Book Keeper</title>
   <meta name="description" content="A collection of stories gathered from the Moonroot Wilds.">
+
+  <!-- Install as an app (full screen, no browser bars) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Burrow Whispers">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
@@ -31,8 +44,8 @@
   <div class="world" id="world">
     <div class="stage" id="stage">
       <picture>
-        <!-- Tall phones (taller than 9:18): the 9:20 picture -->
-        <source media="(max-aspect-ratio: 9/18)"
+        <!-- Tall phones (taller than 9:17): the 9:20 picture -->
+        <source media="(max-aspect-ratio: 9/17)"
                 srcset="images/burrow-whispers-crossroads.jpg">
         <!-- Everything else: the 9:16 picture -->
         <img class="stage-image"
