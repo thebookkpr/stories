@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers About Page: index.html V1.3 · Part 1 of 1
+<!-- Burrow Whispers About Page: index.html V1.4 · Part 1 of 1
      Lives at stories/burrow-whispers/about/index.html
-     Uses ../css/variables.css, ../css/base.css and ../css/effects.css.
-     V1.3: text removed from the paper (now part of the image).
-     V1.2: calligraphy font, slanted text, nudges to follow the paper's curve.
-     V1.1: text written on the moonleaf paper sprite (summarized). -->
+     Uses css/variables.css, css/base.css and css/effects.css from this same folder.
+     Uses js/mailbox.js for the paper and mailbox interaction.
+     V1.4: own css and js folders, new background, rootbark paper,
+           tap the paper to send it to the mailbox, tap the mailbox to bring it back.
+     V1.3: text removed from the paper (now part of the image). -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,80 +15,28 @@
   <title>About Burrow Whispers | The Book Keeper</title>
   <meta name="description" content="An introduction to Burrow Whispers and the Moonroot Wilds.">
 
-  <link rel="stylesheet" href="../css/variables.css">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/effects.css">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/effects.css">
   <link href="https://fonts.googleapis.com/css2?family=Almendra:ital@0;1&display=swap" rel="stylesheet">
-  <style>
-    /* Page layout only. */
-    .back {
-      display: inline-flex;
-      align-items: center;
-      min-height: 48px;
-      float: left;
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-decoration: none;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-    .head { clear: both; padding-top: 1em; }
-
-    .page-title {
-      margin: 0;
-      font-weight: normal;
-      font-size: clamp(2rem, 8vw, 3.4rem);
-      letter-spacing: 0.12em;
-      text-indent: 0.12em;
-      color: var(--gold-bright);
-      text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.8);
-    }
-    .page-subtitle {
-      margin: 0.8em auto 0;
-      max-width: 30ch;
-      font-style: italic;
-      font-size: clamp(1rem, 3.6vw, 1.2rem);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-
-    /* The paper image, centered and gently floating. */
-    .paper {
-      position: relative;
-      width: min(100%, 560px);
-      margin: 1.5em auto 0;
-      container-type: inline-size;
-      animation: paper-float 7s ease-in-out infinite;
-    }
-    @keyframes paper-float {
-      0%, 100% { transform: translateY(0) rotate(-0.3deg); }
-      50%      { transform: translateY(-6px) rotate(0.3deg); }
-    }
-    .paper-img {
-      display: block;
-      width: 100%;
-      height: auto;
-      filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6));
-    }
-
-    /* Footer */
-    .keeper {
-      margin: 3em 0 0;
-      font-style: italic;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-  </style>
 </head>
 
 <body>
 
+  <!-- Background and effects layers -->
   <div class="room"></div>
   <div class="lantern-light"></div>
   <div class="backdrop"></div>
   <div class="fx-layer" id="fx"></div>
 
+  <!-- Mailbox: invisible tap target placed over the mailbox in the painting -->
+  <button class="mailbox" id="mailbox" type="button"
+          aria-label="Mailbox. The note is out on the page."></button>
+
   <main class="page">
+
+    <!-- Return Navigation -->
     <nav aria-label="Main navigation">
       <a class="back" href="../index.html">← Return to Burrow Whispers</a>
     </nav>
@@ -98,15 +47,21 @@
       <div class="rule"></div>
     </div>
 
+    <!-- The floating paper -->
     <section class="paper" aria-label="About Burrow Whispers">
-      <img class="paper-img" src="../assets/about-intro-moonleaf.png" alt="Beyond winding roots and quiet woodland paths lies a world of small lives and gentle wonder. Magical animal companions make their homes here, among forests, ponds, and lantern-lit corners. Choose a story and begin your journey.">
+      <img class="paper-img"
+           src="./assets/about-intro-rootbark.png"
+           alt="Beyond winding roots and quiet woodland paths lies a world of small lives and gentle wonder. Magical animal companions make their homes here, among forests, ponds, and lantern-lit corners. Choose a story and begin your journey.">
     </section>
 
     <p class="keeper">Kept by the Book Keeper</p>
+
   </main>
 
+  <script src="./js/mailbox.js" defer></script>
+
   <script>
-    /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
+    /* ---------- Firefly dust and haze (styles in css/effects.css) ---------- */
     const el = (tag, cls) => {
       const n = document.createElement(tag);
       if (cls) n.className = cls;
