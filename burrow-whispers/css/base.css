@@ -1,197 +1,198 @@
-/* ==========================================================
-   Burrow Whispers: base.css  V1.0  ·  Part 1 of 1
+/* Burrow Whispers Crossroads: css/base.css V2.0 · Part 1 of 1
    Lives at stories/burrow-whispers/css/base.css
-   Layout only. Hover and glow live in effects.css.
-   Needs variables.css loaded first.
-   ========================================================== */
+   Replaces V1.0. Pairs with variables.css V2.0, effects.css V2.0, index.html V1.7.
+   Layout only: stage, hot spot placement and shapes, title zone,
+   hint line, discovery panel. Glows, ripples and dust live in effects.css. */
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--night);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  -webkit-text-size-adjust: 100%;
 }
 
-html {
-    -webkit-text-size-adjust: 100%;
+/* ---------- World and stage ---------- */
+.world { position: fixed; inset: 0; overflow: hidden; }
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  transform: translate(-50%, -50%);
+}
+.stage-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: var(--page-bg);
-    color: var(--text-main);
-    font-family: var(--font-body);
-    text-align: center;
-    position: relative;
+/* ---------- Hot spots: invisible, placed in percent of the picture ---------- */
+.hot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hot:focus-visible { outline: 2px dashed var(--gold); outline-offset: 4px; }
+
+.hot[data-id="pond"]     { left: var(--pond-x);     top: var(--pond-y);     width: var(--pond-w);     height: var(--pond-h);
+                           border-radius: 55% 45% 50% 50% / 50% 58% 42% 50%; }
+.hot[data-id="moon"]     { left: var(--moon-x);     top: var(--moon-y);     width: var(--moon-w);     height: var(--moon-h);
+                           border-radius: 50%; }
+.hot[data-id="waystone"] { left: var(--waystone-x); top: var(--waystone-y); width: var(--waystone-w); height: var(--waystone-h);
+                           border-radius: 50% 50% 38% 38% / 60% 60% 40% 40%; }
+.hot[data-id="trail"]    { left: var(--trail-x);    top: var(--trail-y);    width: var(--trail-w);    height: var(--trail-h);
+                           border-radius: 40% 40% 12% 12% / 30% 30% 8% 8%; }
+.hot[data-id="hill"]     { left: var(--hill-x);     top: var(--hill-y);     width: var(--hill-w);     height: var(--hill-h);
+                           border-radius: 50%; }
+.hot[data-id="clearing"] { left: var(--clearing-x); top: var(--clearing-y); width: var(--clearing-w); height: var(--clearing-h);
+                           border-radius: 50%; }
+.hot[data-id="secret"]   { left: var(--secret-x);   top: var(--secret-y);   width: var(--secret-w);   height: var(--secret-h);
+                           border-radius: 50%; }
+
+/* The secret never shows itself: no outline, no cursor change */
+.hot[data-id="secret"]:focus-visible { outline: none; }
+.hot[data-id="secret"] { cursor: default; }
+
+/* ---------- Title zone (top, over the canopy) ---------- */
+.top {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 5;
+  padding: calc(env(safe-area-inset-top, 0px) + 6px) 16px 0;
+  text-align: center;
+  pointer-events: none;
+}
+.back {
+  pointer-events: auto;
+  float: left;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--gold);
+  text-shadow: var(--hint-shadow);
+}
+.page-title {
+  clear: both;
+  margin: 0;
+  font-weight: normal;
+  font-size: clamp(1.8rem, 7.5vw, 3rem);
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.85);
+}
+.page-subtitle {
+  margin: 0.5em auto 0;
+  max-width: 30ch;
+  font-style: italic;
+  font-size: clamp(0.95rem, 3.4vw, 1.1rem);
+  text-shadow: var(--hint-shadow);
 }
 
-/* ---------- Painted background ----------
-   A fixed layer instead of background-attachment: fixed,
-   which is unreliable on phones. */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background: url("../images/burrow-whispers-bg.jpg") center / cover no-repeat;
+/* ---------- Hint line (bottom, fades in and out) ---------- */
+.hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+  margin: 0;
+  padding: 0 24px;
+  text-align: center;
+  font-style: italic;
+  font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+  color: var(--parchment);
+  text-shadow: var(--hint-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fade-slow) var(--ease-gentle);
 }
+.hint.show { opacity: 1; }
 
-/* Soft dark wash so labels stay readable over the painting */
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(
-        to bottom,
-        rgba(42, 31, 22, 0.55),
-        rgba(42, 31, 22, 0.35) 40%,
-        rgba(42, 31, 22, 0.65)
-    );
-    pointer-events: none;
+/* ---------- Discovery panel (stage 1 of the two-stage tap) ---------- */
+.panel {
+  position: fixed;
+  left: 50%;
+  z-index: 6;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  width: min(calc(100vw - 32px), var(--panel-max));
+  padding: 18px 20px 14px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--panel-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 12px);
+  transition: opacity var(--fade-medium) var(--ease-gentle),
+              transform var(--fade-medium) var(--ease-gentle),
+              visibility 0s linear var(--fade-medium);
 }
-
-/* ---------- Return link ---------- */
-header {
-    padding: var(--space-sm) var(--space-md);
-    text-align: left;
+.panel.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
 }
-
-header a {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--tap-min);
-    color: var(--text-accent);
-    font-size: var(--size-small);
-    text-decoration: none;
-    text-shadow: var(--text-shadow);
+.panel-title {
+  margin: 0;
+  font-weight: normal;
+  font-size: 1.3rem;
+  color: var(--gold-bright);
 }
-
-header a:focus-visible,
-.story-book-link:focus-visible {
-    outline: 2px solid var(--text-accent);
-    outline-offset: 4px;
-    border-radius: 8px;
+.panel-text {
+  margin: 0.6em 0 0;
+  line-height: 1.5;
+  font-style: italic;
 }
-
-/* ---------- Page ---------- */
-main {
-    padding: 0 var(--space-md) var(--space-lg);
+.panel-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  margin-top: 0.5em;
+  padding: 0 18px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold);
 }
-
-h1 {
-    margin: var(--space-md) 0 var(--space-xs);
-    font-family: var(--font-title);
-    font-size: var(--size-title);
-    font-weight: normal;
-    color: var(--text-accent);
-    text-shadow: var(--text-shadow);
+.panel-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border: 0;
+  background: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--parchment);
+  opacity: 0.7;
+  cursor: pointer;
 }
-
-.collection-subtitle {
-    margin: 0 auto var(--space-lg);
-    max-width: 30ch;
-    font-size: var(--size-subtitle);
-    font-style: italic;
-    text-shadow: var(--text-shadow);
-}
-
-/* ---------- Shelf section ----------
-   The heading stays for screen readers but is hidden visually,
-   since the page should stay simple. */
-.story-shelf {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--shelf-gap);
-}
-
-.story-shelf h2 {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-}
-
-/* ---------- One shelf = one book ---------- */
-.story-volume {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: var(--shelf-width);
-    padding-bottom: calc(var(--shelf-plank-height) + var(--space-sm));
-}
-
-/* The wood plank under each book */
-.story-volume::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: var(--shelf-plank-height);
-    border-radius: 4px;
-    background: linear-gradient(
-        to bottom,
-        var(--shelf-plank-top),
-        var(--shelf-plank-edge)
-    );
-    box-shadow: 0 10px 14px var(--shelf-plank-shadow);
-    z-index: 0;
-}
-
-/* ---------- Book + label ---------- */
-.story-book-link {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: var(--tap-min);
-    color: inherit;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.story-book-sprite {
-    display: block;
-    width: var(--book-size);
-    height: auto;
-    margin-bottom: calc(var(--space-sm) * -1);   /* book rests on the plank */
-}
-
-.story-volume-coming-soon .story-book-sprite {
-    width: var(--book-size-small);
-}
-
-.story-volume-coming-soon {
-    opacity: var(--book-dim);
-}
-
-/* Labels sit on the plank, never baked into the sprite */
-.story-title {
-    position: relative;
-    z-index: 2;
-    margin-top: var(--space-md);
-    font-size: var(--size-label);
-    color: var(--text-main);
-    text-shadow: var(--text-shadow);
-}
-
-.story-action {
-    position: relative;
-    z-index: 2;
-    margin-top: var(--space-xs);
-    font-size: var(--size-action);
-    color: var(--text-accent);
-    text-shadow: var(--text-shadow);
-}
-
-.story-volume-coming-soon .story-title,
-.story-volume-coming-soon .story-action {
-    font-size: var(--size-small);
-}
+.panel-close:focus-visible,
+.panel-go:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
