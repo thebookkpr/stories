@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Series Menu: index.html V1.6 · Part 1 of 1
+<!-- Burrow Whispers Crossroads: index.html V1.7 · Part 1 of 2 (head, markup, place data)
      Lives at stories/burrow-whispers/index.html
-     Uses css/variables.css, css/base.css and css/effects.css from this folder.
-     V1.6: padding added around each book so the float, tilt and glow are not clipped.
-     V1.5: about link, book animation kept in the page, sprite size fixed,
-           one transparent "more stories" spot, footer line added.
-     To add a story: add an entry to the STORIES list near the bottom. -->
+     Background: images/burrow-whispers-crossroads.jpg
+     Uses css/variables.css, css/base.css and css/effects.css V2.0 from this folder.
+     Part 2 continues INSIDE the script below: paste it straight after the last line of this Part. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,258 +16,114 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/effects.css">
-  <style>
-    /* Page layout only. Colors and motion come from the CSS files. */
-    .back {
-      display: inline-flex;
-      align-items: center;
-      min-height: 48px;
-      float: left;
-      font-family: var(--font-ui);
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-decoration: none;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-    .head { clear: both; padding-top: 1em; }
-
-    .page-title {
-      margin: 0;
-      font-weight: normal;
-      font-size: clamp(2rem, 8vw, 3.4rem);
-      letter-spacing: 0.12em;
-      text-indent: 0.12em;
-      color: var(--gold-bright);
-      text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.8);
-    }
-    .page-subtitle {
-      margin: 0.8em auto 0;
-      max-width: 30ch;
-      font-style: italic;
-      font-size: clamp(1rem, 3.6vw, 1.2rem);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-
-    /* Books */
-    .shelf {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 332px));
-      justify-content: center;
-      align-items: center;
-      gap: 36px 28px;
-      margin: 2em 0 0;
-      padding: 0;
-      list-style: none;
-    }
-    .shelf > li { min-width: 0; }          /* lets large sprites shrink to fit */
-
-    .book {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: var(--parchment);
-      text-decoration: none;
-    }
-    .book-cover {
-      position: relative;
-      width: 100%;
-      max-width: 332px;
-      padding: 36px;                       /* empty room for float, tilt and glow */
-      margin: 0 auto;
-      overflow: hidden;
-      border-radius: 4px 12px 12px 4px;
-    }
-    .book-sprite { max-width: 100%; }
-
-    .book-title {
-      margin: 0;
-      font-size: 1.25rem;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-    .book-action {
-      margin: 0;
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-
-    /* The one empty spot: no sprite, no background, just a quiet line */
-    .more-note {
-      margin: 0;
-      padding: 20px;
-      font-style: italic;
-      text-align: center;
-      color: var(--parchment);
-      opacity: 0.8;
-      background: none;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-
-    /* If a real sprite is missing: outline only, never a colored block */
-    .book.fallback .book-sprite { display: none; }
-    .book.fallback .book-cover {
-      aspect-ratio: 2 / 3;
-      background: none;
-      border: 1px dashed var(--gold-line);
-    }
-
-    /* Footer */
-    .keeper {
-      margin: 3em 0 0;
-      font-style: italic;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    }
-
-    /* Book float, shimmer and hover (kept here so the page never depends on effects.css) */
-    .book-sprite {
-      display: block;
-      width: 100%;
-      height: auto;
-      filter: drop-shadow(0 12px 14px rgba(0, 0, 0, 0.65));
-      animation: book-float 6s ease-in-out infinite;
-      transition: filter var(--fade-fast) var(--ease-gentle);
-    }
-    @keyframes book-float {
-      0%, 100% { transform: translateY(0) rotate(-0.4deg); }
-      50%      { transform: translateY(-7px) rotate(0.4deg); }
-    }
-    .book-cover::after {
-      content: "";
-      position: absolute;
-      inset: 36px;                         /* keep equal to .book-cover padding */
-      pointer-events: none;
-      background: linear-gradient(105deg,
-        rgba(255, 224, 150, 0) 38%,
-        rgba(255, 224, 150, 0.28) 50%,
-        rgba(255, 224, 150, 0) 62%);
-      transform: translateX(-120%);
-      animation: cover-shimmer 9s ease-in-out 2s infinite;
-    }
-    @keyframes cover-shimmer {
-      0%, 60% { transform: translateX(-120%); }
-      100%    { transform: translateX(120%); }
-    }
-    @media (hover: hover) {
-      a.book:hover .book-sprite {
-        animation-play-state: paused;
-        transform: translateY(-10px) scale(1.03);
-        filter: drop-shadow(0 16px 14px rgba(0, 0, 0, 0.65)) drop-shadow(0 0 20px var(--gold-glow));
-      }
-    }
-
-    /* Small link to the About page */
-    .about-link {
-      display: inline-flex;
-      align-items: center;
-      min-height: 48px;
-      margin-top: 0.4em;
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      color: var(--gold);
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-      transition: text-shadow var(--fade-fast) var(--ease-gentle);
-    }
-    @media (hover: hover) {
-      .about-link:hover { text-shadow: 0 0 12px var(--gold-glow); }
-    }
-  </style>
 </head>
 
 <body>
 
-  <div class="room"></div>
-  <div class="lantern-light"></div>
-  <div class="backdrop"></div>
-  <div class="fx-layer" id="fx"></div>
+  <!-- The picture and its hot spots (positions are set in variables.css) -->
+  <div class="world" id="world">
+    <div class="stage" id="stage">
+      <img class="stage-image"
+           src="images/burrow-whispers-crossroads.jpg"
+           alt="A moonlit woodland crossroads with a carved waystone, a lotus pond, a lantern-lit trail and round-door burrows on a hillside.">
 
-  <main class="page">
+      <button class="hot" data-id="pond"     type="button" aria-label="Moonroot Pond"></button>
+      <button class="hot" data-id="moon"     type="button" aria-hidden="true" tabindex="-1"></button>
+      <button class="hot" data-id="waystone" type="button" aria-label="The Crossroads Stone"></button>
+      <button class="hot" data-id="trail"    type="button" aria-label="The Lantern Trail"></button>
+      <button class="hot" data-id="hill"     type="button" aria-label="Burrow Hill"></button>
+      <button class="hot" data-id="clearing" type="button" aria-label="The Clearing"></button>
+      <button class="hot" data-id="secret"   type="button" aria-hidden="true" tabindex="-1"></button>
+    </div>
+  </div>
+
+  <!-- Firefly dust and haze (built by the script) -->
+  <div class="fx-layer" id="fx" aria-hidden="true"></div>
+
+  <!-- Title zone -->
+  <header class="top">
     <nav aria-label="Main navigation">
       <a class="back" href="../index.html">← Return to Library</a>
     </nav>
+    <h1 class="page-title">Burrow Whispers</h1>
+    <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
+  </header>
 
-    <div class="head">
-      <h1 class="page-title">Burrow Whispers</h1>
-      <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
-      <a class="about-link" href="about/">About This World →</a>
-      <div class="rule"></div>
-    </div>
+  <!-- Idle hint line -->
+  <p class="hint" id="hint" aria-live="polite"></p>
 
-    <ul class="shelf" id="shelf" aria-label="Story volumes"></ul>
-
-    <p class="keeper">Kept by the Book Keeper</p>
-  </main>
+  <!-- Discovery panel: stage 1 of the two-stage tap -->
+  <section class="panel" id="panel" aria-live="polite" aria-labelledby="panel-title">
+    <button class="panel-close" id="panel-close" type="button" aria-label="Close">×</button>
+    <h2 class="panel-title" id="panel-title"></h2>
+    <p class="panel-text" id="panel-text"></p>
+    <a class="panel-go" id="panel-go" href="#"></a>
+  </section>
 
   <script>
-    /* ---------- Add stories here ----------
-       Copy a line, change the title, link and sprite.
-       Sprites live in the assets/ folder. */
-    const STORIES = [
-      { title: "Lunelle", url: "lunelle/", sprite: "assets/lunelle-book.png", alt: "Lunelle storybook" }
-    ];
-    const SHOW_MORE_NOTE = true;   /* set false to hide the "more stories" spot */
-
-    const el = (tag, cls, text) => {
-      const n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text) n.textContent = text;
-      return n;
+    /* ---------- Places ----------
+       id     matches data-id on the hot spot buttons above
+       title  panel heading
+       text   panel flavour text (use \n for a line break)
+       go     the button words, e.g. "Explore →"
+       url    where stage 2 travels to; null = nothing to visit yet,
+              so the panel shows its text with no button
+       lights which hot spots glow when this place is noticed
+       hint   idle line shown at the bottom (null = never hinted)
+       To open a place later: change its url from null to a folder. */
+    const PLACES = {
+      pond: {
+        title: "Moonroot Pond",
+        text: "A quiet pond shines beneath the moon.\nSomeone often visits here at night.",
+        go: "Explore →",
+        url: "lunelle/",
+        lights: ["pond", "moon"],
+        hint: "A faint glow shimmers across the pond..."
+      },
+      waystone: {
+        title: "The Crossroads Stone",
+        text: "Many journeys begin here.",
+        go: "Read More →",
+        url: null,                         /* world lore page not built yet */
+        lights: ["waystone"],
+        hint: "The old waystone remembers many journeys..."
+      },
+      trail: {
+        title: "The Lantern Trail",
+        text: "A lantern-lit path disappears beneath the roots.\nIt has not been walked yet.",
+        go: "Follow →",
+        url: null,                         /* future story slot */
+        lights: ["trail"],
+        hint: "A lantern-lit trail disappears beneath the roots..."
+      },
+      hill: {
+        title: "Burrow Hill",
+        text: "Warm lights glow behind round doors.\nMany little lives call this place home.",
+        go: "Visit →",
+        url: null,                         /* future village hub */
+        lights: ["hill"],
+        hint: "Warm lights flicker among the hillside burrows..."
+      },
+      clearing: {
+        title: "The Clearing",
+        text: "Paw prints wander down the path.\nWhat is Burrow Whispers?",
+        go: "Learn More →",
+        url: "about/",
+        lights: ["clearing"],
+        hint: null
+      }
     };
 
-    /* ---------- Build the shelf ---------- */
-    const shelf = document.getElementById("shelf");
-    STORIES.forEach((s, i) => {
-      const li = el("li");
-      const book = el("a", "book");
-      book.href = s.url;
-      book.setAttribute("aria-label", "Open " + s.title);
+    /* A tap on the moon counts as a tap on the pond: one place, two spots */
+    const ALIASES = { moon: "pond" };
 
-      const cover = el("div", "book-cover");
-      const img = new Image();
-      img.className = "book-sprite";
-      img.alt = s.alt;
-      img.style.animationDelay = (-i * 1.5) + "s";   /* books bob out of step */
-      img.onerror = () => book.classList.add("fallback");
-      img.src = s.sprite;
-      cover.append(img);
+    /* Hints that light nothing; they only teach that the picture holds places */
+    const GENERAL_HINTS = [
+      "Not every secret path is obvious.",
+      "The Wilds reward curious travelers."
+    ];
 
-      book.append(
-        cover,
-        el("p", "book-title", s.title),
-        el("p", "book-action", "Open Volume →")
-      );
-      li.appendChild(book);
-      shelf.appendChild(li);
-    });
+    /* The secret has no panel and no label (see Part 2 for what it opens) */
+    const SECRET_URL = null;               /* set a folder here, e.g. "secret/" */
 
-    if (SHOW_MORE_NOTE) {
-      const li = el("li");
-      li.appendChild(el("p", "more-note", "More stories are being written."));
-      shelf.appendChild(li);
-    }
-
-    /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const fx = document.getElementById("fx");
-    fx.append(el("div", "haze one"), el("div", "haze two"));
-    for (let i = 0; i < 16; i++) {
-      const m = el("div", "mote");
-      m.style.left = rand(5, 95).toFixed(1) + "%";
-      m.style.top = rand(10, 90).toFixed(1) + "%";
-      m.style.setProperty("--dur", rand(5, 9).toFixed(1) + "s");
-      m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
-      m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
-      fx.appendChild(m);
-    }
-  </script>
-
-</body>
-</html>
+    /* ---- Part 2 of 2 continues here ---- */
