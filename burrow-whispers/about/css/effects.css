@@ -1,8 +1,9 @@
-/* Burrow Whispers About Page: effects.css V1.0 · Part 1 of 1
+/* Burrow Whispers About Page: effects.css V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/about/css/effects.css
    Floating paper, firefly dust, haze, and the mailbox hint glow.
    Uses variables from variables.css.
-   The dust and haze elements are created by the script in index.html. */
+   The dust and haze elements are created by the script in index.html.
+   V1.1: version bump to match the set; no visual changes. */
 
 /* ---------- Floating paper ---------- */
 /* Applied to the image, so it never fights the shrink/grow motion on .paper */
