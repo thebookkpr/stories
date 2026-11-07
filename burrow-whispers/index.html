@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Crossroads: index.html V1.7 · Part 1 of 2 (head, markup, place data)
+<!-- Burrow Whispers Crossroads: index.html V1.9 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
      Background: images/burrow-whispers-crossroads.jpg
-     Uses css/variables.css, css/base.css and css/effects.css V2.0 from this folder.
-     Part 2 continues INSIDE the script below: paste it straight after the last line of this Part. -->
+     Uses css/variables.css V2.0, css/base.css V2.1, css/effects.css V2.0
+     and js/crossroads.js V1.0 from this folder.
+     Place text, links and hints are edited in js/crossroads.js, not here.
+     Hot spot positions are edited in css/variables.css. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -16,11 +18,12 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/effects.css">
+  <script src="js/crossroads.js" defer></script>
 </head>
 
 <body>
 
-  <!-- The picture and its hot spots (positions are set in variables.css) -->
+  <!-- The picture and its hot spots -->
   <div class="world" id="world">
     <div class="stage" id="stage">
       <img class="stage-image"
@@ -34,19 +37,23 @@
       <button class="hot" data-id="hill"     type="button" aria-label="Burrow Hill"></button>
       <button class="hot" data-id="clearing" type="button" aria-label="The Clearing"></button>
       <button class="hot" data-id="secret"   type="button" aria-hidden="true" tabindex="-1"></button>
+
+      <!-- Opening titles: play once, then vanish -->
+      <div class="intro">
+        <h1 class="intro-title">Burrow Whispers</h1>
+        <p class="intro-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
+      </div>
     </div>
   </div>
 
   <!-- Firefly dust and haze (built by the script) -->
   <div class="fx-layer" id="fx" aria-hidden="true"></div>
 
-  <!-- Title zone -->
+  <!-- Back link (stays, small) -->
   <header class="top">
     <nav aria-label="Main navigation">
       <a class="back" href="../index.html">← Return to Library</a>
     </nav>
-    <h1 class="page-title">Burrow Whispers</h1>
-    <p class="page-subtitle">A collection of stories gathered from the Moonroot Wilds.</p>
   </header>
 
   <!-- Idle hint line -->
@@ -59,258 +66,6 @@
     <p class="panel-text" id="panel-text"></p>
     <a class="panel-go" id="panel-go" href="#"></a>
   </section>
-
-  <script>
-    /* ---------- Places ----------
-       id     matches data-id on the hot spot buttons above
-       title  panel heading
-       text   panel flavour text (use \n for a line break)
-       go     the button words, e.g. "Explore →"
-       url    where stage 2 travels to; null = nothing to visit yet,
-              so the panel shows its text with no button
-       lights which hot spots glow when this place is noticed
-       hint   idle line shown at the bottom (null = never hinted)
-       To open a place later: change its url from null to a folder. */
-    const PLACES = {
-      pond: {
-        title: "Moonroot Pond",
-        text: "A quiet pond shines beneath the moon.\nSomeone often visits here at night.",
-        go: "Explore →",
-        url: "lunelle/",
-        lights: ["pond", "moon"],
-        hint: "A faint glow shimmers across the pond..."
-      },
-      waystone: {
-        title: "The Crossroads Stone",
-        text: "Many journeys begin here.",
-        go: "Read More →",
-        url: null,                         /* world lore page not built yet */
-        lights: ["waystone"],
-        hint: "The old waystone remembers many journeys..."
-      },
-      trail: {
-        title: "The Lantern Trail",
-        text: "A lantern-lit path disappears beneath the roots.\nIt has not been walked yet.",
-        go: "Follow →",
-        url: null,                         /* future story slot */
-        lights: ["trail"],
-        hint: "A lantern-lit trail disappears beneath the roots..."
-      },
-      hill: {
-        title: "Burrow Hill",
-        text: "Warm lights glow behind round doors.\nMany little lives call this place home.",
-        go: "Visit →",
-        url: null,                         /* future village hub */
-        lights: ["hill"],
-        hint: "Warm lights flicker among the hillside burrows..."
-      },
-      clearing: {
-        title: "The Clearing",
-        text: "Paw prints wander down the path.\nWhat is Burrow Whispers?",
-        go: "Learn More →",
-        url: "about/",
-        lights: ["clearing"],
-        hint: null
-      }
-    };
-
-    /* A tap on the moon counts as a tap on the pond: one place, two spots */
-    const ALIASES = { moon: "pond" };
-
-    /* Hints that light nothing; they only teach that the picture holds places */
-    const GENERAL_HINTS = [
-      "Not every secret path is obvious.",
-      "The Wilds reward curious travelers."
-    ];
-
-    /* The secret has no panel and no label (see Part 2 for what it opens) */
-    const SECRET_URL = null;               /* set a folder here, e.g. "secret/" */
-
-    /* ---- Part 2 of 2 continues here ---- */
-
-   /* ============ Part 2 of 2: behaviour ============ */
-
-    const $ = (id) => document.getElementById(id);
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const el = (tag, cls) => {
-      const n = document.createElement(tag);
-      if (cls) n.className = cls;
-      return n;
-    };
-
-    const stage      = $("stage");
-    const fx         = $("fx");
-    const hintEl     = $("hint");
-    const panel      = $("panel");
-    const panelTitle = $("panel-title");
-    const panelText  = $("panel-text");
-    const panelGo    = $("panel-go");
-    const panelClose = $("panel-close");
-
-    let openKey = null;        /* place currently shown in the panel */
-    let hintTimer = null;      /* waits before the next idle hint */
-    let hideTimer = null;      /* hides the hint that is showing */
-    let swapTimer = null;      /* swaps hint words after a fade-out */
-
-    /* ---------- Light: add or remove the .lit glow ---------- */
-    function clearLit() {
-      stage.querySelectorAll(".hot.lit").forEach((n) => n.classList.remove("lit"));
-    }
-    function setLit(ids) {
-      clearLit();
-      ids.forEach((id) => {
-        const n = stage.querySelector('.hot[data-id="' + id + '"]');
-        if (n) n.classList.add("lit");
-      });
-    }
-
-    /* ---------- Stage 1: discovery panel ---------- */
-    function openPlace(key) {
-      const place = PLACES[ALIASES[key] || key];
-      if (!place) return;
-
-      stopHints();
-      openKey = ALIASES[key] || key;
-
-      panelTitle.textContent = place.title;
-      panelText.textContent = "";
-      place.text.split("\n").forEach((line, i) => {
-        if (i) panelText.appendChild(document.createElement("br"));
-        panelText.appendChild(document.createTextNode(line));
-      });
-
-      if (place.url) {                       /* stage 2 is only this button */
-        panelGo.href = place.url;
-        panelGo.textContent = place.go;
-        panelGo.style.display = "";
-      } else {
-        panelGo.removeAttribute("href");
-        panelGo.style.display = "none";
-      }
-
-      setLit(place.lights);
-      panel.classList.add("open");
-    }
-
-    function closePanel() {
-      if (!openKey) return;
-      openKey = null;
-      panel.classList.remove("open");
-      clearLit();
-      startHints();
-    }
-
-    /* ---------- Hot spot taps ---------- */
-    stage.querySelectorAll(".hot").forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = btn.dataset.id;
-        if (id === "secret") return openSecret(btn);
-        openPlace(id);
-      });
-    });
-
-    /* Tapping bare picture, pressing Escape or the × closes the panel */
-    stage.addEventListener("click", closePanel);
-    panelClose.addEventListener("click", closePanel);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closePanel();
-    });
-
-    /* Coming back with the Back button: start fresh */
-    window.addEventListener("pageshow", () => {
-      openKey = null;
-      panel.classList.remove("open");
-      clearLit();
-      startHints();
-    });
-
-    /* ---------- The secret: no label, no panel, no light ---------- */
-    function openSecret(btn) {
-      if (SECRET_URL) {
-        window.location.href = SECRET_URL;
-        return;
-      }
-      /* Nothing to open yet: a few motes drift up from the spot, then it is quiet again */
-      const r = btn.getBoundingClientRect();
-      for (let i = 0; i < 6; i++) {
-        const m = el("div", "mote");
-        m.style.left = (r.left + r.width * rand(0.25, 0.75)).toFixed(0) + "px";
-        m.style.top = (r.top + r.height * rand(0.3, 0.8)).toFixed(0) + "px";
-        m.style.setProperty("--dur", rand(2.2, 3.6).toFixed(1) + "s");
-        m.style.setProperty("--delay", rand(0, 0.5).toFixed(2) + "s");
-        m.style.setProperty("--drift", rand(-24, 24).toFixed(0) + "px");
-        m.style.animationIterationCount = "1";
-        m.style.animationFillMode = "forwards";
-        m.addEventListener("animationend", () => m.remove());
-        fx.appendChild(m);
-      }
-    }
-
-    /* ---------- Idle hints: one line every 8 to 12 seconds ---------- */
-    const HINT_ORDER = ["pond", "hill", "waystone", "trail"];
-    const HINTS = HINT_ORDER
-      .filter((k) => PLACES[k] && PLACES[k].hint)
-      .map((k) => ({ text: PLACES[k].hint, lights: PLACES[k].lights }))
-      .concat(GENERAL_HINTS.map((t) => ({ text: t, lights: [] })));
-    let hintIndex = 0;
-
-    function stopHints() {
-      clearTimeout(hintTimer);
-      clearTimeout(hideTimer);
-      clearTimeout(swapTimer);
-      hintEl.classList.remove("show");
-    }
-
-    function scheduleHint(delay) {
-      clearTimeout(hintTimer);
-      hintTimer = setTimeout(showHint, delay);
-    }
-
-    function showHint() {
-      if (openKey || document.hidden || !HINTS.length) {
-        return scheduleHint(rand(8000, 12000));
-      }
-      const h = HINTS[hintIndex % HINTS.length];
-      hintIndex++;
-
-      hintEl.textContent = h.text;
-      hintEl.classList.add("show");
-      if (h.lights.length) setLit(h.lights);
-
-      hideTimer = setTimeout(() => {
-        hintEl.classList.remove("show");
-        if (!openKey) clearLit();
-        scheduleHint(rand(8000, 12000));   /* waits after it fades out */
-      }, 5200);
-    }
-
-    function startHints() {
-      stopHints();
-      scheduleHint(rand(3500, 5500));      /* first hint comes a little sooner */
-    }
-
-    /* Pause hints while the tab is hidden */
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) stopHints();
-      else if (!openKey) startHints();
-    });
-
-    /* ---------- Firefly dust and haze (styles in effects.css) ---------- */
-    fx.append(el("div", "haze one"), el("div", "haze two"));
-    for (let i = 0; i < 16; i++) {
-      const m = el("div", "mote");
-      m.style.left = rand(5, 95).toFixed(1) + "%";
-      m.style.top = rand(10, 90).toFixed(1) + "%";
-      m.style.setProperty("--dur", rand(5, 9).toFixed(1) + "s");
-      m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
-      m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
-      fx.appendChild(m);
-    }
-
-    /* ---------- Begin ---------- */
-    startHints();
-  </script>
 
 </body>
 </html>
