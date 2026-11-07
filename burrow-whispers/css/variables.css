@@ -1,8 +1,13 @@
-/* Burrow Whispers Crossroads: css/variables.css V2.0 · Part 1 of 1
+/* Burrow Whispers Crossroads: css/variables.css V2.1 · Part 1 of 1
    Lives at stories/burrow-whispers/css/variables.css
-   Replaces V1.0. Pairs with base.css V2.0, effects.css V2.0, index.html V1.7.
+   Replaces V2.0. Pairs with base.css V2.4, effects.css V2.0,
+   index.html V2.0 and js/crossroads.js V1.1.
    Every colour, timing, and hot spot position is set here.
-   Hot spot values are percent of the PICTURE, not of the screen. */
+   Hot spot values are percent of the PICTURE, not of the screen.
+   Two pictures: 9:16 is the default (older and average phones),
+   9:20 is used for tall phones (see media query below).
+   V2.1: added the 9:16 picture and its own hot spot map. The 9:20 map
+         moved into a media query. */
 
 :root {
   /* ---------- Colours ---------- */
@@ -26,21 +31,22 @@
   --fade-slow:   1.4s;
 
   /* ---------- Picture and stage ----------
-     Ratio is width / height of images/burrow-whispers-crossroads.jpg (9:20).
+     Default picture: images/burrow-whispers-crossroads-916.jpg (9:16).
+     Ratio is width / height: 9 / 16 = 0.5625.
      Phones: the picture covers the screen.
      Wide screens: the picture fits the height (see media query below). */
-  --img-ratio: 0.45;
+  --img-ratio: 0.5625;
   --stage-w: max(100vw, calc(100vh * var(--img-ratio)));
   --stage-h: calc(var(--stage-w) / var(--img-ratio));
 
-  /* ---------- Hot spot map (centre X/Y, width, height) ---------- */
-  --pond-x: 21%;      --pond-y: 41%;      --pond-w: 42%;      --pond-h: 11%;
-  --moon-x: 20%;      --moon-y: 23%;      --moon-w: 16%;      --moon-h: 7%;
-  --waystone-x: 51%;  --waystone-y: 46%;  --waystone-w: 25%;  --waystone-h: 17%;
-  --trail-x: 59%;     --trail-y: 33%;     --trail-w: 16%;     --trail-h: 10%;
-  --hill-x: 85%;      --hill-y: 37%;      --hill-w: 30%;      --hill-h: 20%;
-  --clearing-x: 53%;  --clearing-y: 70%;  --clearing-w: 55%;  --clearing-h: 11%;
-  --secret-x: 90%;    --secret-y: 88%;    --secret-w: 8%;     --secret-h: 5%;
+  /* ---------- Hot spot map: 9:16 picture (centre X/Y, width, height) ---------- */
+  --pond-x: 21%;      --pond-y: 43%;      --pond-w: 42%;      --pond-h: 10%;
+  --moon-x: 20%;      --moon-y: 23%;      --moon-w: 14%;      --moon-h: 7%;
+  --waystone-x: 51%;  --waystone-y: 46%;  --waystone-w: 26%;  --waystone-h: 18%;
+  --trail-x: 58%;     --trail-y: 33%;     --trail-w: 14%;     --trail-h: 8%;
+  --hill-x: 86%;      --hill-y: 34%;      --hill-w: 28%;      --hill-h: 14%;
+  --clearing-x: 52%;  --clearing-y: 75%;  --clearing-w: 48%;  --clearing-h: 18%;
+  --secret-x: 89%;    --secret-y: 91%;    --secret-w: 18%;    --secret-h: 7%;
 
   /* ---------- Glow colours, one per place ---------- */
   --glow-pond:     rgba(190, 205, 255, 0.50);
@@ -57,6 +63,23 @@
   --panel-max:    420px;
   --tap-min:      48px;
   --hint-shadow:  0 2px 8px rgba(0, 0, 0, 0.95);
+}
+
+/* Tall phones (taller than 9:18): use the 9:20 picture and its hot spots.
+   Picture: images/burrow-whispers-crossroads.jpg
+   Keep this query identical to the <source media> in index.html. */
+@media (max-aspect-ratio: 9 / 18) {
+  :root {
+    --img-ratio: 0.45;
+
+    --pond-x: 21%;      --pond-y: 41%;      --pond-w: 42%;      --pond-h: 11%;
+    --moon-x: 20%;      --moon-y: 23%;      --moon-w: 16%;      --moon-h: 7%;
+    --waystone-x: 51%;  --waystone-y: 46%;  --waystone-w: 25%;  --waystone-h: 17%;
+    --trail-x: 59%;     --trail-y: 33%;     --trail-w: 16%;     --trail-h: 10%;
+    --hill-x: 85%;      --hill-y: 37%;      --hill-w: 30%;      --hill-h: 20%;
+    --clearing-x: 53%;  --clearing-y: 70%;  --clearing-w: 55%;  --clearing-h: 11%;
+    --secret-x: 90%;    --secret-y: 88%;    --secret-w: 8%;     --secret-h: 5%;
+  }
 }
 
 /* Wide screens: show the whole picture, fitted to the height, centred.
