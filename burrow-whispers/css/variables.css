@@ -68,7 +68,7 @@
 /* Tall phones (taller than 9:18): use the 9:20 picture and its hot spots.
    Picture: images/burrow-whispers-crossroads.jpg
    Keep this query identical to the <source media> in index.html. */
-@media (max-aspect-ratio: 9 / 18) {
+@media (max-aspect-ratio: 9 / 17) {
   :root {
     --img-ratio: 0.45;
 
