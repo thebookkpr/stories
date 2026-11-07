@@ -1,0 +1,172 @@
+/* Burrow Whispers About Page: base.css V1.0 · Part 1 of 1
+   Lives at stories/burrow-whispers/about/css/base.css
+   Page layout, background layers, the paper, and the mailbox.
+   Uses variables from variables.css.
+   Note: the paper's in/out animation is handled here with a state class.
+   JavaScript only needs to add or remove .is-away on .paper. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg-deep);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--parchment);
+  text-align: center;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Background layers ---------- */
+.room {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-deep) url("../images/burrowwhispers-cg.jpg") center / cover no-repeat;
+}
+
+.lantern-light {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, rgba(215, 180, 106, 0.10), transparent 60%);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(10, 18, 16, 0.55) 0%,
+    rgba(10, 18, 16, 0.15) 40%,
+    rgba(10, 18, 16, 0.45) 100%);
+}
+
+/* ---------- Page ---------- */
+.page {
+  position: relative;
+  z-index: 2;
+  width: min(100%, var(--page-width));
+  margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) var(--page-pad)
+           calc(env(safe-area-inset-bottom, 0px) + 2rem);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-size);
+  float: left;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+.back:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+.head { clear: both; padding-top: 1em; }
+
+.page-title {
+  margin: 0;
+  font-weight: normal;
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px var(--gold-glow), 0 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+.page-subtitle {
+  margin: 0.8em auto 0;
+  max-width: 30ch;
+  font-style: italic;
+  font-size: clamp(1rem, 3.6vw, 1.2rem);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.rule {
+  width: 120px;
+  height: 1px;
+  margin: 1.2em auto 0;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+
+.keeper {
+  margin: 3em 0 0;
+  font-style: italic;
+  color: var(--gold);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+/* ---------- The paper ---------- */
+.paper {
+  position: relative;
+  width: var(--paper-width);
+  margin: 1.5em auto 0;
+  cursor: pointer;
+  transform-origin: center center;
+
+  /* Coming back: grows away from the mailbox */
+  transition:
+    transform  var(--paper-in-time) var(--paper-ease-in),
+    opacity    var(--paper-in-time) ease-out,
+    visibility 0s linear 0s;
+}
+
+.paper-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.6));
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Tucked away: shrinks toward the mailbox */
+.paper.is-away {
+  transform: translate(var(--mailbox-shift-x), var(--mailbox-shift-y)) scale(0.04);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform  var(--paper-out-time) var(--paper-ease-out),
+    opacity    var(--paper-out-time) ease-in,
+    visibility 0s linear var(--paper-out-time);
+}
+
+/* ---------- The mailbox tap target ---------- */
+.mailbox {
+  position: fixed;
+  z-index: 3;
+  left: var(--mailbox-left);
+  bottom: calc(var(--mailbox-bottom) + env(safe-area-inset-bottom, 0px));
+  width: var(--mailbox-size);
+  height: var(--mailbox-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.mailbox:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .paper,
+  .paper.is-away {
+    transition-duration: 0.01s;
+  }
+}
