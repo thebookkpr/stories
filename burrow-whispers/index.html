@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Crossroads: index.html V1.9 · Part 1 of 1
+<!-- Burrow Whispers Crossroads: index.html V2.0 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
-     Background: images/burrow-whispers-crossroads.jpg
-     Uses css/variables.css V2.0, css/base.css V2.1, css/effects.css V2.0
-     and js/crossroads.js V1.0 from this folder.
+     Replaces V1.9.
+     Pictures: images/burrow-whispers-crossroads-916.jpg (default, 9:16)
+               images/burrow-whispers-crossroads.jpg (tall phones, 9:20)
+     Uses css/variables.css V2.1, css/base.css V2.4, css/effects.css V2.0
+     and js/crossroads.js V1.1 from this folder.
      Place text, links and hints are edited in js/crossroads.js, not here.
-     Hot spot positions are edited in css/variables.css. -->
+     Hot spot positions are edited in css/variables.css.
+     V2.0: the picture is now a <picture> element. The media query in
+           <source> must match the one in variables.css (max-aspect-ratio: 9/18). -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -26,9 +30,15 @@
   <!-- The picture and its hot spots -->
   <div class="world" id="world">
     <div class="stage" id="stage">
-      <img class="stage-image"
-           src="images/burrow-whispers-crossroads.jpg"
-           alt="A moonlit woodland crossroads with a carved waystone, a lotus pond, a lantern-lit trail and round-door burrows on a hillside.">
+      <picture>
+        <!-- Tall phones (taller than 9:18): the 9:20 picture -->
+        <source media="(max-aspect-ratio: 9/18)"
+                srcset="images/burrow-whispers-crossroads.jpg">
+        <!-- Everything else: the 9:16 picture -->
+        <img class="stage-image"
+             src="images/burrow-whispers-crossroads-916.jpg"
+             alt="A moonlit woodland crossroads with a carved waystone, a lotus pond, a lantern-lit trail and round-door burrows on a hillside.">
+      </picture>
 
       <button class="hot" data-id="pond"     type="button" aria-label="Moonroot Pond"></button>
       <button class="hot" data-id="moon"     type="button" aria-hidden="true" tabindex="-1"></button>
