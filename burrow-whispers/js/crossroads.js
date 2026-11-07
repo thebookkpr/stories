@@ -1,8 +1,10 @@
-/* Burrow Whispers Crossroads: js/crossroads.js V1.0 · Part 1 of 1
+/* Burrow Whispers Crossroads: js/crossroads.js V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/js/crossroads.js
-   Pairs with index.html V1.9, variables.css V2.0, base.css V2.1, effects.css V2.0.
+   Replaces V1.0. Pairs with index.html V1.9, variables.css V2.0,
+   base.css V2.2, effects.css V2.0.
    Section 1: places (edit text and links here).
-   Section 2: behaviour (two-stage tap, idle hints, secret, dust). */
+   Section 2: behaviour (two-stage tap, idle hints, secret, dust, opening titles).
+   V1.1: the opening-titles clock starts when the picture has loaded. */
 
 /* ============ SECTION 1: PLACES ============
    id      matches data-id on the hot spot buttons in index.html
@@ -71,7 +73,8 @@ const HINT_ORDER = ["pond", "hill", "waystone", "trail"];
 /* The secret: set a folder (e.g. "secret/") to make it open something */
 const SECRET_URL = null;
 
-/* Opening titles finish at this many milliseconds (matches base.css) */
+/* Opening titles finish this many milliseconds after the picture loads
+   (2s wait + 4s title ends at 6s; subtitle 6s + 8s ends at 14s) */
 const INTRO_MS = 14000;
 
 
@@ -97,7 +100,7 @@ const panelClose = $("panel-close");
 let openKey = null;       /* place shown in the panel */
 let hintTimer = null;     /* waits before the next hint */
 let hideTimer = null;     /* hides the hint that is showing */
-const introEnd = performance.now() + INTRO_MS;
+let introStart = null;    /* set when the picture has loaded */
 
 /* ---------- Light ---------- */
 function clearLit() {
@@ -232,7 +235,8 @@ function showHint() {
 /* The first hint waits until the opening titles are finished */
 function startHints() {
   stopHints();
-  const wait = Math.max(rand(3500, 5500), introEnd - performance.now() + 1500);
+  const base = introStart === null ? performance.now() : introStart;
+  const wait = Math.max(rand(3500, 5500), base + INTRO_MS - performance.now() + 1500);
   scheduleHint(wait);
 }
 
@@ -251,6 +255,23 @@ for (let i = 0; i < 16; i++) {
   m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
   m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
   fx.appendChild(m);
+}
+
+/* ---------- Opening titles: start the clock when the picture is ready ---------- */
+const introEl = document.querySelector(".intro");
+const bgImg = document.querySelector(".stage-image");
+
+function playIntro() {
+  if (introStart !== null) return;
+  introStart = performance.now();
+  introEl.classList.add("play");     /* title at 2s, subtitle at 6s, from now */
+  startHints();                      /* hints wait until the titles are done */
+}
+
+if (bgImg.complete && bgImg.naturalWidth) playIntro();
+else {
+  bgImg.addEventListener("load", playIntro);
+  bgImg.addEventListener("error", playIntro);   /* never leave the titles waiting */
 }
 
 /* ---------- Begin ---------- */
