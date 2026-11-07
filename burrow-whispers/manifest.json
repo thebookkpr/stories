@@ -3,7 +3,7 @@
   "short_name": "Burrow Whispers",
   "description": "A collection of stories gathered from the Moonroot Wilds.",
   "start_url": "./index.html",
-  "scope": "./",
+  "scope": "./index.html",
   "display": "standalone",
   "display_override": ["fullscreen", "standalone"],
   "orientation": "portrait",
