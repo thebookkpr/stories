@@ -65,7 +65,7 @@
   --hint-shadow:  0 2px 8px rgba(0, 0, 0, 0.95);
 }
 
-/* Tall phones (taller than 9:18): use the 9:20 picture and its hot spots.
+/* Tall phones (taller than 9:17): use the 9:20 picture and its hot spots.
    Picture: images/burrow-whispers-crossroads.jpg
    Keep this query identical to the <source media> in index.html. */
 @media (max-aspect-ratio: 9 / 17) {
