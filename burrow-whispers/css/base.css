@@ -1,12 +1,12 @@
-/* Burrow Whispers Crossroads: css/base.css V2.2 · Part 1 of 1
+/* Burrow Whispers Crossroads: css/base.css V2.3 · Part 1 of 1
    Lives at stories/burrow-whispers/css/base.css
-   Replaces V2.1. Pairs with variables.css V2.0, effects.css V2.0,
+   Replaces V2.2. Pairs with variables.css V2.0, effects.css V2.0,
    index.html V1.9 and js/crossroads.js V1.1.
    Layout only: stage, hot spot placement and shapes, back link,
    opening titles, hint line, discovery panel.
    Glows, ripples and dust live in effects.css.
-   V2.2: opening titles wait (paused) until JS adds .play to .intro,
-         so the 2-second count starts when the picture has loaded. */
+   V2.3: opening titles play as soon as the page loads (no waiting
+         for the script), so they always appear. */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -97,7 +97,7 @@ html, body {
 
 /* ---------- Opening titles: sit above the waystone, play once ----------
    Lives inside .stage, so it stays locked to the picture.
-   Nothing plays until JS adds .play to .intro (picture loaded).
+   Plays as soon as the page loads.
    Title: 2s delay, 4s on screen. Subtitle: starts at 6s, 8s on screen. */
 .intro {
   position: absolute;
@@ -121,8 +121,8 @@ html, body {
   opacity: 0;
   animation-fill-mode: both;
   animation-timing-function: ease-in-out;
-  animation-play-state: paused;       /* waits until JS says the picture is ready */
 }
+
 /* Soft dark haze behind the words so they read over branches and path */
 .intro-title::before,
 .intro-subtitle::before {
@@ -154,8 +154,6 @@ html, body {
   animation-duration: 8s;
   animation-delay: 6s;
 }
-.intro.play .intro-title,
-.intro.play .intro-subtitle { animation-play-state: running; }
 
 @keyframes intro-title {          /* 1s in, 2s hold, 1s out */
   0%   { opacity: 0; }
