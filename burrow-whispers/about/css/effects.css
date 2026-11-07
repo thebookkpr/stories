@@ -1,0 +1,92 @@
+/* Burrow Whispers About Page: effects.css V1.0 · Part 1 of 1
+   Lives at stories/burrow-whispers/about/css/effects.css
+   Floating paper, firefly dust, haze, and the mailbox hint glow.
+   Uses variables from variables.css.
+   The dust and haze elements are created by the script in index.html. */
+
+/* ---------- Floating paper ---------- */
+/* Applied to the image, so it never fights the shrink/grow motion on .paper */
+.paper-img {
+  animation: paper-float var(--paper-float-time) ease-in-out infinite;
+}
+
+@keyframes paper-float {
+  0%, 100% { transform: translateY(0) rotate(-0.3deg); }
+  50%      { transform: translateY(-6px) rotate(0.3deg); }
+}
+
+/* ---------- Effects layer ---------- */
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Soft drifting haze */
+.haze {
+  position: absolute;
+  width: 140%;
+  height: 40%;
+  left: -20%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(238, 230, 210, 0.07), transparent 70%);
+  filter: blur(18px);
+}
+.haze.one {
+  top: 15%;
+  animation: haze-drift 38s ease-in-out infinite alternate;
+}
+.haze.two {
+  top: 55%;
+  animation: haze-drift 52s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes haze-drift {
+  from { transform: translateX(-4%); }
+  to   { transform: translateX(4%); }
+}
+
+/* Firefly dust: position, --dur, --delay and --drift are set by the script */
+.mote {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 8px 2px var(--gold-glow);
+  opacity: 0;
+  animation: mote-drift var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes mote-drift {
+  0%   { opacity: 0;    transform: translate(0, 0) scale(0.6); }
+  25%  { opacity: 0.9; }
+  60%  { opacity: 0.6; }
+  100% { opacity: 0;    transform: translate(var(--drift, 20px), -70px) scale(1); }
+}
+
+/* ---------- Mailbox hint ---------- */
+/* While the paper is tucked away, the mailbox glows softly
+   to say "there is something inside". The script adds .has-mail. */
+.mailbox.has-mail {
+  animation: mailbox-glow 2.8s ease-in-out infinite;
+}
+
+@keyframes mailbox-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(215, 180, 106, 0); }
+  50%      { box-shadow: 0 0 22px 8px var(--gold-glow); }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .paper-img,
+  .haze,
+  .mote,
+  .mailbox.has-mail {
+    animation: none;
+  }
+  .mote { opacity: 0.5; }
+}
