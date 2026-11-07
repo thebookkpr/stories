@@ -1,8 +1,9 @@
-/* Burrow Whispers About Page: base.css V1.0 · Part 1 of 1
+/* Burrow Whispers About Page: base.css V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/about/css/base.css
    Page layout, background layers, the paper, and the mailbox.
    Uses variables from variables.css.
-   Note: the paper's in/out animation is handled here with a state class.
+   V1.1: mailbox button now follows the mailbox in the painting.
+   The paper's in/out animation is handled here with a state class.
    JavaScript only needs to add or remove .is-away on .paper. */
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -147,14 +148,15 @@ body {
 .mailbox {
   position: fixed;
   z-index: 3;
-  left: var(--mailbox-left);
-  bottom: calc(var(--mailbox-bottom) + env(safe-area-inset-bottom, 0px));
+  left: var(--mailbox-cx);
+  top: var(--mailbox-cy);
   width: var(--mailbox-size);
   height: var(--mailbox-size);
+  transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 50%;
+  border-radius: 22%;
   background: transparent;
   cursor: pointer;
 }
