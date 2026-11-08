@@ -1,40 +1,76 @@
-/* One More Little Step — variables.css V1.1 */
+/* Lunelle Games Menu — css/variables.css V1.0 · Part 1 of 1
+   Lives at stories/burrow-whispers/lunelle/css/variables.css
+   Holds every shared value: colors, fonts, background pictures,
+   hot spot, medallion, whisper and timing settings.
+   Change a look or a timing here, not in base.css or effects.css.
+   Image paths are relative to THIS css folder, so they start with ../ */
+
 :root {
-  /* Canon palette */
-  --ivory: #f7f3ea;
-  --lavender: #cdbfe8;
-  --violet: #8a74c4;
-  --silver: #e6ebf2;
-  --mist: #a9bfd9;
-  --night: #1b1830;
-  --silver-glow: rgba(230, 235, 242, 0.65);
 
-  /* Type */
+  /* ---------- Lunelle palette (hers, not the series') ---------- */
+  --night:        #1b1830;
+  --ivory:        #f7f3ea;
+  --lavender:     #cdbfe8;
+  --violet:       #3c3464;
+  --silver-glow:  rgba(230, 235, 242, 0.65);
+  --gold-glow:    rgba(215, 180, 106, 0.7);
+
+  /* ---------- Fonts ---------- */
   --font-story: Georgia, "Times New Roman", serif;
-  --font-ui: "Trebuchet MS", system-ui, sans-serif;
+  --font-ui:    "Trebuchet MS", system-ui, sans-serif;
 
-  /* Shape and spacing */
-  --radius: 18px;
-  --gap: 12px;
-  --pad: 16px;
+  /* ---------- Background pictures ---------- */
+  --bg-tall:   url("../images/moonlitreverie-bg.jpg");   /* 9:20 (modern phones) */
+  --bg-older:  url("../images/moonlitreverie-916.jpg");  /* 9:16 (older phones)  */
+  --bg-fallback: var(--night);                           /* shown while loading  */
 
-  /* Soft shadows, no harsh contrast */
-  --shadow-soft: 0 6px 24px rgba(27, 24, 48, 0.35);
+  /* ---------- Moon reflection hot spot (primary, invisible) ----------
+     Positions are a percentage of the picture, centered on the
+     reflection in the pond. Nudge these to line up with the art. */
+  --reflection-left:    63%;
+  --reflection-top:     62%;
+  --reflection-width:   clamp(220px, 62vw, 340px);   /* oversized tap zone */
+  --reflection-height:  clamp(220px, 62vw, 340px);
+  --hotspot-focus-ring: 2px solid var(--lavender);   /* keyboard users only */
 
-  /* Motion */
+  /* ---------- Moon Lotus Medallion (hidden until revealed) ---------- */
+  --medallion-image:    url("../assets/moonlotus-medallion.png");
+  --medallion-size:     clamp(96px, 26vw, 150px);
+  --medallion-left:     63%;     /* lines up above the reflection      */
+  --medallion-top:      50%;     /* final resting height over the water */
+  --medallion-rise:     48px;    /* how far it rises up from the water  */
+  --medallion-tap-size: 72px;    /* smallest comfortable tap target     */
+  --medallion-glow:     var(--gold-glow);
+
+  /* ---------- Floating in the air ---------- */
+  --float-distance:  14px;       /* how far it drifts up and down */
+  --float-duration:  6s;         /* one full float cycle          */
+  --float-sway:      4px;        /* slight side-to-side drift     */
+
+  /* ---------- Interaction timing ---------- */
+  --focus-delay:       450ms;    /* world reacts first (300-600ms)    */
+  --reveal-duration:   1.6s;     /* medallion fading and rising in    */
+  --ripple-duration:   1.8s;     /* ripple spreading across the pond  */
+  --travel-duration:   1.2s;     /* fade out before the game opens    */
+  --particle-count:    14;       /* petal particles on the 2nd tap    */
+
+  /* ---------- Ripple and shimmer ---------- */
+  --ripple-color:       rgba(230, 235, 242, 0.55);
+  --ripple-size:        clamp(160px, 46vw, 260px);
+  --shimmer-brighten:   1.25;    /* reflection brightness on first tap */
+
+  /* ---------- Idle whisper (anchored low, never center-screen) ---------- */
+  --whisper-bottom:     max(14vh, 96px);
+  --whisper-fade:       1s;      /* fade in / out time             */
+  --whisper-hold:       3s;      /* how long the line stays        */
+  --whisper-gap-min:    10s;     /* quiet time between whispers    */
+  --whisper-gap-max:    15s;
+  --whisper-size:       clamp(0.95rem, 3.6vw, 1.15rem);
+
+  /* ---------- Text colors ---------- */
+  --label-color:  var(--ivory);
+  --label-shadow: 0 0 12px rgba(27, 24, 48, 0.9), 0 2px 6px rgba(27, 24, 48, 0.9);
+
+  /* ---------- Easing ---------- */
   --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
-  --fade-slow: 1.2s;
-  --fade-fast: 0.4s;
-
-  /* Layers */
-  --z-bg: 0;
-  --z-hotspot: 10;
-  --z-lunelle: 20;
-  --z-fx: 30;
-  --z-ui: 40;
-  --z-overlay: 50;
-
-    /* Stage shape: change both together if the art ratio changes */
-  --stage-ratio: 20 / 9;
-  --stage-ratio-num: 2.2222;
 }
