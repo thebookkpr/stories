@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.3.0
+  VERSION: 0.4.0
   PART: 1 of 1
 */
 
@@ -11,16 +11,18 @@
   // ---------- Data ----------
   const CLUES = {
     reflection: "The light flickers when it moves. It does not seem like a lantern.",
-    petal:      "Something delicate has landed nearby.",
-    fireflies:  "Fireflies glow gold. The mysterious light shines silver.",
+    petal:      "A tiny petal looks disturbed. Something very small may have rested here recently.",
+    fireflies:  "The fireflies glow warm gold. The silver light shines a different color.",
     moonbeam:   "The moonlight follows the light wherever it goes."
   };
+  const LAST_CLUE_NUDGE = " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.";
   const TOTAL_CLUES = Object.keys(CLUES).length;
   const PETAL_REWARD = 100;
 
   // Timings (ms). Keep in sync with variables.css
-  const PETAL_POPUP_DELAY = 900;   // clue text appears while the petal drifts away
-  const PETAL_FX_TIME = 1600;      // matches --petal-time
+  const CONTINUE_DELAY = 1000;     // --continue-delay
+  const PETAL_POPUP_DELAY = 900;   // dialog appears while the petal drifts away
+  const PETAL_FX_TIME = 1600;      // --petal-time
   const REWARD_DELAY = 3200;       // moth grows (1.4s), hovers a moment, then rewards
 
   const DISCOVERIES = [
@@ -63,6 +65,8 @@
   let journalUnlocked = false;
   let storyMode = "intro"; // "intro" | "walk"
   let revealed = false;
+  let waitingForDialog = false;  // true while the petal animation plays
+  let continueTimer = null;
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
@@ -70,9 +74,11 @@
   const storyTitle = $("story-title");
   const storyText = $("story-text");
   const storyBtn = $("story-btn");
-  const popup = $("popup");
-  const popupText = $("popup-text");
-  const popupBadge = popup.querySelector(".clue-badge");
+  const dialog = $("clue-dialog");
+  const dialogTitle = $("dialog-title");
+  const dialogText = $("dialog-text");
+  const dialogProgress = $("dialog-progress");
+  const dialogBtn = $("dialog-btn");
   const silverLight = $("silver-light");
   const moth = $("moth");
   const petalFx = $("petal-fx");
@@ -93,12 +99,6 @@
     storyPanel.hidden = false;
   }
 
-  function showPopup(text, isClue) {
-    popupText.textContent = text;
-    popupBadge.hidden = !isClue;
-    popup.hidden = false;
-  }
-
   function updateClueCount() {
     $("clue-count").textContent = found.size + "/" + TOTAL_CLUES;
   }
@@ -114,6 +114,31 @@
       f.style.animationDuration = 6 + Math.random() * 6 + "s";
       box.appendChild(f);
     }
+  }
+
+  // ---------- Bottom dialog ----------
+  // Continue stays hidden for a moment so an extra tap can't dismiss it.
+  function showDialog(title, text, showProgress) {
+    clearTimeout(continueTimer);
+    dialogBtn.classList.remove("ready");
+
+    dialogTitle.textContent = title;
+    dialogText.textContent = text;
+    dialogProgress.hidden = !showProgress;
+    dialogProgress.textContent = "Clues Found: " + found.size + " / " + TOTAL_CLUES;
+
+    dialog.hidden = false;
+    waitingForDialog = false;
+
+    continueTimer = setTimeout(function () {
+      dialogBtn.classList.add("ready");
+    }, CONTINUE_DELAY);
+  }
+
+  function closeDialog() {
+    clearTimeout(continueTimer);
+    dialogBtn.classList.remove("ready");
+    dialog.hidden = true;
   }
 
   // ---------- Scrapbook ----------
@@ -156,6 +181,8 @@
 
   // ---------- Clues ----------
   function onHotspot(e) {
+    if (waitingForDialog) return;
+
     const btn = e.currentTarget;
     const key = btn.dataset.clue;
     if (!CLUES[key] || found.has(key)) return;
@@ -167,21 +194,24 @@
     let text = CLUES[key];
     if (found.size === TOTAL_CLUES) {
       silverLight.classList.add("ready");
-      text += " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.";
+      text += LAST_CLUE_NUDGE;
     }
 
     if (key === "petal") {
+      waitingForDialog = true;
       playPetalFx();
-      setTimeout(function () { showPopup(text, true); }, PETAL_POPUP_DELAY);
+      setTimeout(function () {
+        showDialog("🌙 Clue Found", text, true);
+      }, PETAL_POPUP_DELAY);
     } else {
-      showPopup(text, true);
+      showDialog("🌙 Clue Found", text, true);
     }
   }
 
   function onSilverLight() {
-    if (revealed) return;
+    if (revealed || waitingForDialog) return;
     if (found.size < TOTAL_CLUES) {
-      showPopup("It's too far away to see clearly.", false);
+      showDialog("🌙 Too Far Away", "It's too far away to see clearly.", false);
       return;
     }
     storyMode = "walk";
@@ -213,9 +243,8 @@
     if (storyMode === "walk") playReveal();
   });
 
-  $("popup-close").addEventListener("click", function () {
-    popup.hidden = true;
-  });
+  // Only the Continue button closes the dialog (never auto-dismiss, never tap-outside)
+  dialogBtn.addEventListener("click", closeDialog);
 
   document.querySelectorAll(".hotspot").forEach(function (h) {
     h.addEventListener("click", onHotspot);
