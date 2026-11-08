@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/style.css
-  VERSION: 0.2.0
+  VERSION: 0.2.1
   PART: 1 of 1
 */
 
@@ -225,13 +225,28 @@ html, body {
 .clue-badge { color: var(--gold); font-weight: bold; }
 .journal { margin-top: 14px; }
 
-#reward-card {
-  max-height: 34vh;
-  width: auto;
-  max-width: 70%;
-  border-radius: 12px;
-  margin-bottom: 10px;
+/* Reward cards (side by side) */
+.reward-cards {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
 }
+.reward-cards figure { margin: 0; flex: 1 1 0; min-width: 0; }
+.reward-cards img {
+  max-height: 24vh;
+  max-width: 100%;
+  width: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 14px rgba(201, 184, 255, 0.45);
+}
+.reward-cards figcaption {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--lavender);
+}
+
 #reward-list { list-style: none; padding: 0; margin: 0 0 16px; text-align: left; display: inline-block; }
 #reward-list li { margin: 4px 0; }
 .mini { width: 20px; height: 20px; vertical-align: middle; }
@@ -303,7 +318,6 @@ html, body {
   border: 1px solid rgba(201, 184, 255, 0.35);
   border-radius: 12px;
 }
-.journal-section img { max-width: 100%; max-height: 30vh; border-radius: 8px; margin-bottom: 8px; }
 .journal-section p { margin: 0; font-style: italic; line-height: 1.55; }
 .journal-section.locked { display: none; }
 
@@ -314,4 +328,5 @@ html, body {
   #hud-left, #hud-scrapbook, #hud-clues { font-size: 0.9rem; }
   .panel-card { max-width: 560px; padding: 32px 30px; font-size: 1.15rem; }
   .page ul { font-size: 1rem; }
-}
+  .reward-cards figcaption { font-size: 0.9rem; }
+  }
