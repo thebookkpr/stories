@@ -1,0 +1,175 @@
+/*
+  PROJECT: Burrow Whispers #001 — The Silver Moth
+  FILE: css/base.css
+  VERSION: 0.3.0
+  PART: 1 of 1
+  LOAD ORDER: 2nd (after variables)
+*/
+
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--night);
+  color: var(--ivory);
+  font-family: var(--font-main);
+  overflow: hidden;
+}
+
+button { font-family: inherit; }
+
+#game { position: relative; width: 100%; height: 100%; }
+
+/* ---------- Scene ---------- */
+#scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+#bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- Fireflies (created by JS) ---------- */
+#fireflies { position: absolute; inset: 0; pointer-events: none; }
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px 3px rgba(255, 217, 138, 0.8);
+  opacity: 0.8;
+}
+
+/* ---------- Hotspots (% positions) ---------- */
+.hotspot {
+  position: absolute;
+  width: 16vmin;
+  height: 16vmin;
+  max-width: 120px;
+  max-height: 120px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 184, 255, 0.22), transparent 70%);
+  cursor: pointer;
+}
+.hotspot.found { opacity: 0; pointer-events: none; }
+
+#hs-reflection { left: 52%; top: 62%; }
+#hs-petal      { left: 32%; top: 85%; }
+#hs-fireflies  { left: 22%; top: 36%; }
+#hs-moonbeam   { left: 55%; top: 20%; }
+
+/* ---------- Petal that floats away after its clue is tapped ---------- */
+#petal-fx {
+  position: absolute;
+  left: 32%;
+  top: 85%;
+  width: 12vw;
+  max-width: 80px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px var(--glow-silver));
+}
+#petal-fx[hidden] { display: none; }
+
+/* ---------- Silver light ---------- */
+#silver-light {
+  position: absolute;
+  left: var(--light-x);
+  top: var(--light-y);
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: var(--silver);
+  box-shadow: 0 0 14px 6px rgba(232, 240, 255, 0.85);
+  cursor: pointer;
+}
+#silver-light::after { content: ""; position: absolute; inset: -22px; }
+#silver-light.ready { box-shadow: 0 0 22px 10px rgba(232, 240, 255, 1); }
+#silver-light[hidden] { display: none; }
+
+/* ---------- Moth (bigger instead of zooming) ---------- */
+#moth {
+  position: absolute;
+  left: var(--light-x);
+  top: var(--light-y);
+  width: var(--moth-size);
+  max-width: var(--moth-max);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 14px var(--glow-silver));
+}
+#moth[hidden] { display: none; }
+
+/* ---------- HUD ---------- */
+#hud-left, #hud-scrapbook, #hud-clues, #crest-menu {
+  position: absolute;
+  z-index: 5;
+  background: var(--hud-bg);
+  border: 1px solid var(--border-hud);
+  backdrop-filter: blur(4px);
+  color: var(--ivory);
+  font-size: var(--text-hud);
+  letter-spacing: 0.06em;
+}
+
+#hud-left {
+  top: calc(var(--safe-top) + 10px);
+  left: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+#hud-left strong { color: var(--lavender); font-size: 0.9rem; }
+
+#hud-scrapbook {
+  top: calc(var(--safe-top) + 10px);
+  right: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  cursor: pointer;
+}
+
+#crest-menu {
+  bottom: calc(var(--safe-bottom) + 12px);
+  left: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#hud-clues {
+  bottom: calc(var(--safe-bottom) + 12px);
+  right: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+}
+#hud-clues strong { color: var(--gold); margin-left: 6px; }
+
+/* ---------- Tablet ---------- */
+@media (min-width: 768px) {
+  #hud-left, #hud-scrapbook, #hud-clues { font-size: var(--text-hud-tablet); }
+}
