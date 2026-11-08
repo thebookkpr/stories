@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/effects.css
-  VERSION: 0.4.0
+  VERSION: 0.5.0
   PART: 1 of 1
   LOAD ORDER: 4th (last)
 */
@@ -97,7 +97,7 @@
   transition:
     opacity 0.5s ease,
     transform 0.5s ease,
-    visibility 0s linear 0.5s; /* stays hidden until the fade-out ends */
+    visibility 0s linear 0.5s;
 }
 #dialog-btn.ready {
   opacity: 1;
@@ -107,6 +107,26 @@
     opacity 0.5s ease,
     transform 0.5s ease,
     visibility 0s;
+}
+
+/* ---------- Viewer: card / journal picture pops up, shrinks away on tap ---------- */
+/* Close time (0.22s) must match VIEWER_CLOSE_TIME in game.js */
+#viewer     { animation: viewer-fade-in 0.25s ease both; }
+#viewer-img { animation: viewer-pop-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+#viewer-hint { animation: viewer-fade-in 0.6s ease 0.3s both; }
+
+#viewer.closing { animation: viewer-fade-out 0.22s ease forwards; pointer-events: none; }
+#viewer.closing #viewer-img { animation: viewer-pop-out 0.22s ease forwards; }
+
+@keyframes viewer-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes viewer-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes viewer-pop-in {
+  from { opacity: 0; transform: scale(0.7) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+@keyframes viewer-pop-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.85) translateY(10px); }
 }
 
 /* ---------- Reward cards appear one after another ---------- */
