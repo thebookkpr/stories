@@ -1,0 +1,253 @@
+/*
+  PROJECT: Burrow Whispers #001 — The Silver Moth
+  FILE: css/style.css
+  VERSION: 0.1.0
+  PART: 1 of 1
+*/
+
+:root {
+  --night: #0f1030;
+  --panel: rgba(24, 22, 58, 0.92);
+  --lavender: #c9b8ff;
+  --ivory: #f6f1ff;
+  --silver: #e8f0ff;
+  --gold: #ffd98a;
+  --radius: 18px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--night);
+  color: var(--ivory);
+  font-family: Georgia, "Times New Roman", serif;
+  overflow: hidden;
+}
+
+#game { position: relative; width: 100%; height: 100%; }
+
+/* ---------- Scene ---------- */
+#scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transition: transform 2.4s ease, transform-origin 0s;
+  transform-origin: 88% 52%;
+}
+#scene.zoom { transform: scale(2.4); }
+
+#bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- Fireflies (created by JS) ---------- */
+#fireflies { position: absolute; inset: 0; pointer-events: none; }
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px 3px rgba(255, 217, 138, 0.8);
+  animation: drift 9s ease-in-out infinite alternate;
+  opacity: 0.8;
+}
+@keyframes drift {
+  from { transform: translate(0, 0); opacity: 0.3; }
+  50%  { opacity: 1; }
+  to   { transform: translate(24px, -30px); opacity: 0.4; }
+}
+
+/* ---------- Hotspots (% positions) ---------- */
+.hotspot {
+  position: absolute;
+  width: 16vmin;
+  height: 16vmin;
+  max-width: 120px;
+  max-height: 120px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,184,255,0.22), transparent 70%);
+  cursor: pointer;
+  animation: breathe 3.6s ease-in-out infinite;
+}
+.hotspot.found { animation: none; opacity: 0; pointer-events: none; }
+
+#hs-reflection { left: 52%; top: 62%; }
+#hs-petal      { left: 32%; top: 85%; }
+#hs-fireflies  { left: 22%; top: 36%; }
+#hs-moonbeam   { left: 55%; top: 20%; }
+
+@keyframes breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
+  50%      { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
+
+/* ---------- Silver light ---------- */
+#silver-light {
+  position: absolute;
+  left: 88%;
+  top: 52%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: var(--silver);
+  box-shadow: 0 0 14px 6px rgba(232, 240, 255, 0.85);
+  cursor: pointer;
+  animation: flicker 2.8s ease-in-out infinite;
+}
+#silver-light.ready { box-shadow: 0 0 22px 10px rgba(232, 240, 255, 1); }
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.55; }
+  35%      { opacity: 1; }
+  60%      { opacity: 0.7; }
+}
+
+#moth {
+  position: absolute;
+  left: 88%;
+  top: 52%;
+  width: 14%;
+  max-width: 120px;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 12px rgba(232, 240, 255, 0.9));
+  animation: hover 4s ease-in-out infinite;
+}
+@keyframes hover {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50%      { transform: translate(-50%, -58%); }
+}
+
+/* ---------- HUD ---------- */
+#hud-left, #hud-scrapbook, #hud-clues, #crest-menu {
+  position: absolute;
+  z-index: 5;
+  background: rgba(15, 16, 48, 0.62);
+  border: 1px solid rgba(201, 184, 255, 0.4);
+  backdrop-filter: blur(4px);
+  color: var(--ivory);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+#hud-left {
+  top: calc(var(--safe-top) + 10px);
+  left: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+}
+#hud-left strong { color: var(--lavender); font-size: 0.9rem; }
+
+#hud-scrapbook {
+  top: calc(var(--safe-top) + 10px);
+  right: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#crest-menu {
+  bottom: calc(var(--safe-bottom) + 12px);
+  left: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#hud-clues {
+  bottom: calc(var(--safe-bottom) + 12px);
+  right: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+}
+#hud-clues strong { color: var(--gold); margin-left: 6px; }
+
+/* ---------- Overlays & panels ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(8, 8, 28, 0.55);
+  animation: fadein 0.6s ease;
+}
+.overlay[hidden] { display: none; }
+
+.panel-card {
+  width: 100%;
+  max-width: 440px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 22px 20px;
+  text-align: center;
+  background: var(--panel);
+  border: 2px solid var(--lavender);
+  border-radius: var(--radius);
+  box-shadow: 0 0 30px rgba(201, 184, 255, 0.35);
+}
+.panel-card.small { max-width: 340px; }
+.panel-card h2 { margin: 0 0 12px; color: var(--lavender); }
+.panel-card p { line-height: 1.55; margin: 0 0 12px; }
+
+#story-text p { margin: 0 0 10px; }
+
+.eyebrow { color: var(--gold); letter-spacing: 0.2em; font-size: 0.75rem; }
+.quote { font-style: italic; color: var(--lavender); }
+.clue-badge { color: var(--gold); font-weight: bold; }
+.journal { margin-top: 14px; }
+
+#reward-card {
+  width: 70%;
+  max-width: 260px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+#reward-list { list-style: none; padding: 0; margin: 0 0 16px; text-align: left; display: inline-block; }
+#reward-list li { margin: 4px 0; }
+
+.panel-card button {
+  margin-top: 6px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #a98bff, #7b5cf0);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.panel-card button:active { transform: scale(0.97); }
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Tablet ---------- */
+@media (min-width: 768px) {
+  #hud-left, #hud-scrapbook, #hud-clues { font-size: 0.9rem; }
+  .panel-card { max-width: 560px; padding: 32px 30px; font-size: 1.15rem; }
+  }
