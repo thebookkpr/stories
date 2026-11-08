@@ -1,0 +1,186 @@
+/* Lunelle Games Menu — css/base.css V1.0 · Part 1 of 1
+   Lives at stories/burrow-whispers/lunelle/css/base.css
+   Layout and resting states only. Colors and timings come from
+   variables.css. Animations (ripple, float, particles) are in
+   effects.css. JavaScript (in /js) only adds state classes to
+   .scene: is-focused, is-revealed, is-traveling.
+
+   Expected HTML parts, all inside <main class="scene">:
+   .stage > .reflection-hotspot, .medallion > .medallion-img,
+   .whisper, .travel-veil, plus .return-link in the header. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-fallback);
+  color: var(--label-color);
+  font-family: var(--font-story);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Scene ---------- */
+.scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg-fallback);
+}
+
+/* The stage is the picture. Hot spots are placed in percentages of
+   it, so they stay lined up with the art on any screen size. */
+.stage {
+  --art-w: 9;
+  --art-h: 20;                                   /* 9:20 by default */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, calc(100dvh * var(--art-w) / var(--art-h)));
+  aspect-ratio: var(--art-w) / var(--art-h);
+  transform: translate(-50%, -50%);
+  background: var(--bg-tall) center / cover no-repeat;
+}
+
+/* Wider than 1:2 means an older 9:16 phone (or a desktop window) */
+@media (min-aspect-ratio: 1/2) {
+  .stage {
+    --art-w: 9;
+    --art-h: 16;
+    background-image: var(--bg-older);
+  }
+}
+
+/* ---------- Return link ---------- */
+.return-link {
+  position: fixed;
+  z-index: 6;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  padding: 0.7em 1em;
+  color: var(--label-color);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-shadow: var(--label-shadow);
+  background: rgba(27, 24, 48, 0.35);
+  border-radius: 999px;
+}
+.return-link:focus-visible { outline: var(--hotspot-focus-ring); }
+
+/* ---------- Moon reflection hot spot (invisible) ---------- */
+.reflection-hotspot {
+  position: absolute;
+  left: var(--reflection-left);
+  top: var(--reflection-top);
+  width: var(--reflection-width);
+  height: var(--reflection-height);
+  transform: translate(-50%, -50%);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+}
+.reflection-hotspot:focus { outline: none; }
+.reflection-hotspot:focus-visible { outline: var(--hotspot-focus-ring); }
+
+/* Once the medallion is out, the pond stops asking to be tapped */
+.scene.is-revealed .reflection-hotspot { pointer-events: none; }
+
+/* ---------- Medallion (hidden until revealed) ---------- */
+.medallion {
+  position: absolute;
+  left: var(--medallion-left);
+  top: var(--medallion-top);
+  width: max(var(--medallion-size), var(--medallion-tap-size));
+  height: max(var(--medallion-size), var(--medallion-tap-size));
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  z-index: 3;
+
+  /* resting state: low in the water, invisible, not tappable */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, calc(-50% + var(--medallion-rise)));
+  transition:
+    opacity var(--reveal-duration) var(--ease-gentle),
+    transform var(--reveal-duration) var(--ease-gentle),
+    visibility 0s linear var(--reveal-duration);
+}
+.medallion:focus { outline: none; }
+.medallion:focus-visible { outline: var(--hotspot-focus-ring); border-radius: 50%; }
+
+.scene.is-revealed .medallion {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  transition-delay: 0s;
+}
+
+.medallion-img {
+  display: block;
+  width: var(--medallion-size);
+  height: var(--medallion-size);
+  object-fit: contain;
+  background: var(--medallion-image) center / contain no-repeat;
+  filter: drop-shadow(0 0 14px var(--medallion-glow));
+  pointer-events: none;
+}
+
+/* ---------- Idle whisper (low on screen, never center) ---------- */
+.whisper {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: var(--whisper-bottom);
+  width: min(88vw, 520px);
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font-style: italic;
+  font-size: var(--whisper-size);
+  line-height: 1.5;
+  color: var(--label-color);
+  text-shadow: var(--label-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--whisper-fade) var(--ease-gentle);
+}
+.whisper.is-showing { opacity: 1; }
+
+/* ---------- Travel veil (fade before the game opens) ---------- */
+.travel-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  background: var(--night);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--travel-duration) var(--ease-gentle);
+}
+.scene.is-traveling .travel-veil { opacity: 1; pointer-events: auto; }
+
+/* ---------- Helpers ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .medallion, .whisper, .travel-veil { transition-duration: 0.01s; }
+}
