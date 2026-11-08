@@ -1,227 +1,86 @@
 <!DOCTYPE html>
 <!-- Lunelle Games Menu — index.html V1.0 · Part 1 of 1
-     Lives at games/burrow-whispers/lunelle/index.html (replaces the old game index).
-     Uses css/variables.css and css/effects.css from this same folder.
-     To add a game: add one entry to the GAMES list near the bottom. -->
+     Lives at stories/burrow-whispers/lunelle/index.html
+     Uses css/variables.css, css/base.css and css/effects.css,
+     and js/lunelle.js, all from this same folder.
+     The pictures are set in css/variables.css (9:20 and 9:16).
+     The game address is set at the top of js/lunelle.js. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#1b1830">
-  <title>Lunelle — A Burrow Whispers Collection</title>
+  <meta name="description" content="Lunelle's Moonlit Reverie, a quiet pond in the Moonroot Wilds.">
+  <title>Lunelle | Burrow Whispers</title>
 
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/effects.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
+  <!-- Load the medallion early so it does not pop in -->
+  <link rel="preload" as="image" href="./assets/moonlotus-medallion.png">
 
-    html { min-height: 100%; background: var(--night, #1b1830); }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      min-height: 100dvh;
-      color: var(--ivory, #f7f3ea);
-      font-family: var(--font-story, Georgia, "Times New Roman", serif);
-      background: radial-gradient(ellipse at 50% 0%, #3c3464 0%, var(--night, #1b1830) 70%) fixed;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* Soft blurred moonlit backdrop from the game's title art */
-    .backdrop {
-      position: fixed; inset: 0; z-index: 0;
-      background: url("one-more-little-step/images/title-screen.jpg") center / cover no-repeat;
-      opacity: 0.22;
-      filter: blur(6px);
-    }
-    .fx-layer { position: fixed; z-index: 1; }
-
-    .hub {
-      position: relative; z-index: 2;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: max(6vh, 24px) max(20px, env(safe-area-inset-right)) 40px max(20px, env(safe-area-inset-left));
-      text-align: center;
-    }
-
-    .hub-title {
-      margin: 0;
-      font-weight: normal;
-      font-size: clamp(2rem, 7vw, 4rem);
-      letter-spacing: 0.25em;
-      text-indent: 0.25em;
-      text-shadow: 0 0 18px var(--silver-glow, rgba(230,235,242,.65)), 0 2px 8px rgba(27,24,48,.6);
-    }
-    .hub-sub {
-      margin: 0.7em 0 0;
-      font-family: var(--font-ui, "Trebuchet MS", system-ui, sans-serif);
-      font-size: clamp(0.7rem, 1.8vw, 1rem);
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--lavender, #cdbfe8);
-    }
-    .hub-tag {
-      margin: 1.4em 0 2em;
-      font-style: italic;
-      font-size: clamp(0.95rem, 2.2vw, 1.2rem);
-      opacity: 0.9;
-    }
-
-    /* Game cards */
-    .games {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
-      justify-content: center;
-      gap: 22px;
-      margin: 0; padding: 0;
-      list-style: none;
-      text-align: left;
-    }
-    .game {
-      display: flex; flex-direction: column;
-      height: 100%;
-      overflow: hidden;
-      color: inherit;
-      text-decoration: none;
-      background: rgba(60, 52, 100, 0.55);
-      border: 1px solid rgba(205, 191, 232, 0.5);
-      border-radius: var(--radius, 18px);
-      box-shadow: var(--shadow-soft, 0 6px 24px rgba(27,24,48,.35));
-      backdrop-filter: blur(4px);
-      transition: transform var(--fade-fast, .4s) var(--ease-gentle, ease),
-                  box-shadow var(--fade-fast, .4s) var(--ease-gentle, ease);
-    }
-    a.game:hover, a.game:focus-visible {
-      transform: translateY(-4px);
-      box-shadow: 0 0 22px var(--silver-glow, rgba(230,235,242,.65));
-      outline: none;
-    }
-    .game-art {
-      aspect-ratio: 20 / 9;
-      background: #2a2548 center / cover no-repeat;
-    }
-    .game-body { display: flex; flex-direction: column; gap: 8px; flex: 1; padding: 16px 18px 18px; }
-    .game-kind {
-      margin: 0;
-      font-family: var(--font-ui, "Trebuchet MS", system-ui, sans-serif);
-      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--lavender, #cdbfe8);
-    }
-    .game-name { margin: 0; font-weight: normal; font-size: 1.3rem; letter-spacing: 0.1em; }
-    .game-desc { margin: 0; flex: 1; font-size: 0.95rem; line-height: 1.5; opacity: 0.9; }
-    .game-go {
-      align-self: flex-start;
-      margin-top: 6px;
-      padding: 0.6em 1.3em;
-      font-family: var(--font-ui, "Trebuchet MS", system-ui, sans-serif);
-      font-size: 0.9rem; letter-spacing: 0.08em;
-      background: rgba(205, 191, 232, 0.5);
-      border: 1px solid rgba(230, 235, 242, 0.5);
-      border-radius: var(--radius, 18px);
-      box-shadow: 0 0 14px var(--silver-glow, rgba(230,235,242,.65));
-    }
-
-    /* "More soon" placeholder: quiet, not clickable */
-    .game.soon {
-      justify-content: center; align-items: center;
-      min-height: 220px; padding: 20px;
-      text-align: center; font-style: italic;
-      background: rgba(60, 52, 100, 0.2);
-      border-style: dashed;
-      box-shadow: none;
-      opacity: 0.7;
-    }
-
-    .version {
-      margin: 2.5em 0 0;
-      font-family: var(--font-ui, "Trebuchet MS", system-ui, sans-serif);
-      font-size: 0.7rem; letter-spacing: 0.2em;
-      color: var(--lavender, #cdbfe8); opacity: 0.6;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .firefly, .particle, .fog { display: none; }
-      .game { transition: none; }
-    }
-  </style>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/effects.css">
 </head>
+
 <body>
 
-  <div class="backdrop"></div>
-  <div class="fx-layer" id="fx"></div>
+  <!-- Return Navigation -->
+  <header>
+    <nav aria-label="Main navigation">
+      <a class="return-link" href="../index.html">← Return to Burrow Whispers</a>
+    </nav>
+  </header>
 
-  <main class="hub">
-    <h1 class="hub-title">LUNELLE</h1>
-    <p class="hub-sub">A Burrow Whispers Collection</p>
-    <p class="hub-tag">Choose a gentle journey.</p>
-    <ul class="games" id="games"></ul>
-    <p class="version">V1.0</p>
+  <main class="scene">
+
+    <h1 class="visually-hidden">Lunelle: Moonlit Reverie</h1>
+
+    <!-- The picture. Hot spots are placed on it in percentages. -->
+    <div class="stage">
+
+      <!-- Invisible tap zone over the moon's reflection -->
+      <button
+        class="reflection-hotspot"
+        type="button"
+        aria-label="Touch the moon's reflection in the pond"
+      >
+        <span class="visually-hidden">Touch the moon's reflection</span>
+      </button>
+
+      <!-- Moon Lotus Medallion: hidden until the reflection is tapped.
+           Opens the first game, One More Little Step. -->
+      <button
+        class="medallion"
+        type="button"
+        aria-label="Open One More Little Step"
+      >
+        <span class="medallion-img" role="img" aria-label="Moon Lotus medallion"></span>
+      </button>
+
+      <!-- Mist, moths, shimmer and ripples are added here by js/lunelle.js -->
+
+    </div>
+
+    <!-- Idle whisper, filled in by js/lunelle.js -->
+    <p class="whisper" aria-hidden="true"></p>
+
+    <!-- Fade-out before the game opens -->
+    <div class="travel-veil" aria-hidden="true"></div>
+
   </main>
 
-  <script>
-    /* ---------- Add new games here ---------- */
-    const GAMES = [
-      {
-        title: "One More Little Step",
-        kind: "Cozy exploration story",
-        desc: "A quiet evening at Moonroot Pond, and a silver reflection that does not match the moon. Perhaps all it takes is one more little step.",
-        url: "one-more-little-step/",
-        art: "one-more-little-step/images/title-screen.jpg"
-      }
-    ];
-    const SHOW_COMING_SOON = true;   /* set false to hide the placeholder card */
+  <!-- If JavaScript is off, the game is still reachable -->
+  <noscript>
+    <a
+      href="./one-more-little-step/index.html"
+      style="position:fixed;z-index:9;left:50%;bottom:12vh;transform:translateX(-50%);
+             padding:0.8em 1.4em;color:#f7f3ea;background:#3c3464;
+             border-radius:999px;font-family:Georgia,serif;text-decoration:none;"
+    >Play One More Little Step</a>
+  </noscript>
 
-    /* ---------- Build the menu ---------- */
-    const list = document.getElementById("games");
-    const el = (tag, cls, text) => {
-      const n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text) n.textContent = text;
-      return n;
-    };
-
-    GAMES.forEach(g => {
-      const li = el("li");
-      const a = el("a", "game");
-      a.href = g.url;
-      const art = el("div", "game-art");
-      art.style.backgroundImage = `url("${g.art}")`;
-      const body = el("div", "game-body");
-      body.append(el("p", "game-kind", g.kind), el("h2", "game-name", g.title),
-                  el("p", "game-desc", g.desc), el("span", "game-go", "Begin"));
-      a.append(art, body);
-      li.appendChild(a);
-      list.appendChild(li);
-    });
-
-    if (SHOW_COMING_SOON) {
-      const li = el("li");
-      li.appendChild(el("div", "game soon", "More journeys are waiting to be found."));
-      list.appendChild(li);
-    }
-
-    /* ---------- Gentle effects (uses styles from effects.css) ---------- */
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const fx = document.getElementById("fx");
-    function add(cls, style, vars) {
-      const d = el("div", cls);
-      if (style) d.style.cssText = style;
-      if (vars) Object.entries(vars).forEach(([k, v]) => d.style.setProperty(k, v));
-      fx.appendChild(d);
-    }
-    add("fog one"); add("fog two");
-    for (let i = 0; i < 12; i++)
-      add("firefly", `left:${rand(5, 95).toFixed(1)}%;top:${rand(10, 85).toFixed(1)}%`, {
-        "--dur": rand(3, 6).toFixed(1) + "s",
-        "--delay": (-rand(0, 6)).toFixed(1) + "s",
-        "--drift": rand(-40, 40).toFixed(0) + "px"
-      });
-    for (let i = 0; i < 10; i++)
-      add("particle", `left:${rand(5, 95).toFixed(1)}%;top:${rand(35, 95).toFixed(1)}%`, {
-        "--dur": rand(10, 18).toFixed(1) + "s",
-        "--delay": (-rand(0, 14)).toFixed(1) + "s"
-      });
-  </script>
+  <script src="./js/lunelle.js" defer></script>
 
 </body>
 </html>
