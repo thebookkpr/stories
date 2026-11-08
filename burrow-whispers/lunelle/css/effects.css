@@ -1,140 +1,191 @@
-/* One More Little Step — effects.css V1.0 */
+/* Lunelle Games Menu — css/effects.css V1.0 · Part 1 of 1
+   Lives at stories/burrow-whispers/lunelle/css/effects.css
+   Motion only: ambient mist and moths, pond ripple, reflection
+   shimmer, medallion float and glow, petal particles.
+   Colors and timings come from variables.css. JavaScript (in /js)
+   adds the elements and the state classes on .scene:
+   is-focused, is-revealed, is-traveling.
 
-/* Effects layer: sits above art, never blocks clicks */
-.fx-layer {
+   Expected HTML parts, all inside .stage:
+   .fx-mist (x2), .fx-moth (several), .fx-shimmer, .fx-ripple,
+   .fx-particle (created on the 2nd tap, inside .medallion). */
+
+/* ---------- Ambient: drifting mist ---------- */
+.fx-mist {
   position: absolute;
-  inset: 0;
-  z-index: var(--z-fx);
-  overflow: hidden;
+  left: -20%;
+  width: 140%;
+  height: 16%;
   pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center,
+              rgba(205, 191, 232, 0.28) 0%,
+              rgba(205, 191, 232, 0) 70%);
+  filter: blur(14px);
+  animation: mist-drift 38s ease-in-out infinite alternate;
+}
+.fx-mist.one { top: 52%; }
+.fx-mist.two { top: 70%; animation-duration: 52s; animation-delay: -18s; opacity: 0.8; }
+
+@keyframes mist-drift {
+  from { transform: translateX(-6%); }
+  to   { transform: translateX(6%); }
 }
 
-/* Fireflies: JS sets left, top, --dur, --delay, --drift per firefly */
-.firefly {
+/* ---------- Ambient: wandering moths ---------- */
+.fx-moth {
   position: absolute;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fffbe0 0%, rgba(255, 251, 224, 0) 70%);
-  box-shadow: 0 0 10px 3px rgba(255, 251, 224, 0.45);
-  opacity: 0;
-  animation:
-    firefly-glow var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
-    firefly-drift calc(var(--dur, 4s) * 2) ease-in-out var(--delay, 0s) infinite alternate;
-}
-@keyframes firefly-glow {
-  0%, 100% { opacity: 0; }
-  50%      { opacity: 0.9; }
-}
-@keyframes firefly-drift {
-  0%   { transform: translate(0, 0); }
-  100% { transform: translate(var(--drift, 30px), -24px); }
-}
-
-/* Floating particles: pollen and dust, slow and faint */
-.particle {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--silver);
-  opacity: 0;
-  animation: particle-float var(--dur, 12s) linear var(--delay, 0s) infinite;
-}
-@keyframes particle-float {
-  0%   { opacity: 0; transform: translateY(0); }
-  20%  { opacity: 0.6; }
-  80%  { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(-80px); }
-}
-
-/* Soft fog: two slow layers drifting across the scene */
-.fog {
-  position: absolute;
-  left: -20%;
-  width: 140%;
-  height: 30%;
-  background: radial-gradient(ellipse at center,
-    rgba(230, 235, 242, 0.22) 0%,
-    rgba(230, 235, 242, 0) 70%);
-  animation: fog-drift 40s ease-in-out infinite alternate;
-}
-.fog.one { bottom: 20%; }
-.fog.two { bottom: 8%; animation-duration: 55s; animation-direction: alternate-reverse; }
-@keyframes fog-drift {
-  0%   { transform: translateX(-4%); }
-  100% { transform: translateX(4%); }
-}
-
-/* Water sparkle: small shimmering points on the pond */
-.sparkle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
   background: var(--ivory);
+  box-shadow: 0 0 10px 3px var(--silver-glow);
   opacity: 0;
-  animation: sparkle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
-}
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0.6); }
-  50%      { opacity: 0.8; transform: scale(1.2); }
+  animation: moth-wander var(--dur, 9s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
 }
 
-/* Silver reflection pulse: the story hook on the pond.
-   Position it with inline left, top, width, height in percent. */
-.silver-reflection {
+@keyframes moth-wander {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  20%  { opacity: 0.9; }
+  50%  { opacity: 0.6; transform: translate(var(--drift, 30px), -26px); }
+  80%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: translate(calc(var(--drift, 30px) * -0.6), -50px); }
+}
+
+/* ---------- Ambient: slow moon shimmer on the reflection ---------- */
+.fx-shimmer {
   position: absolute;
+  left: var(--reflection-left);
+  top: var(--reflection-top);
+  width: calc(var(--reflection-width) * 0.8);
+  height: calc(var(--reflection-height) * 0.8);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
   background: radial-gradient(circle,
-    rgba(230, 235, 242, 0.55) 0%,
-    rgba(230, 235, 242, 0) 70%);
-  animation: reflection-pulse 6s ease-in-out infinite;
-}
-@keyframes reflection-pulse {
-  0%, 100% { opacity: 0.45; transform: scale(0.95); }
-  50%      { opacity: 0.9;  transform: scale(1.05); }
+              rgba(247, 243, 234, 0.35) 0%,
+              rgba(247, 243, 234, 0) 70%);
+  mix-blend-mode: screen;
+  opacity: 0.25;
+  animation: shimmer-idle 7s ease-in-out infinite;
 }
 
-/* Moon Lotus crest overlay: position it over the crest on the sprite */
-.crest {
+@keyframes shimmer-idle {
+  0%, 100% { opacity: 0.18; transform: translate(-50%, -50%) scale(0.96); }
+  50%      { opacity: 0.38; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* First tap: the reflection brightens */
+.scene.is-focused .fx-shimmer,
+.scene.is-revealed .fx-shimmer {
+  animation: shimmer-tap calc(var(--ripple-duration) * 1.4) var(--ease-gentle) forwards;
+}
+
+@keyframes shimmer-tap {
+  0%   { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+  35%  { opacity: 0.95; transform: translate(-50%, -50%) scale(calc(var(--shimmer-brighten) * 0.9)); }
+  100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* ---------- First tap: ripple across the pond ---------- */
+.fx-ripple {
   position: absolute;
-  z-index: calc(var(--z-lunelle) + 1);
-  width: 6%;
-  aspect-ratio: 1;
+  left: var(--reflection-left);
+  top: var(--reflection-top);
+  width: var(--ripple-size);
+  height: var(--ripple-size);
+  transform: translate(-50%, -50%) scale(0.2);
+  border: 2px solid var(--ripple-color);
   border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(205, 191, 232, 0.8) 0%,
-    rgba(205, 191, 232, 0) 70%);
-  opacity: 0;
   pointer-events: none;
-}
-.crest.shimmer {
-  animation: crest-shimmer 2.4s var(--ease-gentle) 1;
-}
-@keyframes crest-shimmer {
-  0%   { opacity: 0;   transform: scale(0.8); }
-  35%  { opacity: 1;   transform: scale(1.4); box-shadow: 0 0 24px var(--silver-glow); }
-  100% { opacity: 0;   transform: scale(1.8); }
+  z-index: 2;
+  opacity: 0;
 }
 
-/* Faint glow breathing on Moon Lotus blooms */
-.lotus-glow {
-  animation: lotus-breathe 7s ease-in-out infinite;
-}
-@keyframes lotus-breathe {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(205, 191, 232, 0.3)); }
-  50%      { filter: drop-shadow(0 0 12px rgba(205, 191, 232, 0.7)); }
+.scene.is-focused .fx-ripple,
+.scene.is-revealed .fx-ripple {
+  animation: ripple-out var(--ripple-duration) var(--ease-gentle) 1 forwards;
 }
 
-/* Fade overlay between scenes */
-.fade-overlay {
+/* A second, softer ring a moment behind the first */
+.fx-ripple.late { animation-delay: 0.35s; border-width: 1px; }
+
+@keyframes ripple-out {
+  0%   { opacity: 0.9; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.5); }
+}
+
+/* ---------- Medallion: floating in the air ----------
+   The float is on the image, not the button, so the reveal
+   transition in base.css and the float never fight each other. */
+.scene.is-revealed .medallion-img {
+  animation:
+    medallion-float var(--float-duration) ease-in-out infinite,
+    medallion-glow  calc(var(--float-duration) * 0.7) ease-in-out infinite;
+}
+
+@keyframes medallion-float {
+  0%, 100% { transform: translate(0, 0) rotate(-1.5deg); }
+  25%      { transform: translate(var(--float-sway), calc(var(--float-distance) * -0.6)) rotate(0.5deg); }
+  50%      { transform: translate(0, calc(var(--float-distance) * -1)) rotate(1.5deg); }
+  75%      { transform: translate(calc(var(--float-sway) * -1), calc(var(--float-distance) * -0.4)) rotate(0deg); }
+}
+
+@keyframes medallion-glow {
+  0%, 100% { filter: drop-shadow(0 0 10px var(--medallion-glow)); }
+  50%      { filter: drop-shadow(0 0 24px var(--medallion-glow)); }
+}
+
+/* Hover / press (touch and mouse) */
+.medallion:hover .medallion-img,
+.medallion:focus-visible .medallion-img {
+  filter: drop-shadow(0 0 30px var(--medallion-glow));
+}
+.medallion:active .medallion-img { transform: scale(0.96); }
+
+/* ---------- Second tap: petal particles ----------
+   JavaScript creates --particle-count of these inside .medallion
+   and sets --angle (deg) and --dist (px) on each one. */
+.fx-particle {
   position: absolute;
-  inset: 0;
-  z-index: calc(var(--z-overlay) + 1);
-  background: var(--night);
-  opacity: 0;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 12px;
+  margin: -6px 0 0 -4px;
+  border-radius: 80% 0 80% 0;
   pointer-events: none;
-  transition: opacity var(--fade-slow) var(--ease-gentle);
+  background: linear-gradient(135deg, var(--ivory), var(--lavender));
+  box-shadow: 0 0 8px var(--silver-glow);
+  opacity: 0;
+  animation: particle-burst 1.4s var(--ease-gentle) forwards;
+  animation-delay: var(--delay, 0s);
 }
-.fade-overlay.on { opacity: 1; }
+
+@keyframes particle-burst {
+  0%   { opacity: 0;   transform: rotate(var(--angle)) translateY(0) scale(0.6); }
+  15%  { opacity: 1; }
+  100% { opacity: 0;   transform: rotate(var(--angle)) translateY(calc(var(--dist, 90px) * -1)) scale(1); }
+}
+
+/* ---------- Travel: medallion swells as the veil closes ---------- */
+.scene.is-traveling .medallion-img {
+  animation: none;
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 40px var(--medallion-glow));
+  transition: transform var(--travel-duration) var(--ease-gentle),
+              filter var(--travel-duration) var(--ease-gentle);
+}
+
+/* ---------- Reduced motion: keep it still ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fx-mist, .fx-moth, .fx-shimmer { animation: none; }
+  .fx-moth { display: none; }
+  .fx-ripple { display: none; }
+  .scene.is-revealed .medallion-img { animation: none; }
+  .fx-particle { display: none; }
+}
