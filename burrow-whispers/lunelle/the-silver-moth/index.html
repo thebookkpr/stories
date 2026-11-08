@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.4.1
+  VERSION: 0.5.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -124,6 +124,7 @@
         <img src="assets/moon-petal.png" alt="">
         <span id="petal-total">0</span> Moon Petals
       </p>
+      <p class="book-hint">Tap a name to see it up close.</p>
 
       <div class="pages">
         <div class="page">
@@ -136,15 +137,23 @@
         </div>
       </div>
 
-      <!-- Journal entry: the picture already contains the writing -->
+      <!-- Journal: tap the title to read the full picture -->
       <div id="journal-section" class="journal-section locked">
-        <h3>Journal Entry #001</h3>
-        <img id="journal-img"
-             src="assets/moonroot-journalentry-001.png"
-             alt="Journal Entry #001, The Silver Moth. Sometimes courage doesn't roar. Sometimes it simply takes one more little step.">
+        <h3>Journal Entries</h3>
+        <button class="name-btn" type="button"
+                data-image="assets/moonroot-journalentry-001.png"
+                data-alt="Journal Entry #001, The Silver Moth. Sometimes courage doesn't roar. Sometimes it simply takes one more little step.">
+          Entry #001: The Silver Moth
+        </button>
       </div>
     </div>
   </section>
+
+  <!-- Viewer: shows a card or journal picture on its own; tap to close -->
+  <div id="viewer" hidden role="dialog" aria-modal="true" aria-label="Collected item">
+    <img id="viewer-img" src="" alt="">
+    <p id="viewer-hint">Tap to close</p>
+  </div>
 
 </main>
 
