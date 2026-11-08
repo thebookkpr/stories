@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.4.0
+  VERSION: 0.5.0
   PART: 1 of 1
 */
 
@@ -19,14 +19,18 @@
   const TOTAL_CLUES = Object.keys(CLUES).length;
   const PETAL_REWARD = 100;
 
-  // Timings (ms). Keep in sync with variables.css
+  // Timings (ms). Keep in sync with variables.css / effects.css
   const CONTINUE_DELAY = 1000;     // --continue-delay
   const PETAL_POPUP_DELAY = 900;   // dialog appears while the petal drifts away
   const PETAL_FX_TIME = 1600;      // --petal-time
   const REWARD_DELAY = 3200;       // moth grows (1.4s), hovers a moment, then rewards
+  const VIEWER_CLOSE_TIME = 220;   // viewer-fade-out in effects.css
 
+  // Items with an image become tappable names in the scrapbook.
   const DISCOVERIES = [
-    { id: "moth",    label: "#001 Silver Moon Moth" },
+    { id: "moth",    label: "#001 Silver Moon Moth",
+      image: "assets/silvermoonmoth-card.png",
+      alt: "Discovery #001, Silver Moon Moth card" },
     { id: "frog",    label: "#002 Moon Frog" },
     { id: "seed",    label: "#003 Lantern Seed" },
     { id: "pearl",   label: "#004 Pond Pearl" },
@@ -34,7 +38,9 @@
   ];
 
   const KEEPSAKES = [
-    { id: "petal",   label: "#001 Moon Petal" },
+    { id: "petal",   label: "#001 Moon Petal",
+      image: "assets/moonpetal-card.png",
+      alt: "Keepsake #001, Moon Petal card" },
     { id: "lotus",   label: "#002 Pressed Moon Lotus" },
     { id: "acorn",   label: "#003 Acorn Charm" },
     { id: "ribbon",  label: "#004 Silver Ribbon" },
@@ -67,6 +73,7 @@
   let revealed = false;
   let waitingForDialog = false;  // true while the petal animation plays
   let continueTimer = null;
+  let viewerClosing = false;
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
@@ -84,6 +91,8 @@
   const petalFx = $("petal-fx");
   const reward = $("reward");
   const scrapbook = $("scrapbook");
+  const viewer = $("viewer");
+  const viewerImg = $("viewer-img");
 
   // ---------- Helpers ----------
   function showStory(title, lines, buttonLabel) {
@@ -141,18 +150,49 @@
     dialog.hidden = true;
   }
 
+  // ---------- Viewer (card / journal picture on its own) ----------
+  function openViewer(src, alt) {
+    if (viewerClosing) return;
+    viewerImg.src = src;
+    viewerImg.alt = alt || "";
+    viewer.classList.remove("closing");
+    viewer.hidden = false;
+  }
+
+  function closeViewer() {
+    if (viewer.hidden || viewerClosing) return;
+    viewerClosing = true;
+    viewer.classList.add("closing");
+    setTimeout(function () {
+      viewer.hidden = true;
+      viewer.classList.remove("closing");
+      viewerImg.src = "";
+      viewerClosing = false;
+    }, VIEWER_CLOSE_TIME);
+  }
+
   // ---------- Scrapbook ----------
   function fillList(listId, items, unlocked) {
     const ul = $(listId);
     ul.innerHTML = "";
     items.forEach(function (item) {
       const li = document.createElement("li");
-      if (unlocked.has(item.id)) {
-        li.textContent = item.label;
-      } else {
+
+      if (!unlocked.has(item.id)) {
         li.textContent = item.label.split(" ")[0] + " ???";
         li.className = "locked";
+      } else if (item.image) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "name-btn";
+        btn.textContent = item.label;
+        btn.dataset.image = item.image;
+        btn.dataset.alt = item.alt || item.label;
+        li.appendChild(btn);
+      } else {
+        li.textContent = item.label;
       }
+
       ul.appendChild(li);
     });
   }
@@ -261,6 +301,20 @@
   $("crest-menu").addEventListener("click", openScrapbook);
   $("book-close").addEventListener("click", function () {
     scrapbook.hidden = true;
+  });
+
+  // Tap a name in the scrapbook to open its picture
+  scrapbook.addEventListener("click", function (e) {
+    const btn = e.target.closest(".name-btn");
+    if (btn && btn.dataset.image) {
+      openViewer(btn.dataset.image, btn.dataset.alt);
+    }
+  });
+
+  // Tap the picture (or anywhere on the viewer) to close it
+  viewer.addEventListener("click", closeViewer);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeViewer();
   });
 
   // ---------- Init ----------
