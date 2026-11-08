@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.1.0
+  VERSION: 0.2.0
   PART: 1 of 1
 */
 
@@ -17,7 +17,22 @@
   };
   const TOTAL_CLUES = Object.keys(CLUES).length;
   const PETAL_REWARD = 100;
-  const START_DISCOVERIES = 12;
+
+  const DISCOVERIES = [
+    { id: "moth",    label: "#001 Silver Moon Moth" },
+    { id: "frog",    label: "#002 Moon Frog" },
+    { id: "seed",    label: "#003 Lantern Seed" },
+    { id: "pearl",   label: "#004 Pond Pearl" },
+    { id: "cricket", label: "#005 Nightfire Cricket" }
+  ];
+
+  const KEEPSAKES = [
+    { id: "petal",   label: "#001 Moon Petal" },
+    { id: "lotus",   label: "#002 Pressed Moon Lotus" },
+    { id: "acorn",   label: "#003 Acorn Charm" },
+    { id: "ribbon",  label: "#004 Silver Ribbon" },
+    { id: "key",     label: "#005 Lantern Key" }
+  ];
 
   const INTRO = [
     "The moon rested quietly upon the water.",
@@ -37,6 +52,10 @@
 
   // ---------- State ----------
   const found = new Set();
+  const unlockedDiscoveries = new Set();
+  const unlockedKeepsakes = new Set();
+  let petals = 0;
+  let journalUnlocked = false;
   let storyMode = "intro"; // "intro" | "walk"
   let revealed = false;
 
@@ -53,12 +72,14 @@
   const silverLight = $("silver-light");
   const moth = $("moth");
   const reward = $("reward");
+  const scrapbook = $("scrapbook");
 
   // ---------- Helpers ----------
   function showStory(title, lines, buttonLabel) {
     storyTitle.textContent = title;
+    storyTitle.hidden = !title;
     storyText.innerHTML = "";
-    lines.forEach((line) => {
+    lines.forEach(function (line) {
       const p = document.createElement("p");
       p.textContent = line;
       storyText.appendChild(p);
@@ -90,6 +111,36 @@
     }
   }
 
+  // ---------- Scrapbook ----------
+  function fillList(listId, items, unlocked) {
+    const ul = $(listId);
+    ul.innerHTML = "";
+    items.forEach(function (item) {
+      const li = document.createElement("li");
+      if (unlocked.has(item.id)) {
+        li.textContent = item.label;
+      } else {
+        li.textContent = item.label.split(" ")[0] + " ???";
+        li.className = "locked";
+      }
+      ul.appendChild(li);
+    });
+  }
+
+  function renderScrapbook() {
+    fillList("discovery-list", DISCOVERIES, unlockedDiscoveries);
+    fillList("keepsake-list", KEEPSAKES, unlockedKeepsakes);
+    $("petal-total").textContent = petals;
+    $("journal-section").classList.toggle("locked", !journalUnlocked);
+    $("discovery-count").textContent =
+      unlockedDiscoveries.size + (unlockedDiscoveries.size === 1 ? " Discovery" : " Discoveries");
+  }
+
+  function openScrapbook() {
+    renderScrapbook();
+    scrapbook.hidden = false;
+  }
+
   // ---------- Clues ----------
   function onHotspot(e) {
     const btn = e.currentTarget;
@@ -99,10 +150,15 @@
     found.add(key);
     btn.classList.add("found");
     updateClueCount();
-    showPopup(CLUES[key], true);
 
     if (found.size === TOTAL_CLUES) {
       silverLight.classList.add("ready");
+      showPopup(
+        CLUES[key] + " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.",
+        true
+      );
+    } else {
+      showPopup(CLUES[key], true);
     }
   }
 
@@ -130,8 +186,13 @@
   }
 
   function showReward() {
+    unlockedDiscoveries.add("moth");
+    unlockedKeepsakes.add("petal");
+    journalUnlocked = true;
+    petals += PETAL_REWARD;
+
     $("petal-amount").textContent = PETAL_REWARD;
-    $("discovery-count").textContent = (START_DISCOVERIES + 1) + " Discoveries";
+    renderScrapbook();
     reward.hidden = false;
   }
 
@@ -154,20 +215,18 @@
   $("reward-btn").addEventListener("click", function () {
     reward.hidden = true;
     scene.classList.remove("zoom");
-    showPopup("Your scrapbook page is ready. It will open in a future update.", false);
+    openScrapbook();
   });
 
-  $("hud-scrapbook").addEventListener("click", function () {
-    showPopup("The Moonroot Scrapbook is coming soon.", false);
-  });
-
-  $("crest-menu").addEventListener("click", function () {
-    showPopup("The Moon Lotus Crest menu is coming soon.", false);
+  $("hud-scrapbook").addEventListener("click", openScrapbook);
+  $("crest-menu").addEventListener("click", openScrapbook);
+  $("book-close").addEventListener("click", function () {
+    scrapbook.hidden = true;
   });
 
   // ---------- Init ----------
   makeFireflies(14);
   updateClueCount();
-  $("discovery-count").textContent = START_DISCOVERIES + " Discoveries";
+  renderScrapbook();
   showStory("Moonroot Pond", INTRO, "Investigate the Light");
 })();
