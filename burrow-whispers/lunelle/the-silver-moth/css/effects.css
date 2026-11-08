@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/effects.css
-  VERSION: 0.3.0
+  VERSION: 0.4.0
   PART: 1 of 1
   LOAD ORDER: 4th (last)
 */
@@ -64,20 +64,49 @@
 }
 
 /* ---------- Overlays fade in ---------- */
-.overlay { animation: fade-in var(--fade-time) ease; }
+.overlay,
+#clue-dialog { animation: fade-in var(--fade-time) ease; }
 
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* ---------- Pop-ups fade + grow in ---------- */
+/* ---------- Panels fade + grow in ---------- */
 .panel-card,
 .book { animation: pop-in var(--pop-time) cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
 
 @keyframes pop-in {
   from { opacity: 0; transform: scale(0.8) translateY(14px); }
   to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+/* ---------- Clue dialog slides up from the bottom ---------- */
+.dialog-card { animation: slide-up var(--dialog-time) cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Continue button: hidden at first, fades in when JS adds .ready ---------- */
+#dialog-btn {
+  opacity: 0;
+  visibility: hidden;          /* hidden buttons cannot be tapped */
+  transform: translateY(6px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    visibility 0s linear 0.5s; /* stays hidden until the fade-out ends */
+}
+#dialog-btn.ready {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    visibility 0s;
 }
 
 /* ---------- Reward cards appear one after another ---------- */
@@ -98,5 +127,6 @@
   *, *::before, *::after {
     animation-duration: 0.01s !important;
     animation-iteration-count: 1 !important;
+    transition-duration: 0.01s !important;
   }
 }
