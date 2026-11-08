@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.1.0
+  VERSION: 0.2.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -50,7 +50,7 @@
     <span id="discovery-count">12 Discoveries</span>
   </button>
 
-  <button id="crest-menu" type="button" aria-label="Menu">🌙</button>
+  <button id="crest-menu" type="button" aria-label="Open scrapbook">🌙</button>
 
   <div id="hud-clues">Clues Found <strong id="clue-count">0/4</strong></div>
 
@@ -84,9 +84,38 @@
         <li>✅ Silver Moon Moth Sticker</li>
         <li>✅ Journal Entry #001</li>
         <li>✅ Moonroot Scrapbook Page</li>
-        <li>✅ <span id="petal-amount">100</span> Moon Petals</li>
+        <li>✅ <img class="mini" src="assets/moon-petal.png" alt=""> <span id="petal-amount">100</span> Moon Petals</li>
       </ul>
       <button id="reward-btn" type="button">Open the Scrapbook</button>
+    </div>
+  </section>
+
+  <!-- Moonroot Scrapbook -->
+  <section id="scrapbook" class="overlay" hidden>
+    <div class="book">
+      <button id="book-close" type="button" aria-label="Close scrapbook">✕</button>
+      <h2>Moonroot Scrapbook</h2>
+      <p class="petal-total">
+        <img src="assets/moon-petal.png" alt="">
+        <span id="petal-total">0</span> Moon Petals
+      </p>
+
+      <div class="pages">
+        <div class="page">
+          <h3>Discoveries</h3>
+          <ul id="discovery-list"></ul>
+        </div>
+        <div class="page">
+          <h3>Keepsakes</h3>
+          <ul id="keepsake-list"></ul>
+        </div>
+      </div>
+
+      <div id="journal-section" class="journal-section locked">
+        <h3>Journal Entry #001</h3>
+        <img src="assets/moonroot-journalentry-001.png" alt="Journal Entry #001: The Silver Moth">
+        <p>Sometimes courage doesn't roar.<br>Sometimes it simply takes one more little step.</p>
+      </div>
     </div>
   </section>
 
