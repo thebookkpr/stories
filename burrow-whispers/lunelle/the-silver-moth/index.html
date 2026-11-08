@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.3.0
+  VERSION: 0.4.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -11,6 +11,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The Silver Moth — Burrow Whispers #001</title>
+
+  <!-- Fonts: Cormorant Garamond (world) + Nunito (reading) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- CSS load order matters: variables first, effects last -->
   <link rel="stylesheet" href="css/variables.css">
@@ -60,7 +65,7 @@
 
   <button id="crest-menu" type="button" aria-label="Open scrapbook">🌙</button>
 
-  <div id="hud-clues">Clues Found <strong id="clue-count">0/4</strong></div>
+  <div id="hud-clues">Clues <strong id="clue-count">0/4</strong></div>
 
   <!-- Storybook panel (intro + transitions) -->
   <section id="story-panel" class="overlay" role="dialog" aria-live="polite">
@@ -71,12 +76,13 @@
     </div>
   </section>
 
-  <!-- Clue popup -->
-  <div id="popup" class="overlay" hidden>
-    <div class="panel-card small">
-      <p id="popup-text"></p>
-      <p class="clue-badge">✅ Clue Found</p>
-      <button id="popup-close" type="button">Continue</button>
+  <!-- Clue dialog: fixed at the bottom, slides up, Continue appears after a short delay -->
+  <div id="clue-dialog" hidden>
+    <div class="dialog-card" role="dialog" aria-live="polite" aria-labelledby="dialog-title">
+      <h2 id="dialog-title">🌙 Clue Found</h2>
+      <p id="dialog-text"></p>
+      <p id="dialog-progress">Clues Found: 0 / 4</p>
+      <button id="dialog-btn" type="button">Continue</button>
     </div>
   </div>
 
@@ -97,8 +103,8 @@
       </div>
 
       <p class="quote">“A gentle traveler drawn to moonlit blossoms.”</p>
-      <p class="journal"><strong>Sometimes courage doesn't roar.</strong><br>
-         <strong>Sometimes it simply takes one more little step.</strong></p>
+      <p class="journal">Sometimes courage doesn't roar.<br>
+         Sometimes it simply takes one more little step.</p>
       <ul id="reward-list">
         <li>✅ Silver Moon Moth Sticker</li>
         <li>✅ Journal Entry #001</li>
@@ -133,7 +139,8 @@
       <!-- Journal picture removed until moonroot-journalentry-001.png exists -->
       <div id="journal-section" class="journal-section locked">
         <h3>Journal Entry #001</h3>
-        <p>Sometimes courage doesn't roar.<br>Sometimes it simply takes one more little step.</p>
+        <p class="entry-title">The Silver Moth</p>
+        <p class="journal-quote">Sometimes courage doesn't roar.<br>Sometimes it simply takes one more little step.</p>
       </div>
     </div>
   </section>
