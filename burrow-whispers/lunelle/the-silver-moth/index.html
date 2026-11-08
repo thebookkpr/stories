@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.2.1
+  VERSION: 0.3.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -11,7 +11,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The Silver Moth — Burrow Whispers #001</title>
-  <link rel="stylesheet" href="css/style.css">
+
+  <!-- CSS load order matters: variables first, effects last -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/effects.css">
 </head>
 <body>
 
@@ -27,11 +32,14 @@
 
     <div id="fireflies" aria-hidden="true"></div>
 
-    <!-- Hotspots (positions set in CSS) -->
+    <!-- Hotspots (positions set in base.css) -->
     <button class="hotspot" id="hs-reflection" data-clue="reflection" aria-label="Pond reflection"></button>
     <button class="hotspot" id="hs-petal"      data-clue="petal"      aria-label="Lotus petal"></button>
     <button class="hotspot" id="hs-fireflies"  data-clue="fireflies"  aria-label="Firefly swarm"></button>
     <button class="hotspot" id="hs-moonbeam"   data-clue="moonbeam"   aria-label="Moonbeam"></button>
+
+    <!-- Petal that floats up when its clue is tapped (not collected) -->
+    <img id="petal-fx" src="assets/moon-petal.png" alt="" hidden>
 
     <!-- The Silver Light -->
     <button id="silver-light" aria-label="The silver light"></button>
