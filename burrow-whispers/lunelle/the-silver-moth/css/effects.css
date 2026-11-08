@@ -1,0 +1,102 @@
+/*
+  PROJECT: Burrow Whispers #001 — The Silver Moth
+  FILE: css/effects.css
+  VERSION: 0.3.0
+  PART: 1 of 1
+  LOAD ORDER: 4th (last)
+*/
+
+/* ---------- Fireflies ---------- */
+.firefly { animation: drift 9s ease-in-out infinite alternate; }
+
+@keyframes drift {
+  from { transform: translate(0, 0); opacity: 0.3; }
+  50%  { opacity: 1; }
+  to   { transform: translate(24px, -30px); opacity: 0.4; }
+}
+
+/* ---------- Hotspots ---------- */
+.hotspot { animation: breathe 3.6s ease-in-out infinite; }
+.hotspot.found { animation: none; transition: opacity 0.4s ease; }
+
+@keyframes breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.5; }
+  50%      { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
+
+/* ---------- Petal float-away (after tapping the petal clue) ---------- */
+#petal-fx { animation: petal-float var(--petal-time) ease-out forwards; }
+
+@keyframes petal-float {
+  0%   { transform: translate(-50%, -50%) scale(0.3) rotate(0deg);    opacity: 0; }
+  25%  { transform: translate(-50%, -80%) scale(1.15) rotate(20deg);  opacity: 1; }
+  100% { transform: translate(-30%, -380%) scale(0.9) rotate(150deg); opacity: 0; }
+}
+
+/* ---------- Silver light ---------- */
+#silver-light { animation: flicker 2.8s ease-in-out infinite; }
+#silver-light.ready { animation: flicker-ready 1.8s ease-in-out infinite; }
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.55; }
+  35%      { opacity: 1; }
+  60%      { opacity: 0.7; }
+}
+@keyframes flicker-ready {
+  0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.35); }
+}
+
+/* ---------- Moth: grows into view, then hovers ---------- */
+#moth {
+  animation:
+    moth-in var(--reveal-time) ease-out forwards,
+    hover 4s ease-in-out var(--reveal-time) infinite;
+}
+
+@keyframes moth-in {
+  from { transform: translate(-50%, -50%) scale(0.15); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1);    opacity: 1; }
+}
+@keyframes hover {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50%      { transform: translate(-50%, -58%); }
+}
+
+/* ---------- Overlays fade in ---------- */
+.overlay { animation: fade-in var(--fade-time) ease; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---------- Pop-ups fade + grow in ---------- */
+.panel-card,
+.book { animation: pop-in var(--pop-time) cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.8) translateY(14px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+/* ---------- Reward cards appear one after another ---------- */
+.reward-cards figure { animation: card-in 0.7s ease both; }
+.reward-cards figure:nth-child(1) { animation-delay: 0.35s; }
+.reward-cards figure:nth-child(2) { animation-delay: 0.7s; }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ---------- Scrapbook items unlock softly ---------- */
+.page li:not(.locked) { animation: fade-in 0.8s ease both; }
+
+/* ---------- Respect "reduce motion" settings ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
