@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.2.0
+  VERSION: 0.3.0
   PART: 1 of 1
 */
 
@@ -17,6 +17,11 @@
   };
   const TOTAL_CLUES = Object.keys(CLUES).length;
   const PETAL_REWARD = 100;
+
+  // Timings (ms). Keep in sync with variables.css
+  const PETAL_POPUP_DELAY = 900;   // clue text appears while the petal drifts away
+  const PETAL_FX_TIME = 1600;      // matches --petal-time
+  const REWARD_DELAY = 3200;       // moth grows (1.4s), hovers a moment, then rewards
 
   const DISCOVERIES = [
     { id: "moth",    label: "#001 Silver Moon Moth" },
@@ -61,7 +66,6 @@
 
   // ---------- Elements ----------
   const $ = (id) => document.getElementById(id);
-  const scene = $("scene");
   const storyPanel = $("story-panel");
   const storyTitle = $("story-title");
   const storyText = $("story-text");
@@ -71,6 +75,7 @@
   const popupBadge = popup.querySelector(".clue-badge");
   const silverLight = $("silver-light");
   const moth = $("moth");
+  const petalFx = $("petal-fx");
   const reward = $("reward");
   const scrapbook = $("scrapbook");
 
@@ -141,6 +146,14 @@
     scrapbook.hidden = false;
   }
 
+  // ---------- Petal animation (clue only, not collected) ----------
+  function playPetalFx() {
+    petalFx.hidden = false;
+    setTimeout(function () {
+      petalFx.hidden = true;
+    }, PETAL_FX_TIME + 100);
+  }
+
   // ---------- Clues ----------
   function onHotspot(e) {
     const btn = e.currentTarget;
@@ -151,14 +164,17 @@
     btn.classList.add("found");
     updateClueCount();
 
+    let text = CLUES[key];
     if (found.size === TOTAL_CLUES) {
       silverLight.classList.add("ready");
-      showPopup(
-        CLUES[key] + " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.",
-        true
-      );
+      text += " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.";
+    }
+
+    if (key === "petal") {
+      playPetalFx();
+      setTimeout(function () { showPopup(text, true); }, PETAL_POPUP_DELAY);
     } else {
-      showPopup(CLUES[key], true);
+      showPopup(text, true);
     }
   }
 
@@ -175,14 +191,9 @@
   // ---------- Reveal & Reward ----------
   function playReveal() {
     revealed = true;
-    scene.classList.add("zoom");
-
-    setTimeout(function () {
-      silverLight.hidden = true;
-      moth.hidden = false;
-    }, 1800);
-
-    setTimeout(showReward, 4600);
+    silverLight.hidden = true;
+    moth.hidden = false;           // grows into view (effects.css)
+    setTimeout(showReward, REWARD_DELAY);
   }
 
   function showReward() {
@@ -214,7 +225,6 @@
 
   $("reward-btn").addEventListener("click", function () {
     reward.hidden = true;
-    scene.classList.remove("zoom");
     openScrapbook();
   });
 
