@@ -1,0 +1,55 @@
+/*
+  PROJECT: Burrow Whispers #001 — The Silver Moth
+  FILE: css/variables.css
+  VERSION: 0.3.0
+  PART: 1 of 1
+  LOAD ORDER: 1st (before base, panels, effects)
+*/
+
+:root {
+  /* ---------- Colors ---------- */
+  --night: #0f1030;
+  --panel: rgba(24, 22, 58, 0.92);
+  --panel-soft: rgba(246, 241, 255, 0.08);
+  --overlay: rgba(8, 8, 28, 0.55);
+  --hud-bg: rgba(15, 16, 48, 0.62);
+
+  --lavender: #c9b8ff;
+  --ivory: #f6f1ff;
+  --silver: #e8f0ff;
+  --gold: #ffd98a;
+
+  --border-soft: rgba(201, 184, 255, 0.35);
+  --border-hud: rgba(201, 184, 255, 0.4);
+  --glow-lavender: rgba(201, 184, 255, 0.35);
+  --glow-silver: rgba(232, 240, 255, 0.9);
+
+  --button-grad: linear-gradient(135deg, #a98bff, #7b5cf0);
+
+  /* ---------- Type ---------- */
+  --font-main: Georgia, "Times New Roman", serif;
+  --text-hud: 0.72rem;
+  --text-hud-tablet: 0.9rem;
+
+  /* ---------- Shape ---------- */
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  /* ---------- Safe areas (phone notches) ---------- */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* ---------- Silver light / moth position ---------- */
+  --light-x: 88%;
+  --light-y: 52%;
+
+  /* ---------- Sizes ---------- */
+  --moth-size: 26vw;        /* bigger moth (replaces the zoom) */
+  --moth-max: 240px;
+
+  /* ---------- Animation timings ---------- */
+  --pop-time: 0.45s;        /* pop-ups fade + grow in */
+  --fade-time: 0.6s;        /* overlays fade in */
+  --petal-time: 1.6s;       /* petal float-away after tap */
+  --reveal-time: 1.4s;      /* moth grows into view */
+}
