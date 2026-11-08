@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/base.css
-  VERSION: 0.3.0
+  VERSION: 0.4.0
   PART: 1 of 1
   LOAD ORDER: 2nd (after variables)
 */
@@ -13,8 +13,9 @@ html, body {
   margin: 0;
   height: 100%;
   background: var(--night);
-  color: var(--ivory);
-  font-family: var(--font-main);
+  color: var(--ink);
+  font-family: var(--font-read);
+  font-size: var(--text-body);
   overflow: hidden;
 }
 
@@ -103,7 +104,7 @@ button { font-family: inherit; }
 #silver-light.ready { box-shadow: 0 0 22px 10px rgba(232, 240, 255, 1); }
 #silver-light[hidden] { display: none; }
 
-/* ---------- Moth (bigger instead of zooming) ---------- */
+/* ---------- Moth ---------- */
 #moth {
   position: absolute;
   left: var(--light-x);
@@ -116,16 +117,18 @@ button { font-family: inherit; }
 }
 #moth[hidden] { display: none; }
 
-/* ---------- HUD ---------- */
+/* ---------- HUD (tiny UI: Nunito SemiBold) ---------- */
 #hud-left, #hud-scrapbook, #hud-clues, #crest-menu {
   position: absolute;
   z-index: 5;
   background: var(--hud-bg);
-  border: 1px solid var(--border-hud);
+  border: 1px solid var(--border-panel);
   backdrop-filter: blur(4px);
-  color: var(--ivory);
-  font-size: var(--text-hud);
-  letter-spacing: 0.06em;
+  color: var(--ink);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: var(--text-tiny);
+  letter-spacing: 0.04em;
 }
 
 #hud-left {
@@ -135,9 +138,15 @@ button { font-family: inherit; }
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  line-height: 1.35;
+  line-height: 1.3;
 }
-#hud-left strong { color: var(--lavender); font-size: 0.9rem; }
+#hud-left strong {
+  color: var(--violet);
+  font-family: var(--font-world);
+  font-weight: 700;
+  font-size: calc(var(--text-tiny) + 6px);
+  letter-spacing: 0.08em;
+}
 
 #hud-scrapbook {
   top: calc(var(--safe-top) + 10px);
@@ -147,16 +156,17 @@ button { font-family: inherit; }
   display: flex;
   flex-direction: column;
   text-align: right;
+  line-height: 1.3;
   cursor: pointer;
 }
 
 #crest-menu {
   bottom: calc(var(--safe-bottom) + 12px);
   left: 12px;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   cursor: pointer;
 }
 
@@ -165,11 +175,5 @@ button { font-family: inherit; }
   right: 12px;
   padding: 10px 14px;
   border-radius: 14px;
-  font-size: 0.8rem;
 }
-#hud-clues strong { color: var(--gold); margin-left: 6px; }
-
-/* ---------- Tablet ---------- */
-@media (min-width: 768px) {
-  #hud-left, #hud-scrapbook, #hud-clues { font-size: var(--text-hud-tablet); }
-}
+#hud-clues strong { color: var(--violet); margin-left: 6px; }
