@@ -1,35 +1,51 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/variables.css
-  VERSION: 0.3.0
+  VERSION: 0.4.0
   PART: 1 of 1
   LOAD ORDER: 1st (before base, panels, effects)
+  SOURCE: Burrow Whispers Typography Style Guide v1.0 (Moonroot Canon)
 */
 
 :root {
-  /* ---------- Colors ---------- */
+  /* ---------- Guide colors ---------- */
+  --ink: #2D2A37;            /* Moon Ink: main reading text */
+  --violet: #433768;         /* Moon Violet: headers */
+  --lavender-soft: #6E5C96;  /* Soft Lavender: quotes */
+  --lotus: #7D6DD8;          /* Moon Lotus Purple: buttons */
+  --silver-glow: #C9D8FF;    /* Silver Moon Glow: rare discoveries */
+
+  /* ---------- Scene colors ---------- */
   --night: #0f1030;
-  --panel: rgba(24, 22, 58, 0.92);
-  --panel-soft: rgba(246, 241, 255, 0.08);
-  --overlay: rgba(8, 8, 28, 0.55);
-  --hud-bg: rgba(15, 16, 48, 0.62);
-
-  --lavender: #c9b8ff;
-  --ivory: #f6f1ff;
-  --silver: #e8f0ff;
   --gold: #ffd98a;
-
-  --border-soft: rgba(201, 184, 255, 0.35);
-  --border-hud: rgba(201, 184, 255, 0.4);
-  --glow-lavender: rgba(201, 184, 255, 0.35);
+  --silver: #e8f0ff;
   --glow-silver: rgba(232, 240, 255, 0.9);
 
-  --button-grad: linear-gradient(135deg, #a98bff, #7b5cf0);
+  /* ---------- Panels (translucent light, so dark text stays readable) ---------- */
+  --panel: rgba(250, 247, 255, 0.95);
+  --panel-soft: rgba(125, 109, 216, 0.10);
+  --hud-bg: rgba(250, 247, 255, 0.88);
+  --overlay: rgba(15, 16, 48, 0.50);
+  --overlay-light: rgba(15, 16, 48, 0.18);   /* lighter dim behind the clue dialog */
+  --border-panel: rgba(125, 109, 216, 0.55);
+  --glow-panel: rgba(201, 216, 255, 0.55);
+  --button-grad: linear-gradient(135deg, #8f80e6, #7D6DD8);
+  --on-button: #ffffff;
+  --locked-opacity: 0.5;
 
-  /* ---------- Type ---------- */
-  --font-main: Georgia, "Times New Roman", serif;
-  --text-hud: 0.72rem;
-  --text-hud-tablet: 0.9rem;
+  /* ---------- Fonts ---------- */
+  --font-world: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-read: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ---------- Type sizes (phone) ---------- */
+  --text-h1: 36px;
+  --text-h2: 28px;
+  --text-h3: 24px;
+  --text-popup-title: 24px;
+  --text-body: 20px;       /* guide: 18-22 */
+  --text-button: 22px;     /* guide: 18-24 */
+  --text-tiny: 14px;       /* guide: 14-18 */
+  --text-caption: 16px;
 
   /* ---------- Shape ---------- */
   --radius: 18px;
@@ -43,13 +59,29 @@
   --light-x: 88%;
   --light-y: 52%;
 
-  /* ---------- Sizes ---------- */
-  --moth-size: 26vw;        /* bigger moth (replaces the zoom) */
+  /* ---------- Moth size ---------- */
+  --moth-size: 26vw;
   --moth-max: 240px;
 
   /* ---------- Animation timings ---------- */
-  --pop-time: 0.45s;        /* pop-ups fade + grow in */
+  --pop-time: 0.45s;        /* panels fade + grow in */
   --fade-time: 0.6s;        /* overlays fade in */
   --petal-time: 1.6s;       /* petal float-away after tap */
   --reveal-time: 1.4s;      /* moth grows into view */
+  --dialog-time: 0.5s;      /* clue dialog slides up */
+  --continue-delay: 1s;     /* Continue appears after this (keep in sync with game.js) */
+}
+
+/* ---------- Tablet sizes ---------- */
+@media (min-width: 768px) {
+  :root {
+    --text-h1: 44px;
+    --text-h2: 34px;
+    --text-h3: 28px;
+    --text-popup-title: 26px;
+    --text-body: 22px;
+    --text-button: 24px;
+    --text-tiny: 18px;
+    --text-caption: 18px;
+  }
 }
