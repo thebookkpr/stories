@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/panels.css
-  VERSION: 0.5.0
+  VERSION: 0.6.0
   PART: 1 of 1
   LOAD ORDER: 3rd (after base)
 */
@@ -267,7 +267,7 @@
 .name-btn::after { content: "›"; font-size: 1.5em; line-height: 1; color: var(--lotus); }
 .name-btn:active { transform: scale(0.98); background: var(--panel-soft); }
 
-/* Journal section: just the tappable title */
+/* Journal section: tappable entry titles */
 .journal-section {
   padding: 14px;
   background: var(--panel-soft);
@@ -275,7 +275,50 @@
   border-radius: var(--radius-sm);
 }
 .journal-section h3 { margin-bottom: 10px; }
-.journal-section.locked { display: none; }
+.journal-section ul { list-style: none; margin: 0; padding: 0; font-size: 18px; }
+.journal-section li { margin: 6px 0; line-height: 1.3; }
+
+/* ---------- Coming soon / locked rows ---------- */
+.page li.soon,
+.journal-section li.soon,
+.extra li.soon {
+  padding: 6px 0;
+  opacity: var(--locked-opacity);
+  font-style: italic;
+  font-size: var(--text-caption);
+  line-height: 1.3;
+}
+.journal-section li.locked,
+.extra li.locked { padding: 6px 0; opacity: var(--locked-opacity); }
+
+/* ---------- Extras: stickers, achievements, frames, packs, themes ---------- */
+#extras { display: grid; gap: 12px; margin-top: 14px; }
+.extra {
+  padding: 12px 14px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border-panel);
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+.extra h3 { margin: 0 0 8px; }
+.extra ul { list-style: none; margin: 0; padding: 0; font-size: var(--text-caption); }
+.extra li { margin: 6px 0; line-height: 1.3; }
+
+/* ---------- Start Over ---------- */
+.start-over {
+  min-height: 44px;
+  margin-top: 18px;
+  padding: 10px 22px;
+  border: 1px solid var(--border-panel);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--lavender-soft);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: var(--text-caption);
+  cursor: pointer;
+}
+.start-over:active { transform: scale(0.97); }
 
 /* ---------- Viewer (card or journal picture on its own) ---------- */
 #viewer {
@@ -317,5 +360,5 @@
 @media (min-width: 768px) {
   .panel-card { max-width: 580px; padding: 34px 32px; }
   .dialog-card { margin-bottom: 12px; border-bottom: 2px solid var(--border-panel); border-radius: var(--radius); }
-  #reward-list, .page ul, .name-btn { font-size: 20px; }
+  #reward-list, .page ul, .journal-section ul, .name-btn { font-size: 20px; }
 }
