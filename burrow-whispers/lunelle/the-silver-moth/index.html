@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.5.0
+  VERSION: 0.6.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -37,18 +37,15 @@
 
     <div id="fireflies" aria-hidden="true"></div>
 
-    <!-- Hotspots (positions set in base.css) -->
-    <button class="hotspot" id="hs-reflection" data-clue="reflection" aria-label="Pond reflection"></button>
-    <button class="hotspot" id="hs-petal"      data-clue="petal"      aria-label="Lotus petal"></button>
-    <button class="hotspot" id="hs-fireflies"  data-clue="fireflies"  aria-label="Firefly swarm"></button>
-    <button class="hotspot" id="hs-moonbeam"   data-clue="moonbeam"   aria-label="Moonbeam"></button>
+    <!-- Hotspots are built by game.js from mysteries.js -->
+    <div id="hotspots"></div>
 
-    <!-- Petal that floats up when its clue is tapped (not collected) -->
+    <!-- Petal that floats up on the moth's petal clue (position set by game.js) -->
     <img id="petal-fx" src="assets/moon-petal.png" alt="" hidden>
 
-    <!-- The Silver Light -->
-    <button id="silver-light" aria-label="The silver light"></button>
-    <img id="moth" src="assets/silvermoon-moth.png" alt="A tiny silver moon moth" hidden>
+    <!-- The target: silver light, then the discovery sprite (set by game.js) -->
+    <button id="silver-light" type="button" aria-label="The silver light"></button>
+    <img id="moth" alt="" hidden>
   </section>
 
   <!-- HUD -->
@@ -67,16 +64,16 @@
 
   <div id="hud-clues">Clues <strong id="clue-count">0/4</strong></div>
 
-  <!-- Storybook panel (intro + transitions) -->
-  <section id="story-panel" class="overlay" role="dialog" aria-live="polite">
+  <!-- Storybook panel (intro, walk, and finale) -->
+  <section id="story-panel" class="overlay" role="dialog" aria-live="polite" hidden>
     <div class="panel-card">
-      <h2 id="story-title">Moonroot Pond</h2>
+      <h2 id="story-title"></h2>
       <div id="story-text"></div>
-      <button id="story-btn" type="button">Investigate the Light</button>
+      <button id="story-btn" type="button">Continue</button>
     </div>
   </section>
 
-  <!-- Clue dialog: fixed at the bottom, slides up, Continue appears after a short delay -->
+  <!-- Clue dialog: bottom card, Continue appears after a short delay -->
   <div id="clue-dialog" hidden>
     <div class="dialog-card" role="dialog" aria-live="polite" aria-labelledby="dialog-title">
       <h2 id="dialog-title">🌙 Clue Found</h2>
@@ -86,36 +83,19 @@
     </div>
   </div>
 
-  <!-- Reward screen -->
+  <!-- Reward screen (filled by game.js) -->
   <section id="reward" class="overlay" hidden>
     <div class="panel-card">
       <p class="eyebrow">NEW COLLECTIBLES</p>
-
-      <div class="reward-cards">
-        <figure>
-          <img src="assets/silvermoonmoth-card.png" alt="Silver Moon Moth discovery card">
-          <figcaption>Discovery #001<br>Silver Moon Moth</figcaption>
-        </figure>
-        <figure>
-          <img src="assets/moonpetal-card.png" alt="Moon Petal keepsake card">
-          <figcaption>Keepsake #001<br>Moon Petal</figcaption>
-        </figure>
-      </div>
-
-      <p class="quote">“A gentle traveler drawn to moonlit blossoms.”</p>
-      <p class="journal">Sometimes courage doesn't roar.<br>
-         Sometimes it simply takes one more little step.</p>
-      <ul id="reward-list">
-        <li>✅ Silver Moon Moth Sticker</li>
-        <li>✅ Journal Entry #001</li>
-        <li>✅ Moonroot Scrapbook Page</li>
-        <li>✅ <img class="mini" src="assets/moon-petal.png" alt=""> <span id="petal-amount">100</span> Moon Petals</li>
-      </ul>
+      <div id="reward-cards" class="reward-cards"></div>
+      <p id="reward-quote" class="quote"></p>
+      <p id="reward-journal" class="journal" hidden></p>
+      <ul id="reward-list"></ul>
       <button id="reward-btn" type="button">Open the Scrapbook</button>
     </div>
   </section>
 
-  <!-- Moonroot Scrapbook -->
+  <!-- Moonroot Scrapbook (lists filled by scrapbook.js) -->
   <section id="scrapbook" class="overlay" hidden>
     <div class="book">
       <button id="book-close" type="button" aria-label="Close scrapbook">✕</button>
@@ -137,15 +117,15 @@
         </div>
       </div>
 
-      <!-- Journal: tap the title to read the full picture -->
-      <div id="journal-section" class="journal-section locked">
+      <div class="journal-section">
         <h3>Journal Entries</h3>
-        <button class="name-btn" type="button"
-                data-image="assets/moonroot-journalentry-001.png"
-                data-alt="Journal Entry #001, The Silver Moth. Sometimes courage doesn't roar. Sometimes it simply takes one more little step.">
-          Entry #001: The Silver Moth
-        </button>
+        <ul id="journal-list"></ul>
       </div>
+
+      <!-- Stickers, Achievements, Frames, Sticker Packs, Journal Themes -->
+      <div id="extras"></div>
+
+      <button id="start-over" class="start-over" type="button">Start Over</button>
     </div>
   </section>
 
@@ -157,6 +137,11 @@
 
 </main>
 
+<!-- Script order matters: data, story, saving, scrapbook, then the game -->
+<script src="js/data.js"></script>
+<script src="js/mysteries.js"></script>
+<script src="js/save.js"></script>
+<script src="js/scrapbook.js"></script>
 <script src="js/game.js"></script>
 </body>
-</html>
+        </html>
