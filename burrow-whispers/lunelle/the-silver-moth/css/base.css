@@ -68,16 +68,14 @@ button { font-family: inherit; }
 }
 .hotspot.found { opacity: 0; pointer-events: none; }
 
-#hs-reflection { left: 52%; top: 62%; }
-#hs-petal      { left: 32%; top: 85%; }
-#hs-fireflies  { left: 22%; top: 36%; }
-#hs-moonbeam   { left: 55%; top: 20%; }
+/* Hotspots are built by game.js, which sets each left/top from mysteries.js */
+#hotspots { position: absolute; inset: 0; pointer-events: none; }
+#hotspots .hotspot { pointer-events: auto; }
+#hotspots .hotspot.found { pointer-events: none; }
 
 /* ---------- Petal that floats away after its clue is tapped ---------- */
 #petal-fx {
   position: absolute;
-  left: 32%;
-  top: 85%;
   width: 12vw;
   max-width: 80px;
   transform: translate(-50%, -50%);
