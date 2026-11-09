@@ -1,7 +1,7 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.6.0
+  VERSION: 0.7.0
   PART: 1 of 1
   LOCATION: /stories/lunelle/the-silver-moth/
 -->
@@ -11,6 +11,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>The Silver Moth — Burrow Whispers #001</title>
+
+  <!-- Installable app (v0.7.0) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f1030">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Silver Moth">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
 
   <!-- Fonts: Cormorant Garamond (world) + Nunito (reading) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -143,5 +152,14 @@
 <script src="js/save.js"></script>
 <script src="js/scrapbook.js"></script>
 <script src="js/game.js"></script>
+
+<!-- Offline play (v0.7.0) -->
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
+</script>
 </body>
-        </html>
+</html>
