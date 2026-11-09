@@ -1,0 +1,31 @@
+{
+  "name": "The Silver Moth — Burrow Whispers #001",
+  "short_name": "Silver Moth",
+  "description": "Burrow Whispers #001 — The Silver Moth. A gentle discovery game with Lunelle. File: manifest.json, Version 0.7.0, Part 1 of 1.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1030",
+  "theme_color": "#0f1030",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
