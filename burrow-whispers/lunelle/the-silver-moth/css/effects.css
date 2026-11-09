@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/effects.css
-  VERSION: 0.5.0
+  VERSION: 0.6.0
   PART: 1 of 1
   LOAD ORDER: 4th (last)
 */
@@ -140,7 +140,8 @@
 }
 
 /* ---------- Scrapbook items unlock softly ---------- */
-.page li:not(.locked) { animation: fade-in 0.8s ease both; }
+.page li:not(.locked):not(.soon),
+.journal-section li:not(.locked):not(.soon) { animation: fade-in 0.8s ease both; }
 
 /* ---------- Respect "reduce motion" settings ---------- */
 @media (prefers-reduced-motion: reduce) {
