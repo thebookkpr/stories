@@ -1,101 +1,53 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.5.0
+  VERSION: 0.6.0
   PART: 1 of 1
+  LOAD ORDER: 5th script (last)
+  NOTE: Runs the mysteries in order. Content is in mysteries.js,
+        items and rewards in data.js, saving in save.js.
 */
 
 (function () {
   "use strict";
 
-  // ---------- Data ----------
-  const CLUES = {
-    reflection: "The light flickers when it moves. It does not seem like a lantern.",
-    petal:      "A tiny petal looks disturbed. Something very small may have rested here recently.",
-    fireflies:  "The fireflies glow warm gold. The silver light shines a different color.",
-    moonbeam:   "The moonlight follows the light wherever it goes."
-  };
-  const LAST_CLUE_NUDGE = " Lunelle gathers her courage. Perhaps it's time to look at the silver light again.";
-  const TOTAL_CLUES = Object.keys(CLUES).length;
-  const PETAL_REWARD = 100;
+  const $ = (id) => document.getElementById(id);
+  const S = BW.Save;
 
   // Timings (ms). Keep in sync with variables.css / effects.css
-  const CONTINUE_DELAY = 1000;     // --continue-delay
-  const PETAL_POPUP_DELAY = 900;   // dialog appears while the petal drifts away
-  const PETAL_FX_TIME = 1600;      // --petal-time
-  const REWARD_DELAY = 3200;       // moth grows (1.4s), hovers a moment, then rewards
-  const VIEWER_CLOSE_TIME = 220;   // viewer-fade-out in effects.css
+  const CONTINUE_DELAY = 1000;
+  const PETAL_POPUP_DELAY = 900;
+  const PETAL_FX_TIME = 1600;
+  const REWARD_DELAY = 3200;
 
-  // Items with an image become tappable names in the scrapbook.
-  const DISCOVERIES = [
-    { id: "moth",    label: "#001 Silver Moon Moth",
-      image: "assets/silvermoonmoth-card.png",
-      alt: "Discovery #001, Silver Moon Moth card" },
-    { id: "frog",    label: "#002 Moon Frog" },
-    { id: "seed",    label: "#003 Lantern Seed" },
-    { id: "pearl",   label: "#004 Pond Pearl" },
-    { id: "cricket", label: "#005 Nightfire Cricket" }
-  ];
-
-  const KEEPSAKES = [
-    { id: "petal",   label: "#001 Moon Petal",
-      image: "assets/moonpetal-card.png",
-      alt: "Keepsake #001, Moon Petal card" },
-    { id: "lotus",   label: "#002 Pressed Moon Lotus" },
-    { id: "acorn",   label: "#003 Acorn Charm" },
-    { id: "ribbon",  label: "#004 Silver Ribbon" },
-    { id: "key",     label: "#005 Lantern Key" }
-  ];
-
-  const INTRO = [
-    "The moon rested quietly upon the water.",
-    "As usual, Lunelle sat among the moon lotuses and listened to the sounds of the Wilds.",
-    "Then she noticed something.",
-    "A small silver light glimmered beyond the pond.",
-    "She had never seen it before.",
-    "What could it be?"
-  ];
-
-  const WALK = [
-    "Lunelle took one careful step.",
-    "Then another.",
-    "And another.",
-    "The clearing seemed much smaller than she imagined."
-  ];
+  // Journal lines shown on the reward screen (more come with their art)
+  const JOURNAL_TEXT = {
+    moth: ["Sometimes courage doesn't roar.",
+           "Sometimes it simply takes one more little step."]
+  };
 
   // ---------- State ----------
-  const found = new Set();
-  const unlockedDiscoveries = new Set();
-  const unlockedKeepsakes = new Set();
-  let petals = 0;
-  let journalUnlocked = false;
-  let storyMode = "intro"; // "intro" | "walk"
+  let mystery = null;
+  let mode = "intro";       // "intro" | "walk" | "done"
   let revealed = false;
-  let waitingForDialog = false;  // true while the petal animation plays
+  let waiting = false;      // true while the petal animation plays
   let continueTimer = null;
-  let viewerClosing = false;
 
   // ---------- Elements ----------
-  const $ = (id) => document.getElementById(id);
-  const storyPanel = $("story-panel");
-  const storyTitle = $("story-title");
-  const storyText = $("story-text");
-  const storyBtn = $("story-btn");
-  const dialog = $("clue-dialog");
-  const dialogTitle = $("dialog-title");
-  const dialogText = $("dialog-text");
-  const dialogProgress = $("dialog-progress");
+  const storyPanel = $("story-panel"), storyTitle = $("story-title");
+  const storyText = $("story-text"), storyBtn = $("story-btn");
+  const dialog = $("clue-dialog"), dialogTitle = $("dialog-title");
+  const dialogText = $("dialog-text"), dialogProgress = $("dialog-progress");
   const dialogBtn = $("dialog-btn");
-  const silverLight = $("silver-light");
-  const moth = $("moth");
-  const petalFx = $("petal-fx");
+  const silverLight = $("silver-light"), moth = $("moth"), petalFx = $("petal-fx");
   const reward = $("reward");
-  const scrapbook = $("scrapbook");
-  const viewer = $("viewer");
-  const viewerImg = $("viewer-img");
 
   // ---------- Helpers ----------
-  function showStory(title, lines, buttonLabel) {
+  const disc = () => BW.DISCOVERIES.find((d) => d.id === mystery.id);
+  const total = () => mystery.clues.length;
+  const allFound = () => S.state.found.length >= total();
+
+  function showStory(title, lines, label) {
     storyTitle.textContent = title;
     storyTitle.hidden = !title;
     storyText.innerHTML = "";
@@ -104,12 +56,12 @@
       p.textContent = line;
       storyText.appendChild(p);
     });
-    storyBtn.textContent = buttonLabel;
+    storyBtn.textContent = label;
     storyPanel.hidden = false;
   }
 
   function updateClueCount() {
-    $("clue-count").textContent = found.size + "/" + TOTAL_CLUES;
+    $("clue-count").textContent = S.state.found.length + "/" + total();
   }
 
   function makeFireflies(count) {
@@ -125,20 +77,17 @@
     }
   }
 
-  // ---------- Bottom dialog ----------
-  // Continue stays hidden for a moment so an extra tap can't dismiss it.
+  // ---------- Bottom dialog (Continue appears after a short delay) ----------
   function showDialog(title, text, showProgress) {
     clearTimeout(continueTimer);
     dialogBtn.classList.remove("ready");
-
     dialogTitle.textContent = title;
     dialogText.textContent = text;
     dialogProgress.hidden = !showProgress;
-    dialogProgress.textContent = "Clues Found: " + found.size + " / " + TOTAL_CLUES;
-
+    dialogProgress.textContent =
+      "Clues Found: " + S.state.found.length + " / " + total();
     dialog.hidden = false;
-    waitingForDialog = false;
-
+    waiting = false;
     continueTimer = setTimeout(function () {
       dialogBtn.classList.add("ready");
     }, CONTINUE_DELAY);
@@ -150,96 +99,71 @@
     dialog.hidden = true;
   }
 
-  // ---------- Viewer (card / journal picture on its own) ----------
-  function openViewer(src, alt) {
-    if (viewerClosing) return;
-    viewerImg.src = src;
-    viewerImg.alt = alt || "";
-    viewer.classList.remove("closing");
-    viewer.hidden = false;
-  }
-
-  function closeViewer() {
-    if (viewer.hidden || viewerClosing) return;
-    viewerClosing = true;
-    viewer.classList.add("closing");
-    setTimeout(function () {
-      viewer.hidden = true;
-      viewer.classList.remove("closing");
-      viewerImg.src = "";
-      viewerClosing = false;
-    }, VIEWER_CLOSE_TIME);
-  }
-
-  // ---------- Scrapbook ----------
-  function fillList(listId, items, unlocked) {
-    const ul = $(listId);
-    ul.innerHTML = "";
-    items.forEach(function (item) {
-      const li = document.createElement("li");
-
-      if (!unlocked.has(item.id)) {
-        li.textContent = item.label.split(" ")[0] + " ???";
-        li.className = "locked";
-      } else if (item.image) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "name-btn";
-        btn.textContent = item.label;
-        btn.dataset.image = item.image;
-        btn.dataset.alt = item.alt || item.label;
-        li.appendChild(btn);
-      } else {
-        li.textContent = item.label;
-      }
-
-      ul.appendChild(li);
+  // ---------- Scene ----------
+  function buildScene() {
+    const box = $("hotspots");
+    box.innerHTML = "";
+    mystery.clues.forEach(function (c) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "hotspot";
+      b.dataset.clue = c.key;
+      b.setAttribute("aria-label", c.label);
+      b.style.left = c.x + "%";
+      b.style.top = c.y + "%";
+      if (S.state.found.indexOf(c.key) !== -1) b.classList.add("found");
+      b.addEventListener("click", onHotspot);
+      box.appendChild(b);
     });
+
+    const t = mystery.target;
+    [silverLight, moth].forEach(function (el) {
+      el.style.left = t.x + "%";
+      el.style.top = t.y + "%";
+    });
+    silverLight.setAttribute("aria-label", t.label);
+    silverLight.classList.toggle("ready", allFound());
+    silverLight.hidden = false;
+
+    moth.hidden = true;
+    moth.src = disc().sprite;
+    moth.alt = disc().name;
+    revealed = false;
+    updateClueCount();
   }
 
-  function renderScrapbook() {
-    fillList("discovery-list", DISCOVERIES, unlockedDiscoveries);
-    fillList("keepsake-list", KEEPSAKES, unlockedKeepsakes);
-    $("petal-total").textContent = petals;
-    $("journal-section").classList.toggle("locked", !journalUnlocked);
-    $("discovery-count").textContent =
-      unlockedDiscoveries.size + (unlockedDiscoveries.size === 1 ? " Discovery" : " Discoveries");
-  }
-
-  function openScrapbook() {
-    renderScrapbook();
-    scrapbook.hidden = false;
-  }
-
-  // ---------- Petal animation (clue only, not collected) ----------
-  function playPetalFx() {
+  function playPetalFx(clue) {
+    petalFx.style.left = clue.x + "%";
+    petalFx.style.top = clue.y + "%";
     petalFx.hidden = false;
-    setTimeout(function () {
-      petalFx.hidden = true;
-    }, PETAL_FX_TIME + 100);
+    setTimeout(function () { petalFx.hidden = true; }, PETAL_FX_TIME + 100);
   }
 
   // ---------- Clues ----------
   function onHotspot(e) {
-    if (waitingForDialog) return;
-
+    if (waiting) return;
     const btn = e.currentTarget;
-    const key = btn.dataset.clue;
-    if (!CLUES[key] || found.has(key)) return;
+    const clue = mystery.clues.find((c) => c.key === btn.dataset.clue);
+    if (!clue || S.state.found.indexOf(clue.key) !== -1) return;
 
-    found.add(key);
+    S.recordClue(clue.key);
     btn.classList.add("found");
     updateClueCount();
+    const bonus = S.countDailyClue();   // daily reward: +5 on the 3rd clue
 
-    let text = CLUES[key];
-    if (found.size === TOTAL_CLUES) {
+    let text = clue.text;
+    if (allFound()) {
       silverLight.classList.add("ready");
-      text += LAST_CLUE_NUDGE;
+      text += BW.NUDGE;
+    }
+    if (bonus) {
+      text += " 🌸 +" + bonus + " Moon Petals for observing " +
+              BW.DAILY.clues + " clues today.";
     }
 
-    if (key === "petal") {
-      waitingForDialog = true;
-      playPetalFx();
+    if (mystery.id === "moth" && clue.key === "petal") {
+      waiting = true;
+      playPetalFx(clue);
       setTimeout(function () {
         showDialog("🌙 Clue Found", text, true);
       }, PETAL_POPUP_DELAY);
@@ -249,77 +173,147 @@
   }
 
   function onSilverLight() {
-    if (revealed || waitingForDialog) return;
-    if (found.size < TOTAL_CLUES) {
-      showDialog("🌙 Too Far Away", "It's too far away to see clearly.", false);
+    if (!mystery || revealed || waiting) return;
+    if (!allFound()) {
+      showDialog("🌙 Too Far Away", BW.TOO_FAR, false);
       return;
     }
-    storyMode = "walk";
-    showStory("", WALK, "Continue");
+    mode = "walk";
+    showStory("", mystery.walk, "Continue");
   }
 
   // ---------- Reveal & Reward ----------
   function playReveal() {
     revealed = true;
     silverLight.hidden = true;
-    moth.hidden = false;           // grows into view (effects.css)
+    moth.hidden = false;
     setTimeout(showReward, REWARD_DELAY);
   }
 
-  function showReward() {
-    unlockedDiscoveries.add("moth");
-    unlockedKeepsakes.add("petal");
-    journalUnlocked = true;
-    petals += PETAL_REWARD;
+  function figure(src, alt, caption) {
+    const f = document.createElement("figure");
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = alt;
+    const cap = document.createElement("figcaption");
+    cap.innerHTML = caption;
+    f.appendChild(img);
+    f.appendChild(cap);
+    return f;
+  }
 
-    $("petal-amount").textContent = PETAL_REWARD;
-    renderScrapbook();
+  function showReward() {
+    const d = disc();
+    const lines = [];
+    const cards = $("reward-cards");
+    cards.innerHTML = "";
+    cards.appendChild(figure(d.card, d.name + " discovery card",
+      "Discovery #" + d.number + "<br>" + d.name));
+
+    S.unlock("discoveries", d.id);
+    const k = BW.KEEPSAKES.find((i) => i.id === "petal");
+    if (S.unlock("keepsakes", k.id)) {
+      cards.appendChild(figure(k.card, k.name + " keepsake card",
+        "Keepsake #" + k.number + "<br>" + k.name));
+    }
+
+    // Journal entry + sticker (coming soon until their art exists)
+    const j = BW.JOURNAL.find((i) => i.id === d.id);
+    const st = BW.STICKERS.find((i) => i.id === d.id);
+    S.unlock("journal", j.id);
+    S.unlock("stickers", st.id);
+    lines.push((j.soon ? "📖 " : "✅ ") + "Journal Entry #" + d.number +
+               (j.soon ? " — Coming soon" : ""));
+    lines.push((st.soon ? "🎟 " : "✅ ") + st.name +
+               (st.soon ? " — Coming soon" : ""));
+
+    // Petals by rarity
+    const earned = BW.RARITY[d.rarity].petals;
+    S.addPetals(earned);
+    lines.push("🌸 +" + earned + " Moon Petals");
+
+    // Achievements
+    BW.ACHIEVEMENTS.forEach(function (a) {
+      if (a.soon || S.has("achievements", a.id)) return;
+      const done =
+        (a.when === "complete-moth" && d.id === "moth") ||
+        (a.when === "complete-region" &&
+         S.state.discoveries.length >= BW.DISCOVERIES.length);
+      if (!done) return;
+      S.unlock("achievements", a.id);
+      S.addPetals(a.petals);
+      lines.push("🏆 " + a.name + " · +" + a.petals + " Moon Petals");
+      if (a.id === "moonroot-explorer") {
+        lines.push("🖼 Exclusive Moonroot Frame — Coming soon");
+      }
+    });
+    lines.push("🌙 Total: " + S.state.petals + " Moon Petals");
+
+    $("reward-list").innerHTML = "";
+    lines.forEach(function (text) {
+      const li = document.createElement("li");
+      li.textContent = text;
+      $("reward-list").appendChild(li);
+    });
+
+    $("reward-quote").textContent = "“" + mystery.quote + "”";
+    const jt = JOURNAL_TEXT[d.id];
+    $("reward-journal").hidden = !jt;
+    $("reward-journal").innerHTML = jt ? jt.join("<br>") : "";
+
     reward.hidden = false;
+  }
+
+  // ---------- Next mystery ----------
+  function startMystery() {
+    // Rewards already given (e.g. page reloaded on the reward screen)? Skip ahead.
+    while (S.state.current < BW.MYSTERIES.length &&
+           S.has("discoveries", BW.MYSTERIES[S.state.current].id)) {
+      S.nextMystery();
+    }
+    if (S.state.current >= BW.MYSTERIES.length) return allDone();
+
+    mystery = BW.MYSTERIES[S.state.current];
+    buildScene();
+    if (!S.state.introSeen) {
+      mode = "intro";
+      showStory(mystery.title, mystery.intro, mystery.button);
+    }
+  }
+
+  function allDone() {
+    mode = "done";
+    $("hotspots").innerHTML = "";
+    silverLight.hidden = true;
+    moth.hidden = true;
+    $("clue-count").textContent = "Done";
+    showStory("The Pond Rests",
+      ["You found every mystery in Moonroot Pond.", "More are coming soon."],
+      "Open the Scrapbook");
   }
 
   // ---------- Events ----------
   storyBtn.addEventListener("click", function () {
     storyPanel.hidden = true;
-    if (storyMode === "walk") playReveal();
+    if (mode === "intro") S.markIntroSeen();
+    else if (mode === "walk") playReveal();
+    else if (mode === "done") BW.Scrapbook.open();
   });
 
-  // Only the Continue button closes the dialog (never auto-dismiss, never tap-outside)
   dialogBtn.addEventListener("click", closeDialog);
-
-  document.querySelectorAll(".hotspot").forEach(function (h) {
-    h.addEventListener("click", onHotspot);
-  });
-
   silverLight.addEventListener("click", onSilverLight);
 
   $("reward-btn").addEventListener("click", function () {
     reward.hidden = true;
-    openScrapbook();
-  });
-
-  $("hud-scrapbook").addEventListener("click", openScrapbook);
-  $("crest-menu").addEventListener("click", openScrapbook);
-  $("book-close").addEventListener("click", function () {
-    scrapbook.hidden = true;
-  });
-
-  // Tap a name in the scrapbook to open its picture
-  scrapbook.addEventListener("click", function (e) {
-    const btn = e.target.closest(".name-btn");
-    if (btn && btn.dataset.image) {
-      openViewer(btn.dataset.image, btn.dataset.alt);
-    }
-  });
-
-  // Tap the picture (or anywhere on the viewer) to close it
-  viewer.addEventListener("click", closeViewer);
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closeViewer();
+    BW.Scrapbook.onClose = function () {
+      S.nextMystery();
+      startMystery();
+    };
+    BW.Scrapbook.open();
   });
 
   // ---------- Init ----------
+  S.load();
   makeFireflies(14);
-  updateClueCount();
-  renderScrapbook();
-  showStory("Moonroot Pond", INTRO, "Investigate the Light");
+  startMystery();
 })();
