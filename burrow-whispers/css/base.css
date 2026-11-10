@@ -1,264 +1,301 @@
-/* Burrow Whispers Crossroads: css/base.css V2.4 · Part 1 of 1
+/* PROJECT: Book Keeper — Website
+   FILE: Burrow Whispers Crossroads · css/base.css
+   VERSION: 1.0 · Part 1 of 1
    Lives at stories/burrow-whispers/css/base.css
-   Replaces V2.3. Pairs with variables.css V2.1, effects.css V2.0,
-   index.html V2.0 and js/crossroads.js V1.1.
-   Layout only: stage, hot spot placement and shapes, back link,
-   opening titles, hint line, discovery panel.
-   Glows, ripples and dust live in effects.css.
-   V2.3: opening titles play as soon as the page loads (no waiting
-         for the script), so they always appear.
-   V2.4: .stage picture set to block so the 9:16 / 9:20 picture swap
-         fills the stage and the hot spots stay aligned. */
 
+   This file holds the layout: the picture, the invisible hot spots,
+   the back link, the hint line, the discovery panel and the mailbox
+   letter. Colors, timings and hot spot positions come from
+   css/variables.css. Glow, fireflies and touch responses are in
+   css/effects.css.
+
+   State classes the script (js/crossroads.js) switches on and off:
+     .hint.is-shown ........ the hint line is visible
+     .panel.is-open ........ the discovery panel is visible
+     .letter.is-open ....... the mailbox letter is visible
+     (the letter also uses the hidden attribute: the script removes it,
+      waits one frame, then adds .is-open)
+
+   Picture size: the picture always covers the screen. The numbers in
+   --stage-w below are the ratios from variables.css written as plain
+   decimals. If you change a ratio there, change it here too. */
+
+/* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
-  height: 100%;
   margin: 0;
-  overflow: hidden;
+  height: 100%;
   background: var(--night);
-  color: var(--parchment);
+  color: var(--cream);
   font-family: var(--font-body);
+  overflow: hidden;
   -webkit-text-size-adjust: 100%;
 }
 
-/* ---------- World and stage ---------- */
-.world { position: fixed; inset: 0; overflow: hidden; }
+/* ---------- The picture ---------- */
+:root { --stage-w: max(100vw, calc(100vh * 0.5625)); }
+@supports (height: 100dvh) {
+  :root { --stage-w: max(100vw, calc(100dvh * 0.5625)); }
+}
+@media (max-aspect-ratio: 9/17) {
+  :root { --stage-w: max(100vw, calc(100vh * 0.45)); }
+  @supports (height: 100dvh) {
+    :root { --stage-w: max(100vw, calc(100dvh * 0.45)); }
+  }
+}
+@media (min-aspect-ratio: 1/1) {
+  :root { --stage-w: max(100vw, calc(100vh * 1.3333)); }
+  @supports (height: 100dvh) {
+    :root { --stage-w: max(100vw, calc(100dvh * 1.3333)); }
+  }
+}
+
+.world {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: var(--z-stage);
+}
 
 .stage {
   position: absolute;
   left: 50%;
   top: 50%;
   width: var(--stage-w);
-  height: var(--stage-h);
+  aspect-ratio: var(--stage-ratio);
   transform: translate(-50%, -50%);
 }
-.stage picture {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
+
+.stage picture,
 .stage-image {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* ---------- Hot spots: invisible, placed in percent of the picture ---------- */
+/* ---------- Hot spots: invisible, they live in the artwork ---------- */
 .hot {
   position: absolute;
-  transform: translate(-50%, -50%);
-  padding: 0;
   margin: 0;
+  padding: 0;
   border: 0;
-  background: none;
+  border-radius: 40%;
+  background: transparent;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-}
-.hot:focus-visible { outline: 2px dashed var(--gold); outline-offset: 4px; }
-
-.hot[data-id="pond"]     { left: var(--pond-x);     top: var(--pond-y);     width: var(--pond-w);     height: var(--pond-h);
-                           border-radius: 55% 45% 50% 50% / 50% 58% 42% 50%; }
-.hot[data-id="moon"]     { left: var(--moon-x);     top: var(--moon-y);     width: var(--moon-w);     height: var(--moon-h);
-                           border-radius: 50%; }
-.hot[data-id="waystone"] { left: var(--waystone-x); top: var(--waystone-y); width: var(--waystone-w); height: var(--waystone-h);
-                           border-radius: 50% 50% 38% 38% / 60% 60% 40% 40%; }
-.hot[data-id="trail"]    { left: var(--trail-x);    top: var(--trail-y);    width: var(--trail-w);    height: var(--trail-h);
-                           border-radius: 40% 40% 12% 12% / 30% 30% 8% 8%; }
-.hot[data-id="hill"]     { left: var(--hill-x);     top: var(--hill-y);     width: var(--hill-w);     height: var(--hill-h);
-                           border-radius: 50%; }
-.hot[data-id="clearing"] { left: var(--clearing-x); top: var(--clearing-y); width: var(--clearing-w); height: var(--clearing-h);
-                           border-radius: 50%; }
-.hot[data-id="secret"]   { left: var(--secret-x);   top: var(--secret-y);   width: var(--secret-w);   height: var(--secret-h);
-                           border-radius: 50%; }
-
-/* The secret never shows itself: no outline, no cursor change */
-.hot[data-id="secret"]:focus-visible { outline: none; }
-.hot[data-id="secret"] { cursor: default; }
-
-/* ---------- Back link (the only text that stays, small, at the top) ---------- */
-.top {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: 5;
-  padding: calc(env(safe-area-inset-top, 0px) + 6px) 16px 0;
-  pointer-events: none;
-}
-.back {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-min);
-  font-family: var(--font-ui);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  color: var(--gold);
-  opacity: 0.8;
-  text-shadow: var(--hint-shadow);
+  touch-action: manipulation;
 }
 
-/* ---------- Opening titles: sit above the waystone, play once ----------
-   Lives inside .stage, so it stays locked to the picture.
-   Plays as soon as the page loads.
-   Title: 2s delay, 4s on screen. Subtitle: starts at 6s, 8s on screen. */
+.hot[data-id="waystone"] { left: var(--waystone-l); top: var(--waystone-t); width: var(--waystone-w); height: var(--waystone-h); }
+.hot[data-id="pond"]     { left: var(--pond-l);     top: var(--pond-t);     width: var(--pond-w);     height: var(--pond-h); }
+.hot[data-id="moon"]     { left: var(--moon-l);     top: var(--moon-t);     width: var(--moon-w);     height: var(--moon-h); }
+.hot[data-id="trail"]    { left: var(--trail-l);    top: var(--trail-t);    width: var(--trail-w);    height: var(--trail-h); }
+.hot[data-id="hill"]     { left: var(--hill-l);     top: var(--hill-t);     width: var(--hill-w);     height: var(--hill-h); }
+.hot[data-id="mailbox"]  { left: var(--mailbox-l);  top: var(--mailbox-t);  width: var(--mailbox-w);  height: var(--mailbox-h); }
+.hot[data-id="clearing"] { left: var(--clearing-l); top: var(--clearing-t); width: var(--clearing-w); height: var(--clearing-h); }
+.hot[data-id="secret"]   { left: var(--secret-l);   top: var(--secret-t);   width: var(--secret-w);   height: var(--secret-h); cursor: default; }
+
+/* Keyboard focus: a soft lantern glow, never a button outline */
+.hot:focus { outline: none; }
+.hot:focus-visible {
+  box-shadow: 0 0 0 2px var(--lantern-soft), 0 0 24px 6px var(--lantern-soft);
+}
+
+/* ---------- Opening titles (animation is in effects.css) ---------- */
 .intro {
   position: absolute;
-  left: 51%;
-  top: 27%;
-  width: 0;
-  height: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-.intro-title,
-.intro-subtitle {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 92vw;
-  max-width: 560px;
-  margin: 0;
+  left: 0; right: 0;
+  top: calc(var(--safe-top) + 9%);
   text-align: center;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  animation-fill-mode: both;
-  animation-timing-function: ease-in-out;
-}
-
-/* Soft dark haze behind the words so they read over branches and path */
-.intro-title::before,
-.intro-subtitle::before {
-  content: "";
-  position: absolute;
-  inset: -60% -15%;
-  z-index: -1;
-  background: radial-gradient(ellipse, rgba(6, 10, 9, 0.62), transparent 68%);
+  padding: 0 1.5rem;
+  pointer-events: none;
 }
 .intro-title {
+  margin: 0;
+  font-family: var(--font-title);
   font-weight: normal;
-  font-size: clamp(2rem, 10vw, 3.4rem);
-  letter-spacing: 0.12em;
-  text-indent: 0.12em;
-  color: var(--gold-bright);
-  text-shadow: 0 0 22px var(--gold-glow), 0 3px 12px rgba(0, 0, 0, 0.9);
-  animation-name: intro-title;
-  animation-duration: 4s;
-  animation-delay: 2s;
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  letter-spacing: 0.06em;
+  color: var(--cream);
+  text-shadow: 0 2px 18px rgba(10, 18, 16, 0.85);
 }
 .intro-subtitle {
-  max-width: 26ch;
+  margin: 0.6rem auto 0;
+  max-width: 28rem;
   font-style: italic;
-  line-height: 1.45;
-  font-size: clamp(1.05rem, 4.6vw, 1.4rem);
-  color: var(--parchment);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
-  animation-name: intro-subtitle;
-  animation-duration: 8s;
-  animation-delay: 6s;
+  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+  color: var(--cream);
+  text-shadow: 0 1px 12px rgba(10, 18, 16, 0.85);
 }
 
-@keyframes intro-title {          /* 1s in, 2s hold, 1s out */
-  0%   { opacity: 0; }
-  25%  { opacity: 1; }
-  75%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-@keyframes intro-subtitle {       /* 1s in, 6s hold, 1s out */
-  0%     { opacity: 0; }
-  12.5%  { opacity: 1; }
-  87.5%  { opacity: 1; }
-  100%   { opacity: 0; }
+/* ---------- Effects layer sits above the picture ---------- */
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-fx);
+  pointer-events: none;
+  overflow: hidden;
 }
 
-/* ---------- Hint line (bottom, fades in and out) ---------- */
+/* ---------- Back link ---------- */
+.top {
+  position: fixed;
+  top: calc(var(--safe-top) + 0.6rem);
+  left: 0.8rem;
+  z-index: var(--z-top);
+}
+.back {
+  display: inline-block;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0.7;
+  background: rgba(10, 18, 16, 0.35);
+  border-radius: 999px;
+  transition: opacity var(--t-fade) var(--ease-soft);
+}
+.back:hover, .back:focus-visible { opacity: 1; }
+
+/* ---------- Hint line ---------- */
 .hint {
   position: fixed;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+  left: 0; right: 0;
+  bottom: calc(var(--safe-bottom) + 1.1rem);
   margin: 0;
-  padding: 0 24px;
+  padding: 0 1.5rem;
+  z-index: var(--z-hint);
   text-align: center;
   font-style: italic;
-  font-size: clamp(0.95rem, 3.8vw, 1.15rem);
-  color: var(--parchment);
-  text-shadow: var(--hint-shadow);
+  font-size: var(--size-hint);
+  color: var(--cream);
+  text-shadow: 0 1px 10px rgba(10, 18, 16, 0.9);
   opacity: 0;
+  transform: translateY(6px);
   pointer-events: none;
-  transition: opacity var(--fade-slow) var(--ease-gentle);
+  transition: opacity var(--t-fade) var(--ease-soft),
+              transform var(--t-fade) var(--ease-soft);
 }
-.hint.show { opacity: 1; }
+.hint.is-shown { opacity: 0.9; transform: none; }
 
 /* ---------- Discovery panel (stage 1 of the two-stage tap) ---------- */
 .panel {
   position: fixed;
   left: 50%;
-  z-index: 6;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
-  width: min(calc(100vw - 32px), var(--panel-max));
-  padding: 18px 20px 14px;
-  text-align: center;
+  bottom: calc(var(--safe-bottom) + 3.2rem);
+  width: min(88vw, 24rem);
+  z-index: var(--z-panel);
+  padding: 1.1rem 1.3rem 1.2rem;
   background: var(--panel-bg);
   border: 1px solid var(--panel-edge);
-  border-radius: var(--panel-radius);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border-radius: 1rem;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   opacity: 0;
-  visibility: hidden;
-  transform: translate(-50%, 12px);
-  transition: opacity var(--fade-medium) var(--ease-gentle),
-              transform var(--fade-medium) var(--ease-gentle),
-              visibility 0s linear var(--fade-medium);
+  transform: translate(-50%, 10px);
+  pointer-events: none;
+  transition: opacity var(--t-panel) var(--ease-soft),
+              transform var(--t-panel) var(--ease-soft);
 }
-.panel.open {
+.panel.is-open {
   opacity: 1;
-  visibility: visible;
   transform: translate(-50%, 0);
-  transition-delay: 0s;
-}
-.panel-title {
-  margin: 0;
-  font-weight: normal;
-  font-size: 1.3rem;
-  color: var(--gold-bright);
-}
-.panel-text {
-  margin: 0.6em 0 0;
-  line-height: 1.5;
-  font-style: italic;
-}
-.panel-go {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--tap-min);
-  margin-top: 0.5em;
-  padding: 0 18px;
-  font-family: var(--font-ui);
-  font-size: 0.85rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--gold);
+  pointer-events: auto;
 }
 .panel-close {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  width: var(--tap-min);
-  height: var(--tap-min);
+  top: 0.3rem; right: 0.5rem;
+  width: 2.2rem; height: 2.2rem;
   border: 0;
-  background: none;
-  font-size: 1.4rem;
+  background: transparent;
+  color: var(--cream);
+  font-size: 1.5rem;
   line-height: 1;
-  color: var(--parchment);
   opacity: 0.7;
   cursor: pointer;
 }
-.panel-close:focus-visible,
-.panel-go:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+.panel-title {
+  margin: 0 1.6rem 0.4rem 0;
+  font-family: var(--font-title);
+  font-weight: normal;
+  font-size: 1.3rem;
+  color: var(--lantern);
+}
+.panel-text {
+  margin: 0 0 0.9rem;
+  font-size: var(--size-panel);
+  line-height: 1.5;
+}
+.panel-go {
+  display: inline-block;
+  color: var(--cream);
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-color: var(--lantern-soft);
+}
+.panel-go:empty { display: none; }
+
+/* ---------- Mailbox letter (the introduction) ---------- */
+.letter {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(90vw, 28rem);
+  max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 3rem);
+  overflow-y: auto;
+  z-index: var(--z-letter);
+  padding: 1.8rem 1.6rem 1.6rem;
+  background: var(--letter-bg);
+  color: var(--ink);
+  border: 1px solid var(--letter-edge);
+  border-radius: 0.5rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transform: translate(-50%, -46%) scale(0.92);
+  transform-origin: 85% 55%;   /* grows from the mailbox side */
+  transition: opacity var(--t-letter) var(--ease-soft),
+              transform var(--t-letter) var(--ease-soft);
+}
+.letter[hidden] { display: none; }
+.letter.is-open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.letter-close {
+  position: absolute;
+  top: 0.3rem; right: 0.5rem;
+  width: 2.2rem; height: 2.2rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  opacity: 0.6;
+  cursor: pointer;
+}
+.letter-title {
+  margin: 0 1.6rem 0.9rem 0;
+  font-family: var(--font-title);
+  font-weight: normal;
+  font-size: 1.5rem;
+}
+.letter-body p {
+  margin: 0 0 0.9rem;
+  font-size: var(--size-letter);
+  line-height: 1.6;
+}
+.letter-sign {
+  margin: 1.2rem 0 0;
+  text-align: right;
+  font-style: italic;
+}
+
+/* ---------- Gentle for everyone ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hint, .panel, .letter, .back { transition-duration: 0.01s; }
+}
