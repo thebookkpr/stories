@@ -1,6 +1,8 @@
 /* PROJECT: Book Keeper — Website
+   SUBTITLE: BURROW WHISPERS — CROSSROADS
    FILE: Burrow Whispers Crossroads · js/crossroads.js
-   VERSION: 1.2 · Part 1 of 1
+   VERSION: 1.3 · Part 1 of 1
+   Location: https://thebookkpr.github.io/stories/burrow-whispers/
    Lives at stories/burrow-whispers/js/crossroads.js
 
    Everything here is built around the hot spots (positions are in
@@ -11,29 +13,39 @@
 
    Tap logic:  tap once = the world answers and a card appears
                tap the link in the card = travel
+               tap empty scenery = the world still answers softly
 
    EDIT HERE (no other file needs to change):
-     LUNELLE_URL ... address of Lunelle's game (stone, pond, moon stone)
+     LUNELLE_URL ... address of Lunelle's game (pond, moon stone)
      SECRET_URL .... optional: send the hidden star to a page instead
      PLACES ........ card text and links
      HINT_ORDER .... which spots whisper while idle
      LETTER ........ the mailbox introduction
      SECRET ........ the page the hidden star opens
-   A place with an empty href shows its card without a link. */
+   A place with an empty href shows its card without a link.
+   A place with a messages list shows the next message on each tap. */
 
 (function () {
   'use strict';
 
   /* ---------- Addresses ---------- */
-  var LUNELLE_URL = '/lunelle/index.html';
+  var LUNELLE_URL = 'https://thebookkpr.github.io/stories/burrow-whispers/lunelle/index.html';
   var SECRET_URL  = '';   /* optional */
 
   /* ---------- Places ---------- */
   var PLACES = {
     waystone: {
       title: 'The Crossroads Stone',
-      text: 'Many journeys begin here.',
-      go: 'Read More →', href: LUNELLE_URL,
+      messages: [
+        'Many journeys begin here.',
+        "The lotus is Lunelle's favorite carving.",
+        'Bramble always stops to look at the fern.',
+        'Piperberry likes the little blossom best.',
+        'The lantern is for finding the way.',
+        'The star is for what comes next.',
+        'Moss has grown in every groove. Nobody minds.'
+      ],
+      go: '', href: '',
       hint: 'The old waystone remembers many journeys...'
     },
     pond: {
@@ -43,8 +55,8 @@
       hint: 'A faint glow shimmers across the pond...'
     },
     moon: {
-      title: 'The Moon Lotus Stone',
-      text: 'A lotus is carved here, soft with moss.\nSomeone sits here often.',
+      title: 'Moon Lotus',
+      text: 'Some journeys begin with a single step.',
       go: 'Explore →', href: LUNELLE_URL
     },
     trail: {
@@ -114,6 +126,7 @@
   var SHRUNK = 'translate(-50%, -50%) scale(0.05)';
   var lastFocus = null;
   var busy = false;
+  var messageIndex = {};
 
   function rand(min, max) { return min + Math.random() * (max - min); }
   function hot(id) { return stage.querySelector('.hot[data-id="' + id + '"]'); }
@@ -193,11 +206,18 @@
     });
   }
 
+  function cardText(id, p) {
+    if (!p.messages) { return p.text; }
+    var n = messageIndex[id] || 0;
+    messageIndex[id] = n + 1;
+    return p.messages[n % p.messages.length];
+  }
+
   function openPanel(id) {
     var p = PLACES[id];
     if (!p) { return; }
     panelTitle.textContent = p.title;
-    setLines(panelText, p.text);
+    setLines(panelText, cardText(id, p));
     if (p.href && p.go) {
       panelGo.textContent = p.go;
       panelGo.setAttribute('href', p.href);
@@ -294,8 +314,11 @@
     spots[i].addEventListener('click', onHot);
   }
 
+  /* Empty scenery: close any card, and let the world answer softly */
   world.addEventListener('click', function (e) {
-    if (!e.target.closest('.hot')) { closePanel(); }
+    if (e.target.closest('.hot')) { return; }
+    closePanel();
+    touchEffect('clearing', e.clientX, e.clientY);
   });
   panelClose.addEventListener('click', closePanel);
   letterClose.addEventListener('click', closeLetter);
