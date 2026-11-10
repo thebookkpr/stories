@@ -1,278 +1,272 @@
-/* Burrow Whispers Crossroads: js/crossroads.js V1.1 · Part 1 of 1
+/* PROJECT: Book Keeper — Website
+   FILE: Burrow Whispers Crossroads · js/crossroads.js
+   VERSION: 1.0 · Part 1 of 1
    Lives at stories/burrow-whispers/js/crossroads.js
-   Replaces V1.0. Pairs with index.html V1.9, variables.css V2.0,
-   base.css V2.2, effects.css V2.0.
-   Section 1: places (edit text and links here).
-   Section 2: behaviour (two-stage tap, idle hints, secret, dust, opening titles).
-   V1.1: the opening-titles clock starts when the picture has loaded. */
 
-/* ============ SECTION 1: PLACES ============
-   id      matches data-id on the hot spot buttons in index.html
-   title   panel heading
-   text    panel flavour text (\n makes a line break)
-   go      the button words
-   url     where stage 2 travels to; null = no button yet
-   lights  which hot spots glow when this place is noticed
-   hint    idle line at the bottom (null = never hinted)
-   To open a place later: change its url from null to a folder. */
-const PLACES = {
-  pond: {
-    title: "Moonroot Pond",
-    text: "A quiet pond shines beneath the moon.\nSomeone often visits here at night.",
-    go: "Explore →",
-    url: "lunelle/",
-    lights: ["pond", "moon"],
-    hint: "A faint glow shimmers across the pond..."
-  },
-  waystone: {
-    title: "The Crossroads Stone",
-    text: "Many journeys begin here.",
-    go: "Read More →",
-    url: null,
-    lights: ["waystone"],
-    hint: "The old waystone remembers many journeys..."
-  },
-  trail: {
-    title: "The Lantern Trail",
-    text: "A lantern-lit path disappears beneath the roots.\nIt has not been walked yet.",
-    go: "Follow →",
-    url: null,
-    lights: ["trail"],
-    hint: "A lantern-lit trail disappears beneath the roots..."
-  },
-  hill: {
-    title: "Burrow Hill",
-    text: "Warm lights glow behind round doors.\nMany little lives call this place home.",
-    go: "Visit →",
-    url: null,
-    lights: ["hill"],
-    hint: "Warm lights flicker among the hillside burrows..."
-  },
-  clearing: {
-    title: "The Clearing",
-    text: "Paw prints wander down the path.\nWhat is Burrow Whispers?",
-    go: "Learn More →",
-    url: "about/",
-    lights: ["clearing"],
-    hint: null
+   What this file does:
+     1. Builds the fireflies, pollen and haze inside #fx
+     2. Shows a soft hint line when the visitor is idle
+     3. Handles the two-stage tap: tap a place and the world answers
+        (touch effect + discovery panel); the link inside the panel is
+        stage two
+     4. Opens the mailbox letter, the introduction to Burrow Whispers
+
+   EDIT HERE (no other file needs to change):
+     PLACES ... title, text, link label and link address for each spot
+     HINTS .... the idle hint lines
+     LETTER ... the mailbox letter (title, paragraphs, signature)
+
+   A place with an empty href shows no link in its panel. Fill in the
+   href when that page exists. Hot spot positions are in
+   css/variables.css. */
+
+(function () {
+  'use strict';
+
+  /* ---------- Place text and links ---------- */
+  var PLACES = {
+    waystone: {
+      title: 'The Old Crossroads Stone',
+      text: 'Stories linger here.',
+      go: 'Crossroads Records',
+      href: ''
+    },
+    pond: {
+      title: 'Moonroot Pond',
+      text: 'A quiet path beneath the moon.',
+      go: 'Visit the pond',
+      href: ''
+    },
+    moon: {
+      title: 'The Moon Lotus Stone',
+      text: 'A lotus is carved here, soft with moss. Someone sits here often.',
+      go: '',
+      href: ''
+    },
+    trail: {
+      title: 'Lantern Trail',
+      text: "Where tomorrow's stories begin.",
+      go: 'Follow the trail',
+      href: ''
+    },
+    hill: {
+      title: 'Burrow Hill',
+      text: 'Home to many friendly faces.',
+      go: 'Visit the burrows',
+      href: ''
+    },
+    clearing: {
+      title: 'The Clearing',
+      text: 'Tiny pawprints cross the path. Many rabbits pass through here every day.',
+      go: '',
+      href: ''
+    },
+    secret: {
+      title: 'A Small Star',
+      text: 'Carved long ago, and easy to miss. You looked closely.',
+      go: '',
+      href: ''
+    }
+  };
+
+  /* Which touch effect each place uses (see css/effects.css) */
+  var EFFECTS = {
+    waystone: 'is-stone', pond: 'is-pond', moon: 'is-pond', trail: 'is-lantern',
+    hill: 'is-hill', mailbox: 'is-mail', clearing: 'is-fern', secret: 'is-star'
+  };
+
+  /* ---------- Idle hints ---------- */
+  var HINTS = [
+    'Touch the stone.',
+    'Something is waiting in the mailbox.',
+    'Every path leads somewhere.',
+    'Look closely at the roots.'
+  ];
+
+  /* ---------- The mailbox letter ---------- */
+  var LETTER = {
+    title: 'A Letter from the Book Keeper',
+    paragraphs: [
+      'Welcome to the Moonroot Wilds.',
+      'This is the Crossroads, where curious rabbits pause, rest, share what they have found, and choose which path to follow next. Nothing here was built to be grand. The roots, the moss and the lanterns simply grew into a place that feels like home.',
+      'Burrow Whispers is a collection of small stories about small lives. Each rabbit keeps a little courage, a little wonder, and a story worth telling. Touch the stone, wander to the pond, follow the lanterns, or visit the hill. Look closely, and you may find a secret or two.'
+    ],
+    sign: 'Many little lives, one shared world. ~ The Book Keeper'
+  };
+
+  /* ---------- Element lookups ---------- */
+  var world = document.getElementById('world');
+  var stage = document.getElementById('stage');
+  var fx = document.getElementById('fx');
+  var hint = document.getElementById('hint');
+  var panel = document.getElementById('panel');
+  var panelTitle = document.getElementById('panel-title');
+  var panelText = document.getElementById('panel-text');
+  var panelGo = document.getElementById('panel-go');
+  var panelClose = document.getElementById('panel-close');
+  var letter = document.getElementById('letter');
+  var letterTitle = document.getElementById('letter-title');
+  var letterBody = document.getElementById('letter-body');
+  var letterSign = document.getElementById('letter-sign');
+  var letterClose = document.getElementById('letter-close');
+  if (!world || !fx || !panel || !letter) { return; }
+
+  var lastFocus = null;
+
+  /* ---------- Atmosphere ---------- */
+  function rand(min, max) { return min + Math.random() * (max - min); }
+
+  function addDrifter(kind, count, size, dur) {
+    for (var i = 0; i < count; i++) {
+      var el = document.createElement('span');
+      el.className = kind;
+      el.style.left = rand(2, 98) + '%';
+      el.style.top = rand(8, 92) + '%';
+      el.style.setProperty('--size', rand(size[0], size[1]).toFixed(1) + 'px');
+      el.style.setProperty('--dx', rand(-50, 50).toFixed(0) + 'px');
+      el.style.setProperty('--dy', rand(-90, -20).toFixed(0) + 'px');
+      el.style.setProperty('--dur', rand(dur[0], dur[1]).toFixed(1) + 's');
+      el.style.setProperty('--delay', (-rand(0, dur[1])).toFixed(1) + 's');
+      fx.appendChild(el);
+    }
   }
-};
 
-/* A tap on the moon counts as a tap on the pond */
-const ALIASES = { moon: "pond" };
+  function buildAtmosphere() {
+    addDrifter('firefly', 16, [3, 6], [11, 20]);
+    addDrifter('pollen', 22, [1.5, 3], [18, 32]);
+    for (var i = 0; i < 3; i++) {
+      var h = document.createElement('span');
+      h.className = 'haze';
+      h.style.top = (10 + i * 28) + '%';
+      h.style.setProperty('--dur', (34 + i * 9) + 's');
+      h.style.setProperty('--delay', (-i * 11) + 's');
+      fx.appendChild(h);
+    }
+  }
 
-/* Hints that light nothing */
-const GENERAL_HINTS = [
-  "Not every secret path is obvious.",
-  "The Wilds reward curious travelers."
-];
+  /* ---------- Touch effect ---------- */
+  function touchEffect(id, x, y) {
+    var el = document.createElement('span');
+    el.className = 'fx-touch ' + (EFFECTS[id] || 'is-lantern');
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.addEventListener('animationend', function () {
+      if (el.parentNode) { el.parentNode.removeChild(el); }
+    });
+    fx.appendChild(el);
+  }
 
-/* Order the place hints appear in */
-const HINT_ORDER = ["pond", "hill", "waystone", "trail"];
+  /* ---------- Hint line ---------- */
+  var hintIndex = 0;
+  var hintTimer = null;
+  var busy = false;
 
-/* The secret: set a folder (e.g. "secret/") to make it open something */
-const SECRET_URL = null;
+  function showHint() {
+    if (busy) { hintTimer = setTimeout(showHint, 4000); return; }
+    hint.textContent = HINTS[hintIndex % HINTS.length];
+    hintIndex++;
+    hint.classList.add('is-shown');
+    hintTimer = setTimeout(function () {
+      hint.classList.remove('is-shown');
+      hintTimer = setTimeout(showHint, 7000);
+    }, 5000);
+  }
 
-/* Opening titles finish this many milliseconds after the picture loads
-   (2s wait + 4s title ends at 6s; subtitle 6s + 8s ends at 14s) */
-const INTRO_MS = 14000;
+  function hideHint() { hint.classList.remove('is-shown'); }
 
+  /* ---------- Discovery panel ---------- */
+  function openPanel(id) {
+    var place = PLACES[id];
+    if (!place) { return; }
+    panelTitle.textContent = place.title;
+    panelText.textContent = place.text;
+    if (place.href && place.go) {
+      panelGo.textContent = place.go;
+      panelGo.setAttribute('href', place.href);
+    } else {
+      panelGo.textContent = '';
+      panelGo.removeAttribute('href');
+    }
+    busy = true;
+    hideHint();
+    world.classList.add('is-focus');
+    panel.classList.add('is-open');
+  }
 
-/* ============ SECTION 2: BEHAVIOUR ============ */
+  function closePanel() {
+    panel.classList.remove('is-open');
+    world.classList.remove('is-focus');
+    busy = letter.classList.contains('is-open');
+  }
 
-const $ = (id) => document.getElementById(id);
-const rand = (a, b) => a + Math.random() * (b - a);
-const el = (tag, cls) => {
-  const n = document.createElement(tag);
-  if (cls) n.className = cls;
-  return n;
-};
+  /* ---------- Mailbox letter ---------- */
+  function buildLetter() {
+    letterTitle.textContent = LETTER.title;
+    letterSign.textContent = LETTER.sign;
+    letterBody.textContent = '';
+    LETTER.paragraphs.forEach(function (text) {
+      var p = document.createElement('p');
+      p.textContent = text;
+      letterBody.appendChild(p);
+    });
+  }
 
-const stage      = $("stage");
-const fx         = $("fx");
-const hintEl     = $("hint");
-const panel      = $("panel");
-const panelTitle = $("panel-title");
-const panelText  = $("panel-text");
-const panelGo    = $("panel-go");
-const panelClose = $("panel-close");
+  function openLetter() {
+    closePanel();
+    busy = true;
+    hideHint();
+    lastFocus = document.activeElement;
+    letter.hidden = false;
+    requestAnimationFrame(function () {
+      letter.classList.add('is-open');
+      letterClose.focus();
+    });
+  }
 
-let openKey = null;       /* place shown in the panel */
-let hintTimer = null;     /* waits before the next hint */
-let hideTimer = null;     /* hides the hint that is showing */
-let introStart = null;    /* set when the picture has loaded */
+  function closeLetter() {
+    letter.classList.remove('is-open');
+    busy = false;
+    setTimeout(function () { letter.hidden = true; }, 750);
+    if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+  }
 
-/* ---------- Light ---------- */
-function clearLit() {
-  stage.querySelectorAll(".hot.lit").forEach((n) => n.classList.remove("lit"));
-}
-function setLit(ids) {
-  clearLit();
-  ids.forEach((id) => {
-    const n = stage.querySelector('.hot[data-id="' + id + '"]');
-    if (n) n.classList.add("lit");
+  /* ---------- Taps ---------- */
+  function onHot(e) {
+    var btn = e.currentTarget;
+    var id = btn.getAttribute('data-id');
+    var x = e.clientX, y = e.clientY;
+    if (!e.clientX && !e.clientY) {          /* keyboard activation */
+      var r = btn.getBoundingClientRect();
+      x = r.left + r.width / 2;
+      y = r.top + r.height / 2;
+    }
+    touchEffect(id, x, y);
+    if (id === 'mailbox') { setTimeout(openLetter, 450); return; }
+    if (id === 'secret') { setTimeout(function () { openPanel(id); }, 700); return; }
+    openPanel(id);
+  }
+
+  var spots = stage.querySelectorAll('.hot');
+  for (var i = 0; i < spots.length; i++) {
+    spots[i].addEventListener('click', onHot);
+  }
+
+  /* Tapping the open scenery, the close button or Escape closes things */
+  world.addEventListener('click', function (e) {
+    if (!e.target.closest('.hot')) { closePanel(); }
   });
-}
-
-/* ---------- Stage 1: discovery panel ---------- */
-function openPlace(key) {
-  const realKey = ALIASES[key] || key;
-  const place = PLACES[realKey];
-  if (!place) return;
-
-  stopHints();
-  openKey = realKey;
-
-  panelTitle.textContent = place.title;
-  panelText.textContent = "";
-  place.text.split("\n").forEach((line, i) => {
-    if (i) panelText.appendChild(document.createElement("br"));
-    panelText.appendChild(document.createTextNode(line));
+  panelClose.addEventListener('click', closePanel);
+  letterClose.addEventListener('click', closeLetter);
+  letter.addEventListener('click', function (e) {
+    if (e.target === letterBody || e.target === letter) { closeLetter(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') { return; }
+    if (letter.classList.contains('is-open')) { closeLetter(); } else { closePanel(); }
   });
 
-  if (place.url) {                       /* stage 2 is only this button */
-    panelGo.href = place.url;
-    panelGo.textContent = place.go;
-    panelGo.style.display = "";
-  } else {
-    panelGo.removeAttribute("href");
-    panelGo.style.display = "none";
-  }
-
-  setLit(place.lights);
-  panel.classList.add("open");
-}
-
-function closePanel() {
-  if (!openKey) return;
-  openKey = null;
-  panel.classList.remove("open");
-  clearLit();
-  startHints();
-}
-
-/* ---------- Taps ---------- */
-stage.querySelectorAll(".hot").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const id = btn.dataset.id;
-    if (id === "secret") return openSecret(btn);
-    openPlace(id);
-  });
-});
-stage.addEventListener("click", closePanel);
-panelClose.addEventListener("click", closePanel);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closePanel();
-});
-
-/* Coming back with the Back button: start fresh */
-window.addEventListener("pageshow", () => {
-  openKey = null;
-  panel.classList.remove("open");
-  clearLit();
-  startHints();
-});
-
-/* ---------- The secret ---------- */
-function openSecret(btn) {
-  if (SECRET_URL) {
-    window.location.href = SECRET_URL;
-    return;
-  }
-  /* Nothing to open yet: a few motes drift up, then quiet */
-  const r = btn.getBoundingClientRect();
-  for (let i = 0; i < 6; i++) {
-    const m = el("div", "mote");
-    m.style.left = (r.left + r.width * rand(0.25, 0.75)).toFixed(0) + "px";
-    m.style.top = (r.top + r.height * rand(0.3, 0.8)).toFixed(0) + "px";
-    m.style.setProperty("--dur", rand(2.2, 3.6).toFixed(1) + "s");
-    m.style.setProperty("--delay", rand(0, 0.5).toFixed(2) + "s");
-    m.style.setProperty("--drift", rand(-24, 24).toFixed(0) + "px");
-    m.style.animationIterationCount = "1";
-    m.style.animationFillMode = "forwards";
-    m.addEventListener("animationend", () => m.remove());
-    fx.appendChild(m);
-  }
-}
-
-/* ---------- Idle hints: one line every 8 to 12 seconds ---------- */
-const HINTS = HINT_ORDER
-  .filter((k) => PLACES[k] && PLACES[k].hint)
-  .map((k) => ({ text: PLACES[k].hint, lights: PLACES[k].lights }))
-  .concat(GENERAL_HINTS.map((t) => ({ text: t, lights: [] })));
-let hintIndex = 0;
-
-function stopHints() {
-  clearTimeout(hintTimer);
-  clearTimeout(hideTimer);
-  hintEl.classList.remove("show");
-}
-
-function scheduleHint(delay) {
-  clearTimeout(hintTimer);
-  hintTimer = setTimeout(showHint, delay);
-}
-
-function showHint() {
-  if (openKey || document.hidden || !HINTS.length) {
-    return scheduleHint(rand(8000, 12000));
-  }
-  const h = HINTS[hintIndex % HINTS.length];
-  hintIndex++;
-
-  hintEl.textContent = h.text;
-  hintEl.classList.add("show");
-  if (h.lights.length) setLit(h.lights);
-
-  hideTimer = setTimeout(() => {
-    hintEl.classList.remove("show");
-    if (!openKey) clearLit();
-    scheduleHint(rand(8000, 12000));
-  }, 5200);
-}
-
-/* The first hint waits until the opening titles are finished */
-function startHints() {
-  stopHints();
-  const base = introStart === null ? performance.now() : introStart;
-  const wait = Math.max(rand(3500, 5500), base + INTRO_MS - performance.now() + 1500);
-  scheduleHint(wait);
-}
-
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) stopHints();
-  else if (!openKey) startHints();
-});
-
-/* ---------- Firefly dust and haze (styles in effects.css) ---------- */
-fx.append(el("div", "haze one"), el("div", "haze two"));
-for (let i = 0; i < 16; i++) {
-  const m = el("div", "mote");
-  m.style.left = rand(5, 95).toFixed(1) + "%";
-  m.style.top = rand(10, 90).toFixed(1) + "%";
-  m.style.setProperty("--dur", rand(5, 9).toFixed(1) + "s");
-  m.style.setProperty("--delay", (-rand(0, 9)).toFixed(1) + "s");
-  m.style.setProperty("--drift", rand(-30, 30).toFixed(0) + "px");
-  fx.appendChild(m);
-}
-
-/* ---------- Opening titles: start the clock when the picture is ready ---------- */
-const introEl = document.querySelector(".intro");
-const bgImg = document.querySelector(".stage-image");
-
-function playIntro() {
-  if (introStart !== null) return;
-  introStart = performance.now();
-  introEl.classList.add("play");     /* title at 2s, subtitle at 6s, from now */
-  startHints();                      /* hints wait until the titles are done */
-}
-
-if (bgImg.complete && bgImg.naturalWidth) playIntro();
-else {
-  bgImg.addEventListener("load", playIntro);
-  bgImg.addEventListener("error", playIntro);   /* never leave the titles waiting */
-}
-
-/* ---------- Begin ---------- */
-startHints();
+  /* ---------- Start ---------- */
+  buildAtmosphere();
+  buildLetter();
+  hintTimer = setTimeout(showHint, 6500);   /* after the opening titles */
+})();
