@@ -1,89 +1,80 @@
 /* PROJECT: Book Keeper — Website
    FILE: Burrow Whispers Crossroads · js/crossroads.js
-   VERSION: 1.0 · Part 1 of 1
+   VERSION: 1.2 · Part 1 of 1
    Lives at stories/burrow-whispers/js/crossroads.js
 
-   What this file does:
-     1. Builds the fireflies, pollen and haze inside #fx
-     2. Shows a soft hint line when the visitor is idle
-     3. Handles the two-stage tap: tap a place and the world answers
-        (touch effect + discovery panel); the link inside the panel is
-        stage two
-     4. Opens the mailbox letter, the introduction to Burrow Whispers
+   Everything here is built around the hot spots (positions are in
+   css/variables.css). Each hot spot has:
+     - a place card (title, text, link label, link address)
+     - a touch effect (css/effects.css)
+     - an idle hint line, which also plays that spot's glow
+
+   Tap logic:  tap once = the world answers and a card appears
+               tap the link in the card = travel
 
    EDIT HERE (no other file needs to change):
-     PLACES ... title, text, link label and link address for each spot
-     HINTS .... the idle hint lines
-     LETTER ... the mailbox letter (title, paragraphs, signature)
-
-   A place with an empty href shows no link in its panel. Fill in the
-   href when that page exists. Hot spot positions are in
-   css/variables.css. */
+     LUNELLE_URL ... address of Lunelle's game (stone, pond, moon stone)
+     SECRET_URL .... optional: send the hidden star to a page instead
+     PLACES ........ card text and links
+     HINT_ORDER .... which spots whisper while idle
+     LETTER ........ the mailbox introduction
+     SECRET ........ the page the hidden star opens
+   A place with an empty href shows its card without a link. */
 
 (function () {
   'use strict';
 
-  /* ---------- Place text and links ---------- */
+  /* ---------- Addresses ---------- */
+  var LUNELLE_URL = '/lunelle/index.html';
+  var SECRET_URL  = '';   /* optional */
+
+  /* ---------- Places ---------- */
   var PLACES = {
     waystone: {
-      title: 'The Old Crossroads Stone',
-      text: 'Stories linger here.',
-      go: 'Crossroads Records',
-      href: ''
+      title: 'The Crossroads Stone',
+      text: 'Many journeys begin here.',
+      go: 'Read More →', href: LUNELLE_URL,
+      hint: 'The old waystone remembers many journeys...'
     },
     pond: {
       title: 'Moonroot Pond',
-      text: 'A quiet path beneath the moon.',
-      go: 'Visit the pond',
-      href: ''
+      text: 'A quiet pond shines beneath the moon.\nSomeone often visits here at night.',
+      go: 'Explore →', href: LUNELLE_URL,
+      hint: 'A faint glow shimmers across the pond...'
     },
     moon: {
       title: 'The Moon Lotus Stone',
-      text: 'A lotus is carved here, soft with moss. Someone sits here often.',
-      go: '',
-      href: ''
+      text: 'A lotus is carved here, soft with moss.\nSomeone sits here often.',
+      go: 'Explore →', href: LUNELLE_URL
     },
     trail: {
       title: 'Lantern Trail',
       text: "Where tomorrow's stories begin.",
-      go: 'Follow the trail',
-      href: ''
+      go: 'Follow →', href: '',
+      hint: 'A lantern-lit trail disappears beneath the roots...'
     },
     hill: {
       title: 'Burrow Hill',
-      text: 'Home to many friendly faces.',
-      go: 'Visit the burrows',
-      href: ''
+      text: 'Warm lights glow behind round doors.\nMany little lives call this place home.',
+      go: 'Visit →', href: '',
+      hint: 'Warm lights flicker among the hillside burrows...'
     },
     clearing: {
       title: 'The Clearing',
-      text: 'Tiny pawprints cross the path. Many rabbits pass through here every day.',
-      go: '',
-      href: ''
+      text: 'Tiny pawprints cross the path.\nMany rabbits pass through here every day.',
+      go: '', href: ''
     },
-    secret: {
-      title: 'A Small Star',
-      text: 'Carved long ago, and easy to miss. You looked closely.',
-      go: '',
-      href: ''
-    }
+    mailbox: { hint: 'Something waits in the old mailbox...' }
   };
 
-  /* Which touch effect each place uses (see css/effects.css) */
+  var HINT_ORDER = ['pond', 'hill', 'waystone', 'trail', 'mailbox'];
+
   var EFFECTS = {
     waystone: 'is-stone', pond: 'is-pond', moon: 'is-pond', trail: 'is-lantern',
     hill: 'is-hill', mailbox: 'is-mail', clearing: 'is-fern', secret: 'is-star'
   };
 
-  /* ---------- Idle hints ---------- */
-  var HINTS = [
-    'Touch the stone.',
-    'Something is waiting in the mailbox.',
-    'Every path leads somewhere.',
-    'Look closely at the roots.'
-  ];
-
-  /* ---------- The mailbox letter ---------- */
+  /* ---------- Letters ---------- */
   var LETTER = {
     title: 'A Letter from the Book Keeper',
     paragraphs: [
@@ -94,7 +85,16 @@
     sign: 'Many little lives, one shared world. ~ The Book Keeper'
   };
 
-  /* ---------- Element lookups ---------- */
+  var SECRET = {
+    title: 'A Page Between the Roots',
+    paragraphs: [
+      'You found the star.',
+      'Few visitors look this closely. Some secrets are only kept for the curious.'
+    ],
+    sign: '~ The Book Keeper'
+  };
+
+  /* ---------- Elements ---------- */
   var world = document.getElementById('world');
   var stage = document.getElementById('stage');
   var fx = document.getElementById('fx');
@@ -109,13 +109,16 @@
   var letterBody = document.getElementById('letter-body');
   var letterSign = document.getElementById('letter-sign');
   var letterClose = document.getElementById('letter-close');
-  if (!world || !fx || !panel || !letter) { return; }
+  if (!world || !stage || !fx || !panel || !letter) { return; }
 
+  var SHRUNK = 'translate(-50%, -50%) scale(0.05)';
   var lastFocus = null;
+  var busy = false;
+
+  function rand(min, max) { return min + Math.random() * (max - min); }
+  function hot(id) { return stage.querySelector('.hot[data-id="' + id + '"]'); }
 
   /* ---------- Atmosphere ---------- */
-  function rand(min, max) { return min + Math.random() * (max - min); }
-
   function addDrifter(kind, count, size, dur) {
     for (var i = 0; i < count; i++) {
       var el = document.createElement('span');
@@ -144,7 +147,7 @@
     }
   }
 
-  /* ---------- Touch effect ---------- */
+  /* ---------- Touch effect and hot spot glow ---------- */
   function touchEffect(id, x, y) {
     var el = document.createElement('span');
     el.className = 'fx-touch ' + (EFFECTS[id] || 'is-lantern');
@@ -156,33 +159,48 @@
     fx.appendChild(el);
   }
 
-  /* ---------- Hint line ---------- */
-  var hintIndex = 0;
-  var hintTimer = null;
-  var busy = false;
-
-  function showHint() {
-    if (busy) { hintTimer = setTimeout(showHint, 4000); return; }
-    hint.textContent = HINTS[hintIndex % HINTS.length];
-    hintIndex++;
-    hint.classList.add('is-shown');
-    hintTimer = setTimeout(function () {
-      hint.classList.remove('is-shown');
-      hintTimer = setTimeout(showHint, 7000);
-    }, 5000);
+  function glowSpot(id) {
+    var btn = hot(id);
+    if (!btn) { return; }
+    var r = btn.getBoundingClientRect();
+    touchEffect(id, r.left + r.width / 2, r.top + r.height / 2);
   }
+
+  /* ---------- Idle hints: every 8 to 12 seconds ---------- */
+  var hintIndex = 0;
 
   function hideHint() { hint.classList.remove('is-shown'); }
 
-  /* ---------- Discovery panel ---------- */
+  function whisper() {
+    var wait = rand(8000, 12000);
+    if (!busy && !document.hidden) {
+      var id = HINT_ORDER[hintIndex % HINT_ORDER.length];
+      hintIndex++;
+      hint.textContent = PLACES[id].hint;
+      hint.classList.add('is-shown');
+      glowSpot(id);
+      setTimeout(hideHint, 5000);
+    }
+    setTimeout(whisper, wait);
+  }
+
+  /* ---------- Place card (stage 1) ---------- */
+  function setLines(el, text) {
+    el.textContent = '';
+    text.split('\n').forEach(function (line, i) {
+      if (i) { el.appendChild(document.createElement('br')); }
+      el.appendChild(document.createTextNode(line));
+    });
+  }
+
   function openPanel(id) {
-    var place = PLACES[id];
-    if (!place) { return; }
-    panelTitle.textContent = place.title;
-    panelText.textContent = place.text;
-    if (place.href && place.go) {
-      panelGo.textContent = place.go;
-      panelGo.setAttribute('href', place.href);
+    var p = PLACES[id];
+    if (!p) { return; }
+    panelTitle.textContent = p.title;
+    setLines(panelText, p.text);
+    if (p.href && p.go) {
+      panelGo.textContent = p.go;
+      panelGo.setAttribute('href', p.href);
     } else {
       panelGo.textContent = '';
       panelGo.removeAttribute('href');
@@ -199,34 +217,51 @@
     busy = letter.classList.contains('is-open');
   }
 
-  /* ---------- Mailbox letter ---------- */
-  function buildLetter() {
-    letterTitle.textContent = LETTER.title;
-    letterSign.textContent = LETTER.sign;
+  /* ---------- Letters: grow from the spot, shrink back into it ---------- */
+  function fillLetter(c) {
+    letterTitle.textContent = c.title;
+    letterSign.textContent = c.sign;
     letterBody.textContent = '';
-    LETTER.paragraphs.forEach(function (text) {
+    c.paragraphs.forEach(function (text) {
       var p = document.createElement('p');
       p.textContent = text;
       letterBody.appendChild(p);
     });
   }
 
-  function openLetter() {
+  function openLetter(c, fromId) {
     closePanel();
     busy = true;
     hideHint();
     lastFocus = document.activeElement;
+    fillLetter(c);
     letter.hidden = false;
-    requestAnimationFrame(function () {
-      letter.classList.add('is-open');
-      letterClose.focus();
-    });
+
+    var origin = '50% 50%', btn = fromId && hot(fromId);
+    if (btn) {
+      var r = btn.getBoundingClientRect();
+      var left = (window.innerWidth - letter.offsetWidth) / 2;
+      var top = (window.innerHeight - letter.offsetHeight) / 2;
+      origin = (r.left + r.width / 2 - left) + 'px ' + (r.top + r.height / 2 - top) + 'px';
+    }
+    letter.style.transformOrigin = origin;
+    letter.style.transition = 'none';
+    letter.style.transform = SHRUNK;
+    void letter.offsetWidth;                 /* lock in the small start */
+    letter.style.transition = '';
+    letter.style.transform = '';
+    letter.classList.add('is-open');
+    letterClose.focus();
   }
 
   function closeLetter() {
+    letter.style.transform = SHRUNK;
     letter.classList.remove('is-open');
     busy = false;
-    setTimeout(function () { letter.hidden = true; }, 750);
+    setTimeout(function () {
+      letter.hidden = true;
+      letter.style.transform = '';
+    }, 750);
     if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
   }
 
@@ -235,15 +270,23 @@
     var btn = e.currentTarget;
     var id = btn.getAttribute('data-id');
     var x = e.clientX, y = e.clientY;
-    if (!e.clientX && !e.clientY) {          /* keyboard activation */
+    if (!x && !y) {                          /* keyboard activation */
       var r = btn.getBoundingClientRect();
       x = r.left + r.width / 2;
       y = r.top + r.height / 2;
     }
     touchEffect(id, x, y);
-    if (id === 'mailbox') { setTimeout(openLetter, 450); return; }
-    if (id === 'secret') { setTimeout(function () { openPanel(id); }, 700); return; }
-    openPanel(id);
+
+    if (id === 'mailbox') {
+      setTimeout(function () { openLetter(LETTER, 'mailbox'); }, 450);
+    } else if (id === 'secret') {
+      setTimeout(function () {
+        if (SECRET_URL) { window.location.href = SECRET_URL; }
+        else { openLetter(SECRET, 'secret'); }
+      }, 800);
+    } else {
+      openPanel(id);
+    }
   }
 
   var spots = stage.querySelectorAll('.hot');
@@ -251,7 +294,6 @@
     spots[i].addEventListener('click', onHot);
   }
 
-  /* Tapping the open scenery, the close button or Escape closes things */
   world.addEventListener('click', function (e) {
     if (!e.target.closest('.hot')) { closePanel(); }
   });
@@ -267,6 +309,5 @@
 
   /* ---------- Start ---------- */
   buildAtmosphere();
-  buildLetter();
-  hintTimer = setTimeout(showHint, 6500);   /* after the opening titles */
+  setTimeout(whisper, 6500);                 /* after the opening titles */
 })();
