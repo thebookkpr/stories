@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<!-- Burrow Whispers Crossroads: index.html V2.3 · Part 1 of 1
+<!-- PROJECT: Book Keeper — Website
+     FILE: Burrow Whispers Crossroads · index.html
+     VERSION: 1.0 · Part 1 of 1
      Lives at stories/burrow-whispers/index.html
-     Replaces V2.2.
-     Pictures: images/burrow-whispers-crossroads-916.jpg (default, 9:16)
-               images/burrow-whispers-crossroads.jpg (tall phones, 9:20)
-     Uses css/variables.css V2.2, css/base.css V2.4, css/effects.css V2.0
-     and js/crossroads.js V1.1 from this folder.
-     Place text, links and hints are edited in js/crossroads.js, not here.
+
+     Pictures (in images/):
+       burrowwhispers-crossroads.jpg       main background (tall phones, 9:20)
+       burrowwhispers-crossroads-tablet.jpg tablet edition (wide, 4:3)
+       burrowwhispers-crossroads-916.jpg    older cellphone edition (9:16, default)
+
+     Picture rules: the media queries in the <source> tags must match
+     the ones in css/variables.css.
+       - Wider than square (min-aspect-ratio 1/1): tablet picture
+       - Taller than 9:17 (max-aspect-ratio 9/17): main picture
+       - Everything else: 9:16 picture
+
+     Companion files from this folder:
+       css/variables.css, css/base.css, css/effects.css, js/crossroads.js
+
+     Place text, links, hints and the mailbox letter are edited in
+     js/crossroads.js, not here.
      Hot spot positions are edited in css/variables.css.
-     V2.0: the picture is now a <picture> element.
-     V2.1: cutoff changed from 9/18 to 9/17 so phones with browser bars
-           showing still get the 9:20 picture. The media query in <source>
-           must match the one in variables.css (max-aspect-ratio: 9/17).
-     V2.2: added the web app manifest link and the iPhone home screen
-           icon and full screen tags.
-     V2.3: removed the install tags. This page no longer installs as an
-           app, so the Lunelle game app can be installed instead. -->
+
+     There is no About page. The mailbox on this page holds the
+     introduction to Burrow Whispers. Visitors tap it to read the letter. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -37,13 +45,16 @@
   <div class="world" id="world">
     <div class="stage" id="stage">
       <picture>
-        <!-- Tall phones (taller than 9:17): the 9:20 picture -->
+        <!-- Tablets and other wide screens: the tablet picture -->
+        <source media="(min-aspect-ratio: 1/1)"
+                srcset="images/burrowwhispers-crossroads-tablet.jpg">
+        <!-- Tall phones (taller than 9:17): the main picture -->
         <source media="(max-aspect-ratio: 9/17)"
-                srcset="images/burrow-whispers-crossroads.jpg">
+                srcset="images/burrowwhispers-crossroads.jpg">
         <!-- Everything else: the 9:16 picture -->
         <img class="stage-image"
-             src="images/burrow-whispers-crossroads-916.jpg"
-             alt="A moonlit woodland crossroads with a carved waystone, a lotus pond, a lantern-lit trail and round-door burrows on a hillside.">
+             src="images/burrowwhispers-crossroads-916.jpg"
+             alt="A sunlit woodland crossroads with a carved waystone, a lotus pond, a lantern-lit trail, a wooden mailbox and round-door burrows on a hillside.">
       </picture>
 
       <button class="hot" data-id="pond"     type="button" aria-label="Moonroot Pond"></button>
@@ -51,6 +62,7 @@
       <button class="hot" data-id="waystone" type="button" aria-label="The Crossroads Stone"></button>
       <button class="hot" data-id="trail"    type="button" aria-label="The Lantern Trail"></button>
       <button class="hot" data-id="hill"     type="button" aria-label="Burrow Hill"></button>
+      <button class="hot" data-id="mailbox"  type="button" aria-label="The Mailbox: read the introduction"></button>
       <button class="hot" data-id="clearing" type="button" aria-label="The Clearing"></button>
       <button class="hot" data-id="secret"   type="button" aria-hidden="true" tabindex="-1"></button>
 
@@ -81,6 +93,15 @@
     <h2 class="panel-title" id="panel-title"></h2>
     <p class="panel-text" id="panel-text"></p>
     <a class="panel-go" id="panel-go" href="#"></a>
+  </section>
+
+  <!-- Mailbox letter: the introduction to Burrow Whispers.
+       Opens when the visitor taps the mailbox. Text comes from the script. -->
+  <section class="letter" id="letter" role="dialog" aria-modal="true" aria-labelledby="letter-title" hidden>
+    <button class="letter-close" id="letter-close" type="button" aria-label="Close the letter">×</button>
+    <h2 class="letter-title" id="letter-title"></h2>
+    <div class="letter-body" id="letter-body"></div>
+    <p class="letter-sign" id="letter-sign"></p>
   </section>
 
 </body>
