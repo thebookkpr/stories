@@ -1,147 +1,179 @@
-/* Burrow Whispers Crossroads: css/effects.css V2.0 · Part 1 of 1
+/* PROJECT: Book Keeper — Website
+   FILE: Burrow Whispers Crossroads · css/effects.css
+   VERSION: 1.0 · Part 1 of 1
    Lives at stories/burrow-whispers/css/effects.css
-   Replaces V1.0. Pairs with variables.css V2.0, base.css V2.0, index.html V1.7.
-   Motion and light only: hot spot glows (.lit), pond ripple, moon shimmer,
-   firefly dust and haze. Layout lives in base.css. */
 
-/* ---------- Hot spot glows ----------
-   JS adds .lit when a place is tapped (stage 1) or hinted (idle).
-   Every glow is an invisible layer until then. */
-.hot::before,
-.hot::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
+   This file holds everything that moves: the opening titles, drifting
+   fireflies, pollen and haze, the glow when a spot is touched, and the
+   focus state when a place is chosen. Nothing flashes, nothing pulses.
+   Timings and colors come from css/variables.css.
+
+   Elements the script (js/crossroads.js) builds inside #fx:
+     .firefly ... a drifting light. Script sets left, top and the
+                  custom properties --size, --dx, --dy, --dur, --delay
+     .pollen .... a tiny drifting speck. Same custom properties
+     .haze ...... a slow band of light mist (two or three of them)
+     .fx-touch .. a localized touch response, placed at the tap point.
+                  Script adds one type class:
+                    .is-stone .... carvings warm, particles gather
+                    .is-pond ..... circular ripple
+                    .is-lantern .. warm glow
+                    .is-hill ..... warm glow, softer
+                    .is-fern ..... spores rise
+                    .is-star ..... star-shaped shimmer (hidden spot)
+                    .is-mail ..... soft warm glow (mailbox)
+   Classes the script puts on .world:
+     .is-focus ... a place is chosen; the rest of the scene softens */
+
+/* ---------- Opening titles: play once, then vanish ---------- */
+.intro {
   opacity: 0;
+  animation: intro-rise var(--t-intro) var(--ease-soft) 0.4s forwards;
 }
-.hot::after {
-  inset: 0;
-  border-radius: inherit;
-  transition: opacity var(--fade-slow) var(--ease-gentle);
+@keyframes intro-rise {
+  0%   { opacity: 0; transform: translateY(10px); visibility: visible; }
+  25%  { opacity: 1; transform: none; }
+  75%  { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-6px); visibility: hidden; }
 }
-.hot.lit::after { opacity: 1; }
 
-.hot[data-id="pond"]::after     { background: radial-gradient(ellipse, var(--glow-pond), transparent 70%); }
-.hot[data-id="moon"]::after     { background: radial-gradient(circle,  var(--glow-moon), transparent 68%); }
-.hot[data-id="waystone"]::after { background: radial-gradient(ellipse at 50% 38%, var(--glow-waystone), transparent 66%); }
-.hot[data-id="trail"]::after    { background: radial-gradient(ellipse at 50% 40%, var(--glow-trail), transparent 70%); }
-.hot[data-id="hill"]::after     { background: radial-gradient(ellipse at 45% 50%, var(--glow-hill), transparent 70%); }
-.hot[data-id="clearing"]::after { background: radial-gradient(ellipse, var(--glow-clearing), transparent 70%); }
-
-/* ---------- Pond: ripple rings and a moon reflection shimmer ---------- */
-.hot[data-id="pond"]::before {
-  inset: 18% 12%;
+/* ---------- Idle atmosphere ---------- */
+.firefly, .pollen {
+  position: absolute;
+  width: var(--size, 4px);
+  height: var(--size, 4px);
   border-radius: 50%;
-  border: 1px solid rgba(210, 225, 255, 0.7);
+  opacity: 0;
+  will-change: transform, opacity;
 }
-.hot[data-id="pond"].lit::before {
-  animation: pond-ripple 3.4s ease-out infinite;
+.firefly {
+  background: radial-gradient(circle, #fff6d0 0%, var(--lantern) 45%, transparent 70%);
+  box-shadow: 0 0 8px 2px var(--lantern-soft);
+  animation: drift var(--dur, 14s) ease-in-out var(--delay, 0s) infinite;
 }
-@keyframes pond-ripple {
-  0%   { transform: scale(0.4); opacity: 0.75; }
-  100% { transform: scale(1.1); opacity: 0; }
-}
-.hot[data-id="pond"].lit::after {
-  animation: pond-shimmer 4s ease-in-out infinite;
-}
-@keyframes pond-shimmer {
-  0%, 100% { opacity: 0.7; }
-  50%      { opacity: 1; }
+.pollen {
+  background: rgba(255, 246, 214, 0.75);
+  animation: float var(--dur, 22s) linear var(--delay, 0s) infinite;
 }
 
-/* ---------- Moon: soft breathing glow while Lunelle's corner is lit ---------- */
-.hot[data-id="moon"].lit::after {
-  animation: moon-breathe 4s ease-in-out infinite;
+@keyframes drift {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  20%  { opacity: 0.9; }
+  50%  { opacity: 0.35; transform: translate(var(--dx, 30px), var(--dy, -40px)); }
+  80%  { opacity: 0.85; }
+  100% { opacity: 0;   transform: translate(calc(var(--dx, 30px) * -0.5), calc(var(--dy, -40px) * 1.6)); }
 }
-@keyframes moon-breathe {
-  0%, 100% { opacity: 0.65; }
-  50%      { opacity: 1; }
-}
-
-/* ---------- Waystone: carved symbols warm up ---------- */
-.hot[data-id="waystone"].lit::after {
-  animation: stone-glow 3.6s ease-in-out infinite;
-}
-@keyframes stone-glow {
-  0%, 100% { opacity: 0.75; }
-  50%      { opacity: 1; }
-}
-
-/* ---------- Lantern trail: brightens briefly, then settles ---------- */
-.hot[data-id="trail"].lit::after {
-  animation: lantern-flare 2.4s ease-out 1;
-}
-@keyframes lantern-flare {
-  0%   { opacity: 0.2; }
-  35%  { opacity: 1; }
-  100% { opacity: 0.8; }
-}
-
-/* ---------- Burrow hill: windows glow warmer, with a gentle flicker ---------- */
-.hot[data-id="hill"].lit::after {
-  animation: window-flicker 3s ease-in-out infinite;
-}
-@keyframes window-flicker {
-  0%, 100% { opacity: 0.85; }
-  45%      { opacity: 1; }
-  60%      { opacity: 0.78; }
-}
-
-/* ---------- The secret: no light, no ring, no motion. Ever. ---------- */
-.hot[data-id="secret"]::before,
-.hot[data-id="secret"]::after { display: none; }
-
-/* ---------- Firefly dust and haze ----------
-   JS builds these inside #fx: two .haze layers and about 16 .mote dots.
-   Each mote gets --dur, --delay and --drift from JS.
-   The layer sits above the picture but never blocks a tap. */
-.fx-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 3;
-  overflow: hidden;
-  pointer-events: none;
+@keyframes float {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  15%  { opacity: 0.7; }
+  85%  { opacity: 0.5; }
+  100% { opacity: 0;   transform: translate(var(--dx, 60px), var(--dy, -80px)); }
 }
 
 .haze {
   position: absolute;
   left: -20%;
   width: 140%;
-  height: 40%;
-  background: radial-gradient(ellipse, rgba(200, 215, 255, 0.10), transparent 70%);
-  filter: blur(20px);
+  height: 28%;
+  background: radial-gradient(ellipse at center, rgba(255, 240, 200, 0.14), transparent 70%);
+  opacity: 0.6;
+  animation: haze-slide var(--dur, 40s) ease-in-out var(--delay, 0s) infinite alternate;
 }
-.haze.one { top: 8%;  animation: haze-drift 26s ease-in-out infinite alternate; }
-.haze.two { top: 52%; animation: haze-drift 32s ease-in-out -10s infinite alternate-reverse; }
-@keyframes haze-drift {
-  from { transform: translateX(-6%); }
-  to   { transform: translateX(6%); }
+@keyframes haze-slide {
+  from { transform: translateX(-4%); opacity: 0.35; }
+  to   { transform: translateX(4%);  opacity: 0.7; }
 }
 
-.mote {
+/* ---------- Hover (mouse and stylus): the world answers first ---------- */
+@media (hover: hover) {
+  .hot:not([data-id="secret"]):hover {
+    background: radial-gradient(ellipse at center, rgba(255, 226, 150, 0.16), transparent 70%);
+    transition: background var(--t-fade) var(--ease-soft);
+  }
+}
+
+/* ---------- Touch responses ---------- */
+.fx-touch {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 14rem;
+  height: 14rem;
+  margin: -7rem 0 0 -7rem;
   border-radius: 50%;
-  background: var(--gold-bright);
-  box-shadow: 0 0 8px 2px var(--gold-glow);
   opacity: 0;
-  animation: mote-float var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+  pointer-events: none;
+  animation: touch-bloom var(--t-touch) var(--ease-soft) forwards;
 }
-@keyframes mote-float {
-  0%   { opacity: 0;   transform: translate(0, 0); }
-  25%  { opacity: 0.9; }
-  75%  { opacity: 0.7; }
-  100% { opacity: 0;   transform: translate(var(--drift, 20px), -40px); }
+@keyframes touch-bloom {
+  0%   { opacity: 0;   transform: scale(0.6); }
+  35%  { opacity: 1; }
+  100% { opacity: 0;   transform: scale(1.25); }
 }
 
-/* ---------- Reduced motion: keep the light, drop the movement ---------- */
+.fx-touch.is-stone {
+  background: radial-gradient(circle, rgba(255, 224, 150, 0.45), rgba(143, 174, 92, 0.2) 45%, transparent 70%);
+  animation-duration: 1.2s;
+}
+.fx-touch.is-lantern,
+.fx-touch.is-mail {
+  background: radial-gradient(circle, rgba(255, 210, 120, 0.5), transparent 68%);
+}
+.fx-touch.is-hill {
+  background: radial-gradient(circle, rgba(255, 214, 140, 0.38), rgba(233, 183, 196, 0.15) 50%, transparent 70%);
+}
+.fx-touch.is-fern {
+  background: radial-gradient(circle, rgba(143, 174, 92, 0.4), transparent 65%);
+  animation-name: touch-rise;
+}
+@keyframes touch-rise {
+  0%   { opacity: 0;   transform: translateY(8px) scale(0.8); }
+  40%  { opacity: 1; }
+  100% { opacity: 0;   transform: translateY(-24px) scale(1.1); }
+}
+
+/* Pond: rings spread outward */
+.fx-touch.is-pond {
+  background: none;
+  border: 2px solid rgba(169, 196, 232, 0.6);
+  box-shadow: 0 0 18px rgba(169, 196, 232, 0.35);
+  animation-name: ripple;
+  animation-duration: 1.4s;
+}
+.fx-touch.is-pond::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 1px solid rgba(169, 196, 232, 0.45);
+}
+@keyframes ripple {
+  0%   { opacity: 0;   transform: scale(0.2); }
+  30%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: scale(1.3); }
+}
+
+/* Hidden star: tiny shimmer, no announcement */
+.fx-touch.is-star {
+  width: 3rem;
+  height: 3rem;
+  margin: -1.5rem 0 0 -1.5rem;
+  background: radial-gradient(circle, rgba(255, 248, 215, 0.95), rgba(242, 196, 109, 0.4) 40%, transparent 70%);
+  clip-path: polygon(50% 0, 60% 38%, 100% 50%, 60% 62%, 50% 100%, 40% 62%, 0 50%, 40% 38%);
+  animation-duration: 1.6s;
+}
+
+/* ---------- Focus: the chosen place strengthens, the rest softens ---------- */
+.stage-image {
+  transition: filter var(--t-panel) var(--ease-soft);
+}
+.world.is-focus .stage-image {
+  filter: saturate(0.88) brightness(0.96);
+}
+.world.is-focus .hot { transition: none; }
+
+/* ---------- Without motion, the picture simply stays calm ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .hot::after,
-  .hot::before { animation: none !important; }
-  .hot.lit::after { opacity: 0.9; }
-  .hot[data-id="pond"].lit::before { opacity: 0; }
-  .haze, .mote { animation: none; }
-  .mote { opacity: 0.5; }
-  .panel, .hint { transition-duration: 0.01s; }
+  .firefly, .pollen, .haze { animation: none; opacity: 0.4; }
+  .intro { animation-duration: 0.01s; animation-delay: 4s; }
+  .fx-touch { animation-duration: 0.01s; }
+  .stage-image { transition: none; }
 }
