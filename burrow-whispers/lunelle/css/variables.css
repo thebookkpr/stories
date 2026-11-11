@@ -1,76 +1,85 @@
-/* Lunelle Games Menu — css/variables.css V1.0 · Part 1 of 1
+/* PROJECT: Burrow Whispers — Book Keeper Website
+   FILE: Moonlit Reverie, Lunelle's Home Region · css/variables.css
+   VERSION: V1.0 · Part 1 of 1
    Lives at stories/burrow-whispers/lunelle/css/variables.css
-   Holds every shared value: colors, fonts, background pictures,
-   hot spot, medallion, whisper and timing settings.
-   Change a look or a timing here, not in base.css or effects.css.
-   Image paths are relative to THIS css folder, so they start with ../ */
+   Holds the three pictures, colors, fonts, sizes and timings.
+   Everything else in css/base.css and css/effects.css
+   reads from here, so change a value once, here. */
 
 :root {
 
-  /* ---------- Lunelle palette (hers, not the series') ---------- */
-  --night:        #1b1830;
-  --ivory:        #f7f3ea;
-  --lavender:     #cdbfe8;
-  --violet:       #3c3464;
-  --silver-glow:  rgba(230, 235, 242, 0.65);
-  --gold-glow:    rgba(215, 180, 106, 0.7);
+  /* ---------- THE PICTURES ----------
+     Default (9:20, modern phones and wide screens) is set here.
+     The media queries below swap it for older 9:16 phones
+     and for tablets. Paths are relative to this css folder. */
+  --img-main:   url("../images/moonlitreverie-bg.jpg");
+  --img-916:    url("../images/moonlitreverie-916.jpg");
+  --img-tablet: url("../images/moonlitreverie-tablet.jpg");
+  --scene-image: var(--img-main);
 
-  /* ---------- Fonts ---------- */
-  --font-story: Georgia, "Times New Roman", serif;
-  --font-ui:    "Trebuchet MS", system-ui, sans-serif;
+  /* ---------- SCENE COLORS (Home Region palette) ---------- */
+  --night:           #1b1830;   /* page behind the picture */
+  --ivory-moonlight: #f7f3ea;
+  --moss-green:      #6f8f6a;
+  --bark-brown:      #5b4636;
+  --moon-lavender:   #b9a9e6;
+  --soft-violet:     #8f7fd0;
+  --misty-blue:      #a9bfd9;
+  --silvery-white:   #eef1f8;
+  --leaf-green:      #9cc98f;
+  --cream-floral:    #fbf6ec;
 
-  /* ---------- Background pictures ---------- */
-  --bg-tall:   url("../images/moonlitreverie-bg.jpg");   /* 9:20 (modern phones) */
-  --bg-older:  url("../images/moonlitreverie-916.jpg");  /* 9:16 (older phones)  */
-  --bg-fallback: var(--night);                           /* shown while loading  */
+  /* ---------- TEXT COLORS (Typography Guide) ---------- */
+  --moon-ink:        #2d2a37;   /* main reading text */
+  --moon-violet:     #433768;   /* headers, used sparingly */
+  --soft-lavender:   #6e5c96;   /* quotes and whispers */
+  --lotus-purple:    #7d6dd8;   /* buttons */
+  --silver-glow:     #c9d8ff;   /* rare discoveries */
 
-  /* ---------- Moon reflection hot spot (primary, invisible) ----------
-     Positions are a percentage of the picture, centered on the
-     reflection in the pond. Nudge these to line up with the art. */
-  --reflection-left:    63%;
-  --reflection-top:     62%;
-  --reflection-width:   clamp(220px, 62vw, 340px);   /* oversized tap zone */
-  --reflection-height:  clamp(220px, 62vw, 340px);
-  --hotspot-focus-ring: 2px solid var(--lavender);   /* keyboard users only */
+  /* ---------- PANEL (translucent, never on bare artwork) ---------- */
+  --panel-bg:        rgba(247, 243, 234, 0.93);
+  --panel-edge:      rgba(125, 109, 216, 0.35);
+  --panel-shadow:    0 10px 40px rgba(27, 24, 48, 0.45);
+  --panel-radius:    1.25rem;
 
-  /* ---------- Moon Lotus Medallion (hidden until revealed) ---------- */
-  --medallion-image:    url("../assets/moonlotus-medallion.png");
-  --medallion-size:     clamp(96px, 26vw, 150px);
-  --medallion-left:     63%;     /* lines up above the reflection      */
-  --medallion-top:      50%;     /* final resting height over the water */
-  --medallion-rise:     48px;    /* how far it rises up from the water  */
-  --medallion-tap-size: 72px;    /* smallest comfortable tap target     */
-  --medallion-glow:     var(--gold-glow);
+  /* ---------- FONTS ---------- */
+  --font-title: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-read:  "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* ---------- Floating in the air ---------- */
-  --float-distance:  14px;       /* how far it drifts up and down */
-  --float-duration:  6s;         /* one full float cycle          */
-  --float-sway:      4px;        /* slight side-to-side drift     */
+  /* ---------- SIZES (minimum 18px for reading and buttons) ---------- */
+  --size-h1:      2.25rem;      /* 36px */
+  --size-title:   1.75rem;      /* 28px, panel title */
+  --size-body:    1.25rem;      /* 20px */
+  --size-button:  1.25rem;      /* 20px */
+  --size-tiny:    1.125rem;     /* 18px */
+  --button-min-h: 3.25rem;      /* roomy, easy to tap */
 
-  /* ---------- Interaction timing ---------- */
-  --focus-delay:       450ms;    /* world reacts first (300-600ms)    */
-  --reveal-duration:   1.6s;     /* medallion fading and rising in    */
-  --ripple-duration:   1.8s;     /* ripple spreading across the pond  */
-  --travel-duration:   1.2s;     /* fade out before the game opens    */
-  --particle-count:    14;       /* petal particles on the 2nd tap    */
+  /* ---------- TOUCH-STATE TIMINGS (Animation Spec) ---------- */
+  --focus-time:    350ms;       /* focus: 250–400 ms */
+  --focus-scale:   1.03;        /* never above 1.05 */
+  --touch-start:   150ms;       /* initial reaction */
+  --touch-main:    900ms;       /* primary animation: 500–1200 ms */
+  --settle-time:   2000ms;      /* recovery: 1–3 s */
+  --ripple-time:   1200ms;
+  --travel-fade:   1400ms;      /* soft fade before a game opens */
 
-  /* ---------- Ripple and shimmer ---------- */
-  --ripple-color:       rgba(230, 235, 242, 0.55);
-  --ripple-size:        clamp(160px, 46vw, 260px);
-  --shimmer-brighten:   1.25;    /* reflection brightness on first tap */
+  /* Nothing snaps back. Everything eases. */
+  --ease-quint: cubic-bezier(0.22, 1, 0.36, 1);   /* Ease-Out Quint */
+  --ease-sine:  cubic-bezier(0.37, 0, 0.63, 1);   /* Ease-In-Out Sine */
 
-  /* ---------- Idle whisper (anchored low, never center-screen) ---------- */
-  --whisper-bottom:     max(14vh, 96px);
-  --whisper-fade:       1s;      /* fade in / out time             */
-  --whisper-hold:       3s;      /* how long the line stays        */
-  --whisper-gap-min:    10s;     /* quiet time between whispers    */
-  --whisper-gap-max:    15s;
-  --whisper-size:       clamp(0.95rem, 3.6vw, 1.15rem);
+  /* ---------- SAFE AREAS (phones with notches) ---------- */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+}
 
-  /* ---------- Text colors ---------- */
-  --label-color:  var(--ivory);
-  --label-shadow: 0 0 12px rgba(27, 24, 48, 0.9), 0 2px 6px rgba(27, 24, 48, 0.9);
+/* ---------- OLDER CELLPHONES (about 9:16) ---------- */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-916); }
+}
 
-  /* ---------- Easing ---------- */
-  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+/* ---------- TABLETS AND WIDE SCREENS (wider than about 5:8) ---------- */
+@media (min-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-tablet); }
 }
