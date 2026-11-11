@@ -4,22 +4,19 @@
    Lives at stories/burrow-whispers/lunelle/css/base.css
    Layout, hot spot places and the reading panel.
    Colors, fonts, sizes and timings come from css/variables.css.
-   Motion lives in css/effects.css. */
+   Motion lives in css/effects.css.
+   The picture breakpoints here must match css/variables.css. */
 
 /* ---------- RESET ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
-  background: var(--night);
-  color: var(--moon-ink);
-  font-family: var(--font-read);
-  font-size: var(--size-body);
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
+  background: var(--night); color: var(--moon-ink);
+  font-family: var(--font-read); font-size: var(--size-body);
+  overflow: hidden; -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
 }
 button { font: inherit; color: inherit; cursor: pointer; }
-
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -28,29 +25,25 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ---------- RETURN LINK ---------- */
 .return-link {
   position: fixed; z-index: 6;
-  top: calc(var(--safe-top) + 0.6rem);
-  left: calc(var(--safe-left) + 0.6rem);
-  padding: 0.5em 1em;
-  min-height: 2.75rem; display: inline-flex; align-items: center;
+  top: calc(var(--safe-top) + 0.6rem); left: calc(var(--safe-left) + 0.6rem);
+  padding: 0.5em 1em; min-height: 2.75rem; display: inline-flex; align-items: center;
   font-size: var(--size-tiny); font-weight: 600;
   color: var(--ivory-moonlight); text-decoration: none;
-  background: rgba(27, 24, 48, 0.62);
-  border-radius: 999px;
+  background: rgba(27, 24, 48, 0.62); border-radius: 999px;
 }
 .return-link:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 3px; }
 
 /* ---------- SCENE AND STAGE ----------
-   The stage is the picture. It always covers the screen and keeps the
-   picture's shape, so hot spot percentages stay on the same place in
-   the art on every device. Ratios must match the three pictures. */
+   The stage is the picture, scaled to cover the screen, so hot spot
+   percentages stay on the same place in the art on every device. */
 .scene { position: fixed; inset: 0; overflow: hidden; }
 
-:root { --stage-ratio: 9 / 20; }                      /* main picture */
-@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
-  :root { --stage-ratio: 9 / 16; }                    /* older cellphones */
+:root { --stage-ratio: 841 / 1842; }                       /* main picture */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
+  :root { --stage-ratio: 841 / 1494; }                     /* older phones, portrait tablets */
 }
-@media (min-aspect-ratio: 62/100) {
-  :root { --stage-ratio: 3 / 4; }                     /* tablet: set to the real picture shape */
+@media (min-aspect-ratio: 99/100) {
+  :root { --stage-ratio: 1448 / 1086; }                    /* landscape tablet picture */
 }
 
 .stage {
@@ -63,108 +56,115 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* ---------- HOT SPOTS ----------
-   Each spot is invisible. Place and size are percentages of the picture.
-   Tune --x --y --w --h to match the art (x, y = top left corner). */
+   Invisible. --x --y is the top left corner; --w --h the size,
+   all in percent of the picture. */
 .spot {
   position: absolute;
-  left: calc(var(--x) * 1%);  top: calc(var(--y) * 1%);
+  left: calc(var(--x) * 1%); top: calc(var(--y) * 1%);
   width: calc(var(--w) * 1%); height: calc(var(--h) * 1%);
-  min-width: 2.75rem; min-height: 2.75rem;   /* always easy to tap */
+  min-width: 2.75rem; min-height: 2.75rem;
   padding: 0; border: 0; border-radius: 50%;
-  background: transparent;
-  touch-action: manipulation;
+  background: transparent; touch-action: manipulation;
 }
 .spot:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 2px; }
 
-/* Places (first guesses, to be tuned against the pictures) */
-[data-spot="moonroot"]   { --x: 28; --y:  4; --w: 44; --h: 14; border-radius: 40%; }
-[data-spot="hollow"]     { --x:  8; --y: 20; --w: 24; --h: 10; }
-[data-spot="meadow"]     { --x: 30; --y: 34; --w: 44; --h: 10; border-radius: 40%; }
-[data-spot="stone"]      { --x: 10; --y: 50; --w: 20; --h:  8; }
-[data-spot="pond"]       { --x: 22; --y: 62; --w: 56; --h: 14; border-radius: 40%; }
-[data-spot="shore"]      { --x:  4; --y: 70; --w: 24; --h: 10; }
-[data-spot="trail"]      { --x: 72; --y: 70; --w: 24; --h: 10; }
-[data-spot="grove"]      { --x: 40; --y: 48; --w: 22; --h:  8; }
+/* Order matters: later spots sit on top of earlier ones. */
 
-/* Hidden Root Path: small, never highlighted */
-[data-spot="rootpath"]   { --x: 72; --y: 24; --w: 12; --h:  6; }
+/* Main picture (tall, moonlitreverie-bg.jpg) */
+[data-spot="moonroot"]   { --x:  5; --y:  2; --w: 50; --h: 14; }
+[data-spot="hollow"]     { --x:  8; --y: 19; --w: 14; --h:  6; }
+[data-spot="rootpath"]   { --x:  8; --y: 34; --w: 18; --h:  6; }
+[data-spot="roothollow"] { --x: 42; --y: 29; --w: 10; --h:  5; }
+[data-spot="grove"]      { --x: 63; --y: 23; --w: 37; --h: 11; }
+[data-spot="trail"]      { --x: 24; --y: 40; --w: 28; --h: 11; }
+[data-spot="meadow"]     { --x: 45; --y: 42; --w: 50; --h:  8; }
+[data-spot="pond"]       { --x: 20; --y: 54; --w: 45; --h: 13; }
+[data-spot="shore"]      { --x:  3; --y: 52; --w: 28; --h: 11; }
+[data-spot="stone"]      { --x:  8; --y: 68; --w: 44; --h: 11; }
+[data-spot="reflection"] { --x: 68; --y: 57; --w: 18; --h: 15; }
+[data-spot="petals"]     { --x: 52; --y: 63; --w: 12; --h:  5; }
+[data-spot="lotus"]      { --x: 66; --y: 83; --w: 34; --h: 14; }
+[data-spot="moth"]       { --x: 72; --y: 49; --w:  8; --h:  4; }
 
-/* Touch objects */
-[data-spot="reflection"] { --x: 38; --y: 66; --w: 24; --h:  9; }
-[data-spot="lotus"]      { --x: 54; --y: 76; --w: 18; --h:  7; }
-[data-spot="petals"]     { --x: 46; --y: 40; --w: 18; --h:  7; }
-[data-spot="roothollow"] { --x: 18; --y: 12; --w: 10; --h:  5; }
-[data-spot="moth"]       { --x: 60; --y: 56; --w: 10; --h:  5; }
+/* Older phones and portrait tablets (moonlitreverie-916.jpg) */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
+  [data-spot="moonroot"]   { --x:  5; --y:  2; --w: 50; --h: 15; }
+  [data-spot="hollow"]     { --x:  8; --y: 16; --w: 14; --h:  6; }
+  [data-spot="rootpath"]   { --x:  8; --y: 34; --w: 18; --h:  6; }
+  [data-spot="roothollow"] { --x: 42; --y: 31; --w: 10; --h:  5; }
+  [data-spot="grove"]      { --x: 63; --y: 21; --w: 37; --h: 12; }
+  [data-spot="trail"]      { --x: 22; --y: 40; --w: 30; --h: 12; }
+  [data-spot="meadow"]     { --x: 50; --y: 43; --w: 48; --h:  8; }
+  [data-spot="pond"]       { --x: 20; --y: 58; --w: 45; --h: 14; }
+  [data-spot="shore"]      { --x:  3; --y: 56; --w: 28; --h: 10; }
+  [data-spot="stone"]      { --x:  8; --y: 76; --w: 44; --h: 14; }
+  [data-spot="reflection"] { --x: 68; --y: 60; --w: 18; --h: 18; }
+  [data-spot="petals"]     { --x: 52; --y: 72; --w: 12; --h:  4; }
+  [data-spot="lotus"]      { --x: 80; --y: 84; --w: 20; --h:  8; }
+  [data-spot="moth"]       { --x: 71; --y: 53; --w:  8; --h:  4; }
+}
+
+/* Landscape tablets and wide screens (moonlitreverie-tablet.jpg) */
+@media (min-aspect-ratio: 99/100) {
+  [data-spot="moonroot"]   { --x: 22; --y:  4; --w: 38; --h: 24; }
+  [data-spot="hollow"]     { --x: 28; --y: 26; --w: 13; --h:  8; }
+  [data-spot="rootpath"]   { --x:  8; --y: 22; --w: 14; --h: 14; }
+  [data-spot="roothollow"] { --x: 52; --y: 31; --w:  9; --h:  6; }
+  [data-spot="grove"]      { --x: 72; --y: 22; --w: 28; --h: 20; }
+  [data-spot="trail"]      { --x: 20; --y: 40; --w: 20; --h:  9; }
+  [data-spot="meadow"]     { --x: 40; --y: 43; --w: 35; --h:  8; }
+  [data-spot="pond"]       { --x: 30; --y: 58; --w: 40; --h: 20; }
+  [data-spot="shore"]      { --x: 27; --y: 52; --w: 13; --h: 22; }
+  [data-spot="stone"]      { --x:  5; --y: 52; --w: 21; --h: 22; }
+  [data-spot="reflection"] { --x: 69; --y: 66; --w: 12; --h: 15; }
+  [data-spot="petals"]     { --x: 66; --y: 84; --w: 12; --h:  5; }
+  [data-spot="lotus"]      { --x: 83; --y: 76; --w: 16; --h: 14; }
+  [data-spot="moth"]       { --x: 57; --y: 72; --w:  8; --h:  5; }
+}
 
 /* ---------- READING PANEL ----------
    Docked to the bottom. A translucent card, never bare text on the art.
    It never closes by itself. */
 .panel {
-  position: fixed; z-index: 5;
-  left: 50%; transform: translateX(-50%);
+  position: fixed; z-index: 5; left: 50%; transform: translateX(-50%);
   bottom: calc(var(--safe-bottom) + 0.75rem);
   width: min(34rem, calc(100vw - 1.5rem - var(--safe-left) - var(--safe-right)));
   max-height: 62dvh; overflow-y: auto;
   padding: 1.25rem 1.4rem 1.1rem;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--panel-radius);
-  box-shadow: var(--panel-shadow);
+  background: var(--panel-bg); border: 1px solid var(--panel-edge);
+  border-radius: var(--panel-radius); box-shadow: var(--panel-shadow);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .panel[hidden] { display: none; }
-
 .panel-title {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-title); font-weight: 700;
-  font-size: var(--size-title); line-height: 1.15;
-  color: var(--moon-violet);
+  margin: 0 0 0.5rem; font-family: var(--font-title); font-weight: 700;
+  font-size: var(--size-title); line-height: 1.15; color: var(--moon-violet);
 }
-.panel-text {
-  margin: 0;
-  font-size: var(--size-body); line-height: 1.55;
-  white-space: pre-line;                 /* keeps the lore's line breaks */
-}
+.panel-text { margin: 0; font-size: var(--size-body); line-height: 1.55; white-space: pre-line; }
 .panel-text em, .panel-quote {
-  font-family: var(--font-title); font-style: italic; font-weight: 500;
-  color: var(--soft-lavender);
+  font-family: var(--font-title); font-style: italic; font-weight: 500; color: var(--soft-lavender);
 }
-
-.panel-actions {
-  display: flex; flex-direction: column; gap: 0.6rem;
-  margin-top: 1rem;
-}
+.panel-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
 .panel-actions button {
-  min-height: var(--button-min-h);
-  padding: 0.6em 1.2em;
+  min-height: var(--button-min-h); padding: 0.6em 1.2em;
   font-family: var(--font-read); font-weight: 600; font-size: var(--size-button);
-  color: #fff; background: var(--lotus-purple);
-  border: 0; border-radius: 999px;
+  color: #fff; background: var(--lotus-purple); border: 0; border-radius: 999px;
 }
-.panel-actions button.quiet {            /* Return / Close */
-  color: var(--moon-violet); background: transparent;
-  border: 1.5px solid var(--panel-edge);
+.panel-actions button.quiet {
+  color: var(--moon-violet); background: transparent; border: 1.5px solid var(--panel-edge);
 }
 .panel-actions button:focus-visible { outline: 3px solid var(--moon-violet); outline-offset: 3px; }
 
 /* ---------- WHISPER (own soft card, not on the bare art) ---------- */
 .whisper {
-  position: fixed; z-index: 4;
-  left: 50%; transform: translateX(-50%);
+  position: fixed; z-index: 4; left: 50%; transform: translateX(-50%);
   bottom: calc(var(--safe-bottom) + 1.25rem);
-  width: min(30rem, calc(100vw - 2rem));
-  margin: 0; padding: 0.7em 1.2em; text-align: center;
+  width: min(30rem, calc(100vw - 2rem)); margin: 0; padding: 0.7em 1.2em; text-align: center;
   font-family: var(--font-title); font-style: italic; font-weight: 500;
-  font-size: var(--size-body); line-height: 1.4;
-  color: var(--ivory-moonlight);
-  background: rgba(27, 24, 48, 0.6);
-  border-radius: 999px;
+  font-size: var(--size-body); line-height: 1.4; color: var(--ivory-moonlight);
+  background: rgba(27, 24, 48, 0.6); border-radius: 999px;
   opacity: 0; pointer-events: none;
 }
 
 /* ---------- TRAVEL VEIL ---------- */
-.travel-veil {
-  position: fixed; inset: 0; z-index: 8;
-  background: var(--night);
-  opacity: 0; pointer-events: none;
-}
+.travel-veil { position: fixed; inset: 0; z-index: 8; background: var(--night); opacity: 0; pointer-events: none; }
