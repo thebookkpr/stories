@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<!-- Lunelle Games Menu — index.html V1.0 · Part 1 of 1
+<!-- PROJECT: Burrow Whispers — Book Keeper Website
+     FILE: Moonlit Reverie, Lunelle's Home Region · index.html
+     VERSION: V1.0 · Part 1 of 1
      Lives at stories/burrow-whispers/lunelle/index.html
-     Uses css/variables.css, css/base.css and css/effects.css,
+     Uses css/variables.css, css/base.css, css/effects.css
      and js/lunelle.js, all from this same folder.
-     The pictures are set in css/variables.css (9:20 and 9:16).
-     The game address is set at the top of js/lunelle.js. -->
+     The three pictures are set in css/variables.css:
+       images/moonlitreverie-bg.jpg      (main)
+       images/moonlitreverie-tablet.jpg  (tablet)
+       images/moonlitreverie-916.jpg     (older cellphones)
+     Hot spot places are set in css/base.css.
+     Lore, routes and game addresses are set in js/lunelle.js. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#1b1830">
-  <meta name="description" content="Lunelle's Moonlit Reverie, a quiet pond in the Moonroot Wilds.">
-  <title>Lunelle | Burrow Whispers</title>
+  <meta name="description" content="Moonlit Reverie, Lunelle's home region in the Moonroot Wilds.">
+  <title>Moonlit Reverie | Burrow Whispers</title>
 
-  <!-- Load the medallion early so it does not pop in -->
-  <link rel="preload" as="image" href="./assets/moonlotus-medallion.png">
+  <!-- Fonts: Cormorant Garamond (titles) and Nunito (reading) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Nunito:wght@400;600&display=swap">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="./css/variables.css">
@@ -34,50 +42,68 @@
 
   <main class="scene">
 
-    <h1 class="visually-hidden">Lunelle: Moonlit Reverie</h1>
+    <h1 class="visually-hidden">Moonlit Reverie: Lunelle's Home Region</h1>
 
-    <!-- The picture. Hot spots are placed on it in percentages. -->
+    <!-- The picture. Hot spots sit on it in percentages.
+         Mist, particles, ripples and the Silver Moth
+         are added here by js/lunelle.js -->
     <div class="stage">
 
-      <!-- Invisible tap zone over the moon's reflection -->
-      <button
-        class="reflection-hotspot"
-        type="button"
-        aria-label="Touch the moon's reflection in the pond"
-      >
-        <span class="visually-hidden">Touch the moon's reflection</span>
-      </button>
+      <!-- Type C: places (tap, read, read more, then travel) -->
+      <button class="spot" type="button" data-spot="moonroot"    aria-label="Ancient Moonroot"></button>
+      <button class="spot" type="button" data-spot="hollow"      aria-label="Moss Hollow"></button>
+      <button class="spot" type="button" data-spot="meadow"      aria-label="Moon Blossom Meadow"></button>
+      <button class="spot" type="button" data-spot="stone"       aria-label="Moonwatch Stone"></button>
+      <button class="spot" type="button" data-spot="pond"        aria-label="Moon Lotus Pond"></button>
+      <button class="spot" type="button" data-spot="shore"       aria-label="Lotus Shore"></button>
+      <button class="spot" type="button" data-spot="trail"       aria-label="Shoreline Trail"></button>
+      <button class="spot" type="button" data-spot="grove"       aria-label="Silver Light Grove"></button>
 
-      <!-- Moon Lotus Medallion: hidden until the reflection is tapped.
-           Opens the first game, One More Little Step. -->
-      <button
-        class="medallion"
-        type="button"
-        aria-label="Open One More Little Step"
-      >
-        <span class="medallion-img" role="img" aria-label="Moon Lotus medallion"></span>
-      </button>
+      <!-- Hidden Root Path: not highlighted, found by looking -->
+      <button class="spot" type="button" data-spot="rootpath"    aria-label="Roots, slightly unusual"></button>
 
-      <!-- Mist, moths, shimmer and ripples are added here by js/lunelle.js -->
+      <!-- Type A and D: small touch objects -->
+      <button class="spot" type="button" data-spot="reflection"  aria-label="The moon's reflection"></button>
+      <button class="spot" type="button" data-spot="lotus"       aria-label="Moon lotus cluster"></button>
+      <button class="spot" type="button" data-spot="petals"      aria-label="Drifting petals"></button>
+
+      <!-- Type B: discovery object -->
+      <button class="spot" type="button" data-spot="roothollow"  aria-label="A small dark hollow under the roots"></button>
+
+      <!-- Character and story -->
+      <button class="spot" type="button" data-spot="lunelle"     aria-label="Lunelle"></button>
+      <button class="spot" type="button" data-spot="moth"        aria-label="Silver Moth"></button>
 
     </div>
+
+    <!-- Reading panel. Never closes by itself.
+         Filled in by js/lunelle.js -->
+    <section class="panel" role="dialog" aria-labelledby="panel-title" aria-live="polite" hidden>
+      <h2 class="panel-title" id="panel-title"></h2>
+      <p class="panel-text"></p>
+      <div class="panel-actions"></div>
+    </section>
 
     <!-- Idle whisper, filled in by js/lunelle.js -->
     <p class="whisper" aria-hidden="true"></p>
 
-    <!-- Fade-out before the game opens -->
+    <!-- Soft fade before travel -->
     <div class="travel-veil" aria-hidden="true"></div>
 
   </main>
 
-  <!-- If JavaScript is off, the game is still reachable -->
+  <!-- If JavaScript is off, both games are still reachable -->
   <noscript>
-    <a
-      href="./one-more-little-step/index.html"
-      style="position:fixed;z-index:9;left:50%;bottom:12vh;transform:translateX(-50%);
-             padding:0.8em 1.4em;color:#f7f3ea;background:#3c3464;
-             border-radius:999px;font-family:Georgia,serif;text-decoration:none;"
-    >Play One More Little Step</a>
+    <nav class="noscript-games" aria-label="Lunelle's games"
+         style="position:fixed;z-index:9;left:50%;bottom:10vh;transform:translateX(-50%);
+                display:flex;flex-direction:column;gap:0.7em;align-items:center;">
+      <a href="./one-more-little-step/index.html"
+         style="padding:0.8em 1.4em;color:#f7f3ea;background:#3c3464;border-radius:999px;
+                font-family:Georgia,serif;text-decoration:none;">Play One More Little Step</a>
+      <a href="./the-silver-moth/index.html"
+         style="padding:0.8em 1.4em;color:#f7f3ea;background:#3c3464;border-radius:999px;
+                font-family:Georgia,serif;text-decoration:none;">Play The Silver Moth</a>
+    </nav>
   </noscript>
 
   <script src="./js/lunelle.js" defer></script>
