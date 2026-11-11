@@ -4,14 +4,16 @@
    Lives at stories/burrow-whispers/lunelle/css/variables.css
    Holds the three pictures, colors, fonts, sizes and timings.
    Everything else in css/base.css and css/effects.css
-   reads from here, so change a value once, here. */
+   reads from here, so change a value once, here.
+   The picture breakpoints at the bottom must match css/base.css. */
 
 :root {
 
   /* ---------- THE PICTURES ----------
-     Default (9:20, modern phones and wide screens) is set here.
-     The media queries below swap it for older 9:16 phones
-     and for tablets. Paths are relative to this css folder. */
+     Main (tall, modern phones) is the default. The media queries at
+     the bottom swap it for older 9:16 phones and portrait tablets,
+     and for landscape tablets and wide screens.
+     Paths are relative to this css folder. */
   --img-main:   url("../images/moonlitreverie-bg.jpg");
   --img-916:    url("../images/moonlitreverie-916.jpg");
   --img-tablet: url("../images/moonlitreverie-tablet.jpg");
@@ -74,12 +76,12 @@
   --safe-right:  env(safe-area-inset-right, 0px);
 }
 
-/* ---------- OLDER CELLPHONES (about 9:16) ---------- */
-@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+/* ---------- OLDER PHONES AND PORTRAIT TABLETS (9:16 picture) ---------- */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
   :root { --scene-image: var(--img-916); }
 }
 
-/* ---------- TABLETS AND WIDE SCREENS (wider than about 5:8) ---------- */
-@media (min-aspect-ratio: 62/100) {
+/* ---------- LANDSCAPE TABLETS AND WIDE SCREENS (4:3 picture) ---------- */
+@media (min-aspect-ratio: 99/100) {
   :root { --scene-image: var(--img-tablet); }
 }
