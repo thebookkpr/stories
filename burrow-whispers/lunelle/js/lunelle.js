@@ -205,13 +205,21 @@
      Paste this under the last line of Part 1. It closes the file.
      Part 1 calls these before this part runs, so the state variables
      below are declared WITHOUT values; setting them here would wipe
-     the timer Part 1 starts. */
+     the timer Part 1 starts.
+     Places on the picture (moth, shimmer, ripples, stars, memory trail)
+     are read from the hot spots in css/base.css, so they follow
+     whichever of the three pictures is showing. */
 
-  var idleT, reverieT, trail, mothAt, memDone;
+  var idleT, reverieT, trail, mothAt, memDone, home, mw, mh;
 
   /* ---------- SMALL HELPERS ---------- */
   function stg() { return $(".stage"); }
   function rnd(a, b) { return a + Math.random() * (b - a); }
+  function box(id) {                              /* a hot spot's place, in % of the picture */
+    var cs = getComputedStyle($('[data-spot="' + id + '"]')), n = function (k) { return parseFloat(cs.getPropertyValue(k)); };
+    return { x: n("--x"), y: n("--y"), w: n("--w"), h: n("--h") };
+  }
+  function mid(id) { var b = box(id); return { x: b.x + b.w / 2, y: b.y + b.h / 2 }; }
   function put(cls, x, y) {                       /* add a piece to the picture, in % */
     var e = document.createElement("div");
     e.className = cls; e.style.left = x + "%"; e.style.top = y + "%";
@@ -255,12 +263,23 @@
     if (tries < 5) setTimeout(function () { whisperFree(text, tries + 1); }, 4000);
   }
 
+  /* ---------- LAYOUT: moth and shimmer sit where the hot spots say ---------- */
+  function layout() {
+    var sp = $('[data-spot="moth"]'), m = $(".moth"), sh = $(".shimmer");
+    sp.style.removeProperty("--x"); sp.style.removeProperty("--y");
+    var b = box("moth"), pb = box("pond");
+    mw = b.w; mh = b.h; mothAt = 0;
+    home = { x: b.x + b.w / 2, y: b.y + b.h / 2 };
+    m.style.left = home.x + "%"; m.style.top = home.y + "%";
+    if (sh) { sh.style.left = pb.x + "%"; sh.style.top = pb.y + "%"; sh.style.width = pb.w + "%"; sh.style.height = pb.h + "%"; }
+  }
+
   /* ---------- AMBIENT (State 01) ---------- */
   function startAmbient() {
     var calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!calm) {
       put("mist", -10, 22); put("mist", -10, 58);
-      var sh = put("shimmer", 24, 64); sh.style.width = "52%"; sh.style.height = "10%";
+      put("shimmer", 0, 0);
       for (var i = 0; i < 20; i++) {
         var e = put(i < 14 ? "speck" : "firefly", rnd(5, 95), rnd(15, 85));
         e.style.setProperty("--dur", rnd(14, 26) + "s");
@@ -268,7 +287,11 @@
         e.style.setProperty("--drift", rnd(-18, 18) + "px");
       }
     }
-    put("moth", 65, 58);                          /* rests on a lotus */
+    put("moth", 0, 0);                            /* rests on a lotus */
+    layout();
+    window.addEventListener("resize", function () {   /* turning the phone changes the picture */
+      clearTimeout(layout.t); layout.t = setTimeout(layout, 300);
+    });
     markActivity();
     setTimeout(function () { whisperFree("Take your time."); }, 4000);
   }
@@ -285,7 +308,8 @@
     if (!panel.hidden || leaving) return markActivity();
     stg().classList.add("is-reverie");
     reverieT = setTimeout(function () {
-      ring(50, 79, 1);
+      var pb = box("pond");
+      ring(pb.x + 2, pb.y + pb.h * 0.7, 1);
       whisperFree("Sometimes it simply takes one more little step.");
       reverieT = setTimeout(markActivity, 2500);  /* back to ambient, idle clock restarts */
     }, 2500);
@@ -297,12 +321,16 @@
     glow(el);
 
     if (id === "reflection") {
+      var rb = box("reflection"), pb = box("pond");
       ring(p.x, p.y, 3);                          /* rings out from the touch point */
-      var g = put("reflection-break", p.x - 5, p.y - 2);   /* the moon is in the picture, so a soft glow stretches and reforms */
-      g.style.cssText += ";position:absolute;width:10%;height:4%;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(ellipse,rgba(238,241,248,.5),transparent 70%)";
+      var g = put("reflection-break", 0, 0);      /* a soft glow over the moon stretches and reforms */
+      g.style.cssText = "position:absolute;pointer-events:none;mix-blend-mode:screen;border-radius:50%;" +
+        "left:" + (rb.x + rb.w * 0.1) + "%;top:" + (rb.y + rb.h * 0.25) + "%;" +
+        "width:" + rb.w * 0.8 + "%;height:" + rb.h * 0.5 + "%;" +
+        "background:radial-gradient(ellipse,rgba(238,241,248,.5),transparent 70%)";
       rm(g, 2600);
       if (Math.random() < 0.03) {                 /* rare: stars beneath the water, 1 s */
-        for (var i = 0; i < 5; i++) rm(put("star", rnd(30, 70), rnd(64, 76)), 1100);
+        for (var i = 0; i < 5; i++) rm(put("star", rnd(pb.x, pb.x + pb.w), rnd(pb.y, pb.y + pb.h)), 1100);
       }
     } else if (id === "lotus") {
       ring(p.x, p.y, 1); specks(p.x, p.y, 3);
@@ -316,15 +344,15 @@
 
   /* ---------- SILVER MOTH: takeoff, circle, land on a nearby lotus ---------- */
   function flyMoth() {
-    var perches = [[65, 58], [58, 70], [72, 66], [44, 72]],
+    var OFF = [[0, 0], [-6, 5], [5, 3], [-11, 7]],   /* perches, as steps away from its home lotus */
         m = $(".moth"), sp = $('[data-spot="moth"]');
-    mothAt = ((mothAt || 0) + 1) % perches.length;
-    var nx = perches[mothAt][0], ny = perches[mothAt][1];
+    mothAt = ((mothAt || 0) + 1) % OFF.length;
+    var nx = home.x + OFF[mothAt][0], ny = home.y + OFF[mothAt][1];
     specks(parseFloat(m.style.left), parseFloat(m.style.top), 2);   /* silver trail */
     m.classList.add("is-flying");
     setTimeout(function () {
       m.style.left = nx + "%"; m.style.top = ny + "%";
-      sp.style.setProperty("--x", nx - 5); sp.style.setProperty("--y", ny - 2.5);   /* the spot follows */
+      sp.style.setProperty("--x", nx - mw / 2); sp.style.setProperty("--y", ny - mh / 2);   /* the spot follows */
     }, 200);
     setTimeout(function () { m.classList.remove("is-flying"); specks(nx, ny, 2); }, 1200);
   }
@@ -339,12 +367,14 @@
     trail = trail.slice(-3);
     if (!memDone && trail.join() === "pond,shore,grove") { memDone = true; memory(); }
   }
-  function memory() {
+  function memory() {                             /* silver drifts from the shore toward the grove */
+    var s = mid("shore"), g = mid("grove");
     setTimeout(function () {
-      var m = $(".moth"), x = parseFloat(m.style.left), y = parseFloat(m.style.top);
-      for (var i = 0; i < 9; i++) (function (k) {
-        setTimeout(function () { specks(x - k * 5, y + Math.sin(k) * 3, 2); }, k * 350);
-      })(i);
+      for (var k = 0; k <= 8; k++) (function (k) {
+        setTimeout(function () {
+          specks(s.x + (g.x - s.x) * k / 8, s.y + (g.y - s.y) * k / 8 + Math.sin(k) * 1.5, 2);
+        }, k * 350);
+      })(k);
       whisperFree("One more little step.");
     }, 1500);
   }
