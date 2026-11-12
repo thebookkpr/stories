@@ -1,4 +1,10 @@
-/* One More Little Step — variables.css V1.1 */
+/* One More Little Step — variables.css V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (CSS)
+   V1.0: NEW BEGINNING. Versions restart at 1.0. Values unchanged.
+   Note: game.js sets --stage-ratio on #game for the tablet format. */
+
+
 :root {
   /* Canon palette */
   --ivory: #f7f3ea;
