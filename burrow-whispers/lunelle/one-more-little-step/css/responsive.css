@@ -1,4 +1,11 @@
-/* One More Little Step — responsive.css V1.0 */
+/* One More Little Step — responsive.css V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (CSS)
+
+   V1.0: NEW BEGINNING. Versions restart at 1.0.
+         Reduced motion now also covers the new touch and guidance
+         effects: the drifting ones are hidden, and the blooms become
+         a plain gentle fade so a tap still feels acknowledged. */
 
 /* Small screens: tighten spacing so nothing crowds the art */
 @media (max-width: 700px) {
@@ -48,7 +55,7 @@
   }
 }
 
-/* Touch screens: no hover, so make hints visible and targets larger */
+/* Touch screens: larger targets */
 @media (hover: none) {
   .hotspot { min-width: 52px; min-height: 52px; }
   .menu-btn:hover { transform: none; }
@@ -61,5 +68,18 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.2s !important;
   }
-  .firefly, .particle, .fog { display: none; }
+  .firefly, .particle, .fog,
+  .touch-mote, .guide-petal, .guide-firefly,
+  .guide-twinkle, .guide-mote { display: none; }
+
+  /* Blooms stay, as a plain soft fade with no movement */
+  .touch-bloom, .touch-lotus, .guide-bloom {
+    animation: soft-fade 1.2s ease both !important;
+    animation-duration: 1.2s !important;
+  }
+  @keyframes soft-fade {
+    0%   { opacity: 0; }
+    40%  { opacity: 0.6; }
+    100% { opacity: 0; }
+  }
 }
