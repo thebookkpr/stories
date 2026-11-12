@@ -1,4 +1,20 @@
-/* One More Little Step — effects.css V1.0 */
+/* One More Little Step — effects.css V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (CSS)
+
+   V1.0: NEW BEGINNING. Versions restart at 1.0.
+         Kept: fx layer, fireflies, particles, fog, water sparkle,
+         silver reflection, Moon Lotus crest, lotus glow, fade overlay.
+         Added Touch-State feedback (JS: Effects.touch):
+           .touch-mote   small drifting motes (all three touch states)
+           .touch-bloom  soft silver bloom (.big for discoveries)
+           .touch-lotus  Moon Lotus symbol for discoveries
+         Added guidance effects (JS: guidance.js Stages 1 to 3):
+           .guide-petal, .guide-firefly, .guide-twinkle   Stage 1
+           .guide-mote                                    Stage 2
+           .guide-bloom                                   Stage 3
+         All effects are soft: no rings, ripples, stars or bursts.
+         Effect elements are centered on their left/top point. */
 
 /* Effects layer: sits above art, never blocks clicks */
 .fx-layer {
@@ -9,7 +25,7 @@
   pointer-events: none;
 }
 
-/* Fireflies: JS sets left, top, --dur, --delay, --drift per firefly */
+/* Fireflies: JS sets left, top, --dur, --delay, --drift */
 .firefly {
   position: absolute;
   width: 6px;
@@ -31,7 +47,7 @@
   100% { transform: translate(var(--drift, 30px), -24px); }
 }
 
-/* Floating particles: pollen and dust, slow and faint */
+/* Floating particles: pollen and dust */
 .particle {
   position: absolute;
   width: 3px;
@@ -48,7 +64,7 @@
   100% { opacity: 0; transform: translateY(-80px); }
 }
 
-/* Soft fog: two slow layers drifting across the scene */
+/* Soft fog: two slow layers */
 .fog {
   position: absolute;
   left: -20%;
@@ -66,7 +82,7 @@
   100% { transform: translateX(4%); }
 }
 
-/* Water sparkle: small shimmering points on the pond */
+/* Water sparkle */
 .sparkle {
   position: absolute;
   width: 4px;
@@ -81,8 +97,7 @@
   50%      { opacity: 0.8; transform: scale(1.2); }
 }
 
-/* Silver reflection pulse: the story hook on the pond.
-   Position it with inline left, top, width, height in percent. */
+/* Silver reflection pulse: the story hook */
 .silver-reflection {
   position: absolute;
   border-radius: 50%;
@@ -96,7 +111,7 @@
   50%      { opacity: 0.9;  transform: scale(1.05); }
 }
 
-/* Moon Lotus crest overlay: position it over the crest on the sprite */
+/* Moon Lotus crest overlay */
 .crest {
   position: absolute;
   z-index: calc(var(--z-lunelle) + 1);
@@ -125,6 +140,160 @@
 @keyframes lotus-breathe {
   0%, 100% { filter: drop-shadow(0 0 4px rgba(205, 191, 232, 0.3)); }
   50%      { filter: drop-shadow(0 0 12px rgba(205, 191, 232, 0.7)); }
+}
+
+/* ---------- Touch-State feedback (from the exact tap position) ---------- */
+
+/* Moonroot motes: JS sets --dx, --dy, --dur, --delay, --c (color), --o (strength) */
+.touch-mote {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--c, var(--silver));
+  box-shadow: 0 0 6px 1px var(--c, var(--silver));
+  opacity: 0;
+  animation: touch-mote var(--dur, 400ms) ease-out var(--delay, 0ms) both;
+}
+@keyframes touch-mote {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  25%  { opacity: var(--o, 0.5); }
+  100% { opacity: 0; transform: translate(var(--dx, 0), var(--dy, -20px)) scale(1.1); }
+}
+
+/* Soft silver bloom: a glow, never a ring */
+.touch-bloom {
+  position: absolute;
+  width: clamp(50px, 8vw, 100px);
+  aspect-ratio: 1;
+  margin: calc(clamp(50px, 8vw, 100px) / -2) 0 0 calc(clamp(50px, 8vw, 100px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(230, 235, 242, 0.6) 0%,
+    rgba(205, 191, 232, 0.25) 45%,
+    rgba(205, 191, 232, 0) 70%);
+  opacity: 0;
+  animation: touch-bloom 1.1s var(--ease-gentle) both;
+}
+.touch-bloom.big {
+  width: clamp(90px, 14vw, 180px);
+  margin: calc(clamp(90px, 14vw, 180px) / -2) 0 0 calc(clamp(90px, 14vw, 180px) / -2);
+  animation-duration: 1.8s;
+}
+@keyframes touch-bloom {
+  0%   { opacity: 0;                    transform: scale(0.5); }
+  35%  { opacity: var(--o, 1);          transform: scale(1); }
+  100% { opacity: 0;                    transform: scale(1.3); }
+}
+
+/* Moon Lotus symbol for discoveries: a simple soft flower of petals */
+.touch-lotus {
+  position: absolute;
+  width: clamp(40px, 6vw, 72px);
+  aspect-ratio: 1;
+  margin: calc(clamp(40px, 6vw, 72px) / -2) 0 0 calc(clamp(40px, 6vw, 72px) / -2);
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 22% 48% at 50% 28%, rgba(247, 243, 234, 0.9), transparent 70%),
+    radial-gradient(ellipse 22% 48% at 28% 40%, rgba(205, 191, 232, 0.85), transparent 70%),
+    radial-gradient(ellipse 22% 48% at 72% 40%, rgba(205, 191, 232, 0.85), transparent 70%),
+    radial-gradient(circle at 50% 62%, rgba(230, 235, 242, 0.8), transparent 40%);
+  filter: drop-shadow(0 0 10px var(--silver-glow));
+  animation: touch-lotus 2.4s var(--ease-gentle) both;
+}
+@keyframes touch-lotus {
+  0%   { opacity: 0;   transform: scale(0.6) translateY(6px); }
+  30%  { opacity: 1;   transform: scale(1)   translateY(0); }
+  100% { opacity: 0;   transform: scale(1.15) translateY(-14px); }
+}
+
+/* ---------- Guidance effects (MCGS Stages 1 to 3) ---------- */
+
+/* Stage 1: a single petal falls, extra fireflies stir, a faint twinkle */
+.guide-petal {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, var(--silver), var(--lavender));
+  opacity: 0;
+  animation: guide-fall 8s ease-in-out both;
+}
+@keyframes guide-fall {
+  0%   { opacity: 0;   transform: translate(0, 0) rotate(0deg); }
+  15%  { opacity: 0.8; }
+  85%  { opacity: 0.8; }
+  100% { opacity: 0;   transform: translate(var(--drift, 30px), 55vh) rotate(200deg); }
+}
+
+.guide-firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbe0 0%, rgba(255, 251, 224, 0) 70%);
+  box-shadow: 0 0 10px 3px rgba(255, 251, 224, 0.5);
+  opacity: 0;
+  animation: guide-firefly 6s ease-in-out var(--delay, 0s) both;
+}
+@keyframes guide-firefly {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  40%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: translate(var(--drift, 30px), -30px); }
+}
+
+.guide-twinkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ivory);
+  box-shadow: 0 0 8px 2px var(--silver-glow);
+  opacity: 0;
+  animation: guide-twinkle 3s ease-in-out var(--delay, 0s) both;
+}
+@keyframes guide-twinkle {
+  0%, 100% { opacity: 0;   transform: scale(0.5); }
+  50%      { opacity: 0.9; transform: scale(1.3); }
+}
+
+/* Stage 2: silver motes drift through the area, each on its own path */
+.guide-mote {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--silver);
+  box-shadow: 0 0 8px 2px rgba(205, 191, 232, 0.6);
+  opacity: 0;
+  animation: guide-mote var(--dur, 4500ms) ease-in-out var(--delay, 0ms) both;
+}
+@keyframes guide-mote {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  30%  { opacity: 0.7; }
+  70%  { opacity: 0.7; }
+  100% { opacity: 0;   transform: translate(var(--dx, 30px), var(--dy, -20px)); }
+}
+
+/* Stage 3: a brief, subtle silver-lavender pulse (about 1 second) */
+.guide-bloom {
+  position: absolute;
+  width: clamp(60px, 9vw, 120px);
+  aspect-ratio: 1;
+  margin: calc(clamp(60px, 9vw, 120px) / -2) 0 0 calc(clamp(60px, 9vw, 120px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(205, 191, 232, 0.5) 0%,
+    rgba(230, 235, 242, 0.2) 45%,
+    rgba(230, 235, 242, 0) 70%);
+  opacity: 0;
+  animation: guide-bloom 1s var(--ease-gentle) both;
+}
+@keyframes guide-bloom {
+  0%   { opacity: 0;   transform: scale(0.7); }
+  45%  { opacity: 0.55; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(1.15); }
 }
 
 /* Fade overlay between scenes */
