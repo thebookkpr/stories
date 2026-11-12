@@ -1,11 +1,12 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/scrapbook.js
-  VERSION: 0.6.0
+  VERSION: 0.8.0
   PART: 1 of 1
-  LOAD ORDER: 4th script (after save.js, before game.js)
+  LOAD ORDER: 4th script (after save.js, before guidance.js and game.js)
   NOTE: Draws the scrapbook and the picture viewer, and handles Start Over.
         Items marked soon: true in data.js show "Coming soon".
+        v0.8.0: text journal view, Save Card link, Guidance setting.
 */
 
 (function () {
@@ -18,25 +19,50 @@
   const scrapbook = $("scrapbook");
   const viewer = $("viewer");
   const viewerImg = $("viewer-img");
+  const viewerText = $("viewer-text");
+  const viewerSave = $("viewer-save");
 
   let viewerClosing = false;
   let resetArmed = false;
   let resetTimer = null;
 
+  // Guidance modes (Accessibility Discovery Mode)
+  const MODES = [
+    { id: "off", label: "Off",
+      text: "The pond guides you gently. Hints appear if you are stuck." },
+    { id: "gentle", label: "Gentle",
+      text: "Hotspots glow brighter and sparkle more often." },
+    { id: "assisted", label: "Assisted",
+      text: "Adds a faint outline, bigger touch areas, and moon dust." }
+  ];
+
   // ---------- Rows ----------
-  function nameButton(label, image) {
+  // kind: "card" (opens the picture), "journal" (opens the text), or null
+  function nameButton(label, kind, item) {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "name-btn";
     b.textContent = label;
-    b.dataset.image = image;
-    b.dataset.alt = label;
+    b.dataset.kind = kind;
+    b.dataset.id = item.id;
+    b.dataset.label = label;
+    if (kind === "card") {
+      b.dataset.image = item.card;
+      b.dataset.file = fileName(item.name, item.card);
+    }
     return b;
   }
 
-  function row(item, unlocked, image) {
+  // e.g. "Silver Moon Moth" -> "burrow-whispers-silver-moon-moth-card.jpg"
+  function fileName(name, src) {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return "burrow-whispers-" + slug + "-card." + src.split(".").pop();
+  }
+
+  function row(item, unlocked, kind) {
     const num = item.number ? "#" + item.number + " " : "";
     const el = document.createElement("li");
+    const canOpen = (kind === "card" && item.card) || (kind === "journal" && item.text);
 
     if (item.soon) {
       el.className = "soon";
@@ -44,19 +70,19 @@
     } else if (!unlocked) {
       el.className = "locked";
       el.textContent = (num + "???").trim();
-    } else if (image) {
-      el.appendChild(nameButton(num + item.name, image));
+    } else if (canOpen) {
+      el.appendChild(nameButton(num + item.name, kind, item));
     } else {
       el.textContent = num + item.name;
     }
     return el;
   }
 
-  function fill(ul, items, listName, imageOf) {
+  function fill(ul, items, listName, kind) {
     ul.innerHTML = "";
     items.forEach(function (item) {
       const unlocked = BW.Save.has(listName, item.id);
-      ul.appendChild(row(item, unlocked, imageOf ? imageOf(item) : null));
+      ul.appendChild(row(item, unlocked, kind));
     });
   }
 
@@ -102,12 +128,47 @@
     });
   }
 
+  // ---------- Guidance setting ----------
+  function chooseMode(id) {
+    if (BW.Guidance) BW.Guidance.setMode(id);
+    else BW.Save.setGuidance(id);
+    renderGuidance();
+  }
+
+  function renderGuidance() {
+    const box = $("guidance-setting");
+    const current = BW.Save.getGuidance();
+    box.innerHTML = "";
+
+    const h = document.createElement("h3");
+    h.textContent = "Guidance";
+    const p = document.createElement("p");
+    const btns = document.createElement("div");
+    btns.className = "mode-row";
+
+    MODES.forEach(function (m) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "mode-btn" + (m.id === current ? " on" : "");
+      b.dataset.mode = m.id;
+      b.textContent = m.label;
+      b.setAttribute("aria-pressed", m.id === current ? "true" : "false");
+      btns.appendChild(b);
+      if (m.id === current) p.textContent = m.text;
+    });
+
+    box.appendChild(h);
+    box.appendChild(p);
+    box.appendChild(btns);
+  }
+
   // ---------- Render / open / close ----------
   function render() {
-    fill($("discovery-list"), BW.DISCOVERIES, "discoveries", (i) => i.card);
-    fill($("keepsake-list"),  BW.KEEPSAKES,   "keepsakes",   (i) => i.card);
-    fill($("journal-list"),   BW.JOURNAL,     "journal",     (i) => i.image);
+    fill($("discovery-list"), BW.DISCOVERIES, "discoveries", "card");
+    fill($("keepsake-list"),  BW.KEEPSAKES,   "keepsakes",   "card");
+    fill($("journal-list"),   BW.JOURNAL,     "journal",     "journal");
     renderExtras();
+    renderGuidance();
 
     const n = BW.Save.state.discoveries.length;
     $("petal-total").textContent = BW.Save.state.petals;
@@ -127,11 +188,31 @@
     if (after) after();
   }
 
-  // ---------- Viewer ----------
-  function openViewer(src, alt) {
+  // ---------- Viewer (a card with Save Card, or a journal entry as text) ----------
+  function openViewer(opts) {
     if (viewerClosing) return;
-    viewerImg.src = src;
-    viewerImg.alt = alt || "";
+    if (opts.text) {
+      viewerText.innerHTML = "";
+      const h = document.createElement("h3");
+      h.textContent = opts.title;
+      viewerText.appendChild(h);
+      opts.text.forEach(function (line) {
+        const p = document.createElement("p");
+        p.textContent = line;
+        viewerText.appendChild(p);
+      });
+      viewerText.hidden = false;
+      viewerImg.hidden = true;
+      viewerSave.hidden = true;
+    } else {
+      viewerImg.src = opts.src;
+      viewerImg.alt = opts.alt || "";
+      viewerImg.hidden = false;
+      viewerText.hidden = true;
+      viewerSave.href = opts.src;
+      viewerSave.setAttribute("download", opts.file || "card.jpg");
+      viewerSave.hidden = false;
+    }
     viewer.classList.remove("closing");
     viewer.hidden = false;
   }
@@ -144,6 +225,7 @@
       viewer.hidden = true;
       viewer.classList.remove("closing");
       viewerImg.src = "";
+      viewerText.innerHTML = "";
       viewerClosing = false;
     }, VIEWER_CLOSE_TIME);
   }
@@ -172,12 +254,27 @@
   $("book-close").addEventListener("click", close);
   $("start-over").addEventListener("click", onStartOver);
 
-  scrapbook.addEventListener("click", function (e) {
-    const btn = e.target.closest(".name-btn");
-    if (btn && btn.dataset.image) openViewer(btn.dataset.image, btn.dataset.alt);
+  $("guidance-setting").addEventListener("click", function (e) {
+    const b = e.target.closest(".mode-btn");
+    if (b) chooseMode(b.dataset.mode);
   });
 
-  viewer.addEventListener("click", closeViewer);
+  scrapbook.addEventListener("click", function (e) {
+    const btn = e.target.closest(".name-btn");
+    if (!btn) return;
+    if (btn.dataset.kind === "journal") {
+      const j = BW.JOURNAL.find((i) => i.id === btn.dataset.id);
+      if (j && j.text) openViewer({ title: j.name, text: j.text });
+    } else if (btn.dataset.image) {
+      openViewer({ src: btn.dataset.image, alt: btn.dataset.label,
+                   file: btn.dataset.file });
+    }
+  });
+
+  viewer.addEventListener("click", function (e) {
+    if (e.target.closest("#viewer-save")) return;   // let the download happen
+    closeViewer();
+  });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") closeViewer();
   });
