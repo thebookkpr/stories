@@ -1,25 +1,25 @@
-/* One More Little Step — game.js V1.0
+/* One More Little Step — game.js V1.1
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.1: Tablet format finished.
+         Tablet hotspots in scenes.js list only id and position; this
+         file fills in kind, courage and clue from the main hotspot.
+         Fixed: the petal hint arrow and text now follow the petal on
+         tablet screens (before, they used the wide-screen position).
+         TABLET_RATIO confirmed as 4:3 (all tablet pictures are 1448 x 1086).
    V1.0: NEW BEGINNING. Rebuilt around the new help system.
-         Removed: the 8-second tutorial glow, the 15-second idle
-         reminder, and the circle ripple (the Touch-State spec bans
-         ripples).
-         Added: Guidance (guidance.js) is started for every scene.
+         Guidance (guidance.js) runs in every scene (hints, auto-reveal).
          Every tap gets particle feedback (Effects.touch):
            "explore" = empty area, "interactive" = hotspot,
-           "discovery" = petal or final hotspot.
-         Added: taps that find nothing count as Missed Searches.
-         Added: auto-reveal (Guidance calls reveal) counts as a find.
-         Added: a short "touched" scale on hotspots.
-         Added: tablet format. Narrow screens (under 1.7:1) swap to
-         scene.tabletBackground and scene.tabletHotspots / tabletPetal
-         when a scene has them. TABLET_RATIO is a guess: set it to
-         the real tablet art ratio.
-         Kept: first-time intro text (Scenes with a hint), petal hint,
-         Lunelle vanish, Sound button, save and resume.
-         Resume now ignores old hotspot ids that no longer exist.
+           "discovery" = petal or last hotspot.
+         Taps that find nothing count as Missed Searches.
+         No hotspot glow timers, no circle ripple.
+         Narrow screens (under 1.7:1) use the tablet picture, hotspots
+         and petal of each scene when the scene has them.
+         First-time intro text, petal hint, Lunelle vanish, Sound
+         button, save and resume are kept.
+         Resume ignores old hotspot ids that no longer exist.
 
    Needs scenes.js, effects.js, audio.js, guidance.js loaded first;
    save.js after. */
@@ -27,7 +27,7 @@
 const Game = (() => {
   const stage = document.getElementById("game");
   const TOTAL = SCENES.length;
-  const TABLET_RATIO = 4 / 3;               /* confirm with the real art */
+  const TABLET_RATIO = 4 / 3;
   let current = -1, courage = 0, moving = false, tablet = null;
   let petalsGot = new Array(TOTAL).fill(false);
   let foundIds = SCENES.map(() => []);
@@ -43,7 +43,11 @@ const Game = (() => {
   fade.className = "fade-overlay";
   stage.appendChild(fade);
 
-  const spots = s => (tablet && s.tabletHotspots) || s.hotspots;
+  /* Hotspots for the current format. Tablet entries borrow kind, courage
+     and clue from the main hotspot with the same id. */
+  const spots = s => (tablet && s.tabletHotspots)
+    ? s.tabletHotspots.map(t => Object.assign({}, s.hotspots.find(h => h.id === t.id), t))
+    : s.hotspots;
   const place = (b, h) => { b.style.cssText = `left:${h.x}%;top:${h.y}%;width:${h.w}%;height:${h.h}%`; };
 
   /* ---------- Build ---------- */
@@ -54,6 +58,18 @@ const Game = (() => {
     const cx = s.petal.x + 2, tx = Math.min(Math.max(cx, 15), 85);
     return `<div class="petal-hint-text" style="left:${tx}%;top:${Math.max(s.petal.y - 18, 14)}%">${s.petalHint}</div>
             <div class="petal-hint-arrow" style="left:${cx}%;top:${s.petal.y - 10}%">&#9660;</div>`;
+  }
+
+  /* Move a scene's petal hint (text and arrow) to follow its petal */
+  function placePetalHint(i, pt) {
+    const e = sceneEls[i];
+    const t = e.querySelector(".petal-hint-text"), a = e.querySelector(".petal-hint-arrow");
+    if (!t || !a) return;                              /* no arrow: text stays centered */
+    const cx = pt.x + 2;
+    t.style.left = Math.min(Math.max(cx, 15), 85) + "%";
+    t.style.top = Math.max(pt.y - 18, 14) + "%";
+    a.style.left = cx + "%";
+    a.style.top = (pt.y - 10) + "%";
   }
 
   function buildScene(s, i) {
@@ -284,6 +300,7 @@ const Game = (() => {
       });
       const pt = (t && s.tabletPetal) || s.petal;
       petalEls[i].style.cssText = `left:${pt.x}%;top:${pt.y}%`;
+      placePetalHint(i, pt);
     });
   }
   applyFormat();
