@@ -1,9 +1,10 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/panels.css
-  VERSION: 0.6.0
+  VERSION: 0.8.0
   PART: 1 of 1
   LOAD ORDER: 3rd (after base)
+  NOTE: v0.8.0 adds text journal view, Save Card button, guidance setting.
 */
 
 /* ---------- Overlays ---------- */
@@ -172,9 +173,7 @@
   padding: 24px 18px 28px;
   text-align: center;
   color: var(--ink);
-  background:
-    linear-gradient(rgba(250, 247, 255, 0.90), rgba(250, 247, 255, 0.90)),
-    url("../assets/moonroot-scrapbook.png") center / cover no-repeat;
+  background: var(--panel);
   border: 2px solid var(--border-panel);
   border-radius: var(--radius);
   box-shadow: 0 0 30px var(--glow-panel);
@@ -304,6 +303,44 @@
 .extra ul { list-style: none; margin: 0; padding: 0; font-size: var(--text-caption); }
 .extra li { margin: 6px 0; line-height: 1.3; }
 
+/* ---------- Guidance setting (Accessibility Discovery Mode) ---------- */
+.setting {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--panel-soft);
+  border: 1px solid var(--border-panel);
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+.setting h3 { margin: 0 0 6px; }
+.setting p {
+  margin: 0 0 10px;
+  color: var(--lavender-soft);
+  font-weight: 600;
+  font-size: var(--text-caption);
+  line-height: 1.35;
+}
+.mode-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.mode-btn {
+  flex: 1 1 0;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-panel);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--violet);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: var(--text-caption);
+  cursor: pointer;
+}
+.mode-btn.on {
+  background: var(--button-grad);
+  border-color: transparent;
+  color: var(--on-button);
+}
+.mode-btn:active { transform: scale(0.97); }
+
 /* ---------- Start Over ---------- */
 .start-over {
   min-height: 44px;
@@ -320,7 +357,7 @@
 }
 .start-over:active { transform: scale(0.97); }
 
-/* ---------- Viewer (card or journal picture on its own) ---------- */
+/* ---------- Viewer (card or journal text on its own) ---------- */
 #viewer {
   position: absolute;
   inset: 0;
@@ -338,13 +375,66 @@
 
 #viewer-img {
   max-width: 94vw;
-  max-height: 80vh;
+  max-height: 72vh;
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: var(--radius-sm);
   box-shadow: 0 0 36px var(--glow-panel);
 }
+#viewer-img[hidden] { display: none; }
+
+/* Journal entry shown as text */
+#viewer-text {
+  width: 100%;
+  max-width: 460px;
+  max-height: 72vh;
+  overflow-y: auto;
+  padding: 26px 22px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--border-panel);
+  border-radius: var(--radius);
+  box-shadow: 0 0 36px var(--glow-panel);
+  cursor: default;
+}
+#viewer-text[hidden] { display: none; }
+#viewer-text h3 {
+  margin: 0 0 14px;
+  color: var(--violet);
+  font-family: var(--font-world);
+  font-weight: 700;
+  font-size: var(--text-h2);
+  line-height: 1.15;
+}
+#viewer-text p {
+  margin: 0 0 10px;
+  color: var(--lavender-soft);
+  font-family: var(--font-world);
+  font-style: italic;
+  font-weight: 500;
+  font-size: calc(var(--text-body) + 4px);
+  line-height: 1.45;
+}
+
+/* Save Card button (a download link styled as a button) */
+#viewer-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: var(--button-grad);
+  color: var(--on-button);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: var(--text-button);
+  text-decoration: none;
+}
+#viewer-save[hidden] { display: none; }
+#viewer-save:active { transform: scale(0.97); }
 
 #viewer-hint {
   margin: 0;
@@ -361,4 +451,4 @@
   .panel-card { max-width: 580px; padding: 34px 32px; }
   .dialog-card { margin-bottom: 12px; border-bottom: 2px solid var(--border-panel); border-radius: var(--radius); }
   #reward-list, .page ul, .journal-section ul, .name-btn { font-size: 20px; }
-}
+  }
