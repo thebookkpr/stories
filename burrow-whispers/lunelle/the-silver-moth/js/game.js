@@ -1,11 +1,12 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.6.0
+  VERSION: 0.8.0
   PART: 1 of 1
-  LOAD ORDER: 5th script (last)
+  LOAD ORDER: 6th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
         items and rewards in data.js, saving in save.js.
+        v0.8.0: guidance hooks (guidance.js), journal text from data.js.
 */
 
 (function () {
@@ -13,18 +14,13 @@
 
   const $ = (id) => document.getElementById(id);
   const S = BW.Save;
+  const G = BW.Guidance;
 
   // Timings (ms). Keep in sync with variables.css / effects.css
   const CONTINUE_DELAY = 1000;
   const PETAL_POPUP_DELAY = 900;
   const PETAL_FX_TIME = 1600;
   const REWARD_DELAY = 3200;
-
-  // Journal lines shown on the reward screen (more come with their art)
-  const JOURNAL_TEXT = {
-    moth: ["Sometimes courage doesn't roar.",
-           "Sometimes it simply takes one more little step."]
-  };
 
   // ---------- State ----------
   let mystery = null;
@@ -130,6 +126,7 @@
     moth.alt = disc().name;
     revealed = false;
     updateClueCount();
+    G.start();
   }
 
   function playPetalFx(clue) {
@@ -148,6 +145,8 @@
 
     S.recordClue(clue.key);
     btn.classList.add("found");
+    G.clueTouched(btn);               // dust burst, light pulse, success glow
+    G.noteProgress();                 // the player is not stuck anymore
     updateClueCount();
     const bonus = S.countDailyClue();   // daily reward: +5 on the 3rd clue
 
@@ -175,6 +174,7 @@
   function onSilverLight() {
     if (!mystery || revealed || waiting) return;
     if (!allFound()) {
+      G.tooFar(silverLight);
       showDialog("🌙 Too Far Away", BW.TOO_FAR, false);
       return;
     }
@@ -257,7 +257,7 @@
     });
 
     $("reward-quote").textContent = "“" + mystery.quote + "”";
-    const jt = JOURNAL_TEXT[d.id];
+    const jt = j.text;                 // journal text now lives in data.js
     $("reward-journal").hidden = !jt;
     $("reward-journal").innerHTML = jt ? jt.join("<br>") : "";
 
@@ -283,6 +283,7 @@
 
   function allDone() {
     mode = "done";
+    G.stop();
     $("hotspots").innerHTML = "";
     silverLight.hidden = true;
     moth.hidden = true;
@@ -314,6 +315,7 @@
 
   // ---------- Init ----------
   S.load();
+  G.applyMode();
   makeFireflies(14);
   startMystery();
 })();
