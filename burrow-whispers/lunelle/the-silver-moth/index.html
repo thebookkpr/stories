@@ -1,9 +1,9 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.7.0
+  VERSION: 0.8.0
   PART: 1 of 1
-  LOCATION: /stories/lunelle/the-silver-moth/
+  LOCATION: /stories/burrow-whispers/lunelle/the-silver-moth/
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -26,11 +26,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- CSS load order matters: variables first, effects last -->
+  <!-- CSS load order matters: variables first, guidance last -->
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/panels.css">
   <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/guidance.css">
 </head>
 <body>
 
@@ -55,12 +56,15 @@
     <!-- The target: silver light, then the discovery sprite (set by game.js) -->
     <button id="silver-light" type="button" aria-label="The silver light"></button>
     <img id="moth" alt="" hidden>
+
+    <!-- Guidance effects layer (v0.8.0): dust, whispers, crest particles -->
+    <div id="guide-fx" aria-hidden="true"></div>
   </section>
 
   <!-- HUD -->
   <header id="hud-left">
     <span>BURROW WHISPERS</span>
-    <span>BUNNY #001</span>
+    <span>PET #001</span>
     <strong>LUNELLE</strong>
   </header>
 
@@ -134,23 +138,29 @@
       <!-- Stickers, Achievements, Frames, Sticker Packs, Journal Themes -->
       <div id="extras"></div>
 
+      <!-- Guidance setting (v0.8.0, filled by scrapbook.js) -->
+      <div id="guidance-setting" class="setting"></div>
+
       <button id="start-over" class="start-over" type="button">Start Over</button>
     </div>
   </section>
 
-  <!-- Viewer: shows a card or journal picture on its own; tap to close -->
+  <!-- Viewer: shows a card or a journal entry on its own; tap to close -->
   <div id="viewer" hidden role="dialog" aria-modal="true" aria-label="Collected item">
     <img id="viewer-img" src="" alt="">
+    <div id="viewer-text" hidden></div>
+    <a id="viewer-save" href="#" download hidden>Save Card</a>
     <p id="viewer-hint">Tap to close</p>
   </div>
 
 </main>
 
-<!-- Script order matters: data, story, saving, scrapbook, then the game -->
+<!-- Script order matters: data, story, saving, scrapbook, guidance, then the game -->
 <script src="js/data.js"></script>
 <script src="js/mysteries.js"></script>
 <script src="js/save.js"></script>
 <script src="js/scrapbook.js"></script>
+<script src="js/guidance.js"></script>
 <script src="js/game.js"></script>
 
 <!-- Offline play (v0.7.0) -->
