@@ -1,17 +1,15 @@
-/* One More Little Step — scenes.js V1.0
+/* One More Little Step — scenes.js V1.1
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
-   V1.0: NEW BEGINNING. Version numbers restart at 1.0.
+   V1.1: Tablet format finished for all 5 scenes. Every scene now has
+         tabletBackground, tabletHotspots and tabletPetal.
+         Tablet hotspots list only id and position; game.js fills in
+         kind, courage and clue from the main hotspot of the same id.
+   V1.0: NEW BEGINNING. Versions restart at 1.0.
          Exactly 5 hotspots per scene.
-         Scene 1 lost two hotspots: the moon (too bright for the glow)
-         and the middle lotus (lotus-mid).
-         Removed the empty whisper fields (dialogue is still deferred).
-         Added per-scene "mood" (Hint Stage 4) and per-hotspot "clue"
+         Per-scene "mood" (Hint Stage 4) and per-hotspot "clue"
          (Hint Stage 5). These are observations, never instructions.
-         Added tablet background slots for Scenes 1 to 3.
-         Tablet hotspot positions come later (tabletHotspots: null
-         means "reuse the 20:9 hotspots for now").
 
    Scene data only. No behavior lives here.
    Positions are percentages of the stage
@@ -23,7 +21,14 @@ const SCENES = [
     title: "Moonroot Pond",
     background: "images/scene-pond.jpg",
     tabletBackground: "images/scenepond-tablet.jpg",
-    tabletHotspots: null,
+    tabletHotspots: [
+      { id: "lotus-left",  x: 21.7, y: 56.4, w: 8,   h: 11 },
+      { id: "reflection",  x: 53.5, y: 50,   w: 8,   h: 20 },
+      { id: "lotus",       x: 43.6, y: 63.3, w: 9,   h: 12 },
+      { id: "fireflies",   x: 84.5, y: 25,   w: 9,   h: 13 },
+      { id: "lotus-right", x: 75.5, y: 70.5, w: 8.5, h: 11 }
+    ],
+    tabletPetal: { x: 72, y: 87 },
     lunelle: { src: "assets/lunelle-blinking.gif", x: 4, bottom: 19, w: 12, vanishAfter: 15000 },
     courageRequired: 5,
     petalHint: "Did you forget something?",
@@ -55,7 +60,14 @@ const SCENES = [
     title: "The Silver Light",
     background: "images/scene-silver-light.jpg",
     tabletBackground: "images/scenesilverlight-tablet.jpg",
-    tabletHotspots: null,
+    tabletHotspots: [
+      { id: "orb",       x: 61.6, y: 33.5, w: 10, h: 14 },
+      { id: "flowers",   x: 74.5, y: 62,   w: 11, h: 20 },
+      { id: "fireflies", x: 31.3, y: 18,   w: 12, h: 14 },
+      { id: "petals",    x: 24,   y: 78,   w: 18, h: 16 },
+      { id: "roots",     x: 22.7, y: 41.5, w: 14, h: 22 }
+    ],
+    tabletPetal: { x: 80, y: 22 },
     lunelle: { src: "images/sprites/lunelle-light.png", x: 10, bottom: 4, w: 28 },
     courageRequired: 5,
     petalHint: "A silver petal is hiding here",
@@ -86,7 +98,14 @@ const SCENES = [
     title: "The Clearing",
     background: "images/scene-clearing.jpg",
     tabletBackground: "images/sceneclearing-tablet.jpg",
-    tabletHotspots: null,
+    tabletHotspots: [
+      { id: "boulder",   x: 16.5, y: 46,   w: 11, h: 11 },
+      { id: "petals",    x: 45.5, y: 78.5, w: 14, h: 14 },
+      { id: "fireflies", x: 28,   y: 34.5, w: 17, h: 14 },
+      { id: "glow",      x: 54.6, y: 39.4, w: 10, h: 16 },
+      { id: "log",       x: 30,   y: 51,   w: 20, h: 8 }
+    ],
+    tabletPetal: { x: 24, y: 49 },
     lunelle: { src: "images/sprites/lunelle-clearing.png", x: 10, bottom: 4, w: 28 },
     courageRequired: 5,
     petalHint: "Another silver petal is hiding here",
@@ -116,6 +135,15 @@ const SCENES = [
     id: "moth",
     title: "The Moth",
     background: "images/scene-moth.jpg",
+    tabletBackground: "images/scenemoth-tablet.jpg",
+    tabletHotspots: [
+      { id: "fireflies", x: 11.3, y: 15,   w: 12, h: 14 },
+      { id: "stones",    x: 22.7, y: 79.6, w: 14, h: 14 },
+      { id: "moth",      x: 59.4, y: 27.4, w: 11, h: 16 },
+      { id: "boulder",   x: 58.9, y: 69.4, w: 14, h: 14 },
+      { id: "blossoms",  x: 82,   y: 69,   w: 10, h: 17 }
+    ],
+    tabletPetal: { x: 37.5, y: 38.5 },
     lunelle: { src: "images/sprites/lunelle-moth.png", x: 10, bottom: 4, w: 28 },
     courageRequired: 5,
     petalHint: "Can you find the hidden petal?",
@@ -143,6 +171,15 @@ const SCENES = [
     id: "hilltop",
     title: "Farther From the Burrow",
     background: "images/scene-hilltop.jpg",
+    tabletBackground: "images/scenehilltop-tablet.jpg",
+    tabletHotspots: [
+      { id: "trail",     x: 49,   y: 29,   w: 12, h: 10 },
+      { id: "fireflies", x: 36,   y: 52,   w: 10, h: 12 },
+      { id: "meadow",    x: 70,   y: 74,   w: 20, h: 18 },
+      { id: "lake",      x: 66,   y: 40.5, w: 9,  h: 8 },
+      { id: "boulder",   x: 4.5,  y: 51,   w: 18, h: 14 }
+    ],
+    tabletPetal: { x: 29, y: 48 },
     lunelle: { src: "images/sprites/lunelle-hilltop.png", x: 10, bottom: 4, w: 28 },
     courageRequired: 5,
     petalHint: "Can you find the hidden petal?",
