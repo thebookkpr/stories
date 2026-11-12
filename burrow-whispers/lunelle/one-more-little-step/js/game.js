@@ -1,47 +1,57 @@
-/* One More Little Step — game.js V1.9
-   V1.9: tutorial now runs per scene (Scenes 1 to 3 show "Tap what catches your eye"); petalHintY lets a scene lower its petal hint text
-   V1.8: petal hint after 1 second; scenes with petalPoint get an arrow, others just ask the player to find the petal
-   V1.7
-   V1.7: blinking arrow and text pointing to the hidden petal (scenes with petalHint)
-   V1.6
-   V1.6: sound hooks (audio.js) and a Sound on/off button in Settings
-   V1.5
-   V1.5: save support: remembers found hotspots, resume() for Continue, newGame() resets cleanly
-   V1.1: gentle first-time tutorial (Scene 1 only)
-   V1.2: missing Lunelle sprite files are hidden instead of showing a broken image
-   V1.3: crest offset scales with sprite size; optional vanishAfter fades Lunelle out
-   V1.4: idle reminder: unfound hotspots glow again after 30 seconds without a discovery */
+/* One More Little Step — game.js V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (JavaScript)
+
+   V1.0: NEW BEGINNING. Rebuilt around the new help system.
+         Removed: the 8-second tutorial glow, the 15-second idle
+         reminder, and the circle ripple (the Touch-State spec bans
+         ripples).
+         Added: Guidance (guidance.js) is started for every scene.
+         Every tap gets particle feedback (Effects.touch):
+           "explore" = empty area, "interactive" = hotspot,
+           "discovery" = petal or final hotspot.
+         Added: taps that find nothing count as Missed Searches.
+         Added: auto-reveal (Guidance calls reveal) counts as a find.
+         Added: a short "touched" scale on hotspots.
+         Added: tablet format. Narrow screens (under 1.7:1) swap to
+         scene.tabletBackground and scene.tabletHotspots / tabletPetal
+         when a scene has them. TABLET_RATIO is a guess: set it to
+         the real tablet art ratio.
+         Kept: first-time intro text (Scenes with a hint), petal hint,
+         Lunelle vanish, Sound button, save and resume.
+         Resume now ignores old hotspot ids that no longer exist.
+
+   Needs scenes.js, effects.js, audio.js, guidance.js loaded first;
+   save.js after. */
 
 const Game = (() => {
   const stage = document.getElementById("game");
   const TOTAL = SCENES.length;
-  const IDLE_MS = 15000;          /* time without a discovery before the reminder */
-  let current = -1;
-  let courage = 0;
-  let found = 0;
+  const TABLET_RATIO = 4 / 3;               /* confirm with the real art */
+  let current = -1, courage = 0, moving = false, tablet = null;
   let petalsGot = new Array(TOTAL).fill(false);
-  let foundIds = SCENES.map(() => []);   /* hotspot ids found, per scene */
+  let foundIds = SCENES.map(() => []);
+  let tutorialDone = SCENES.map(() => false);
   const petalEls = [];
-  let moving = false;
 
-  /* Optional modules (effects.js, save.js) may not exist yet */
-  const fx = (fn, ...a) => { if (typeof Effects !== "undefined") Effects[fn](...a); };
+  /* Optional modules */
+  const fx = (fn, ...a) => { if (typeof Effects !== "undefined" && Effects[fn]) Effects[fn](...a); };
   const sv = () => { if (typeof Save !== "undefined") Save.save(); };
   const au = (fn, ...a) => { if (typeof Sound !== "undefined") Sound[fn](...a); };
 
-  /* Fade overlay, created once */
   const fade = document.createElement("div");
   fade.className = "fade-overlay";
   stage.appendChild(fade);
 
+  const spots = s => (tablet && s.tabletHotspots) || s.hotspots;
+  const place = (b, h) => { b.style.cssText = `left:${h.x}%;top:${h.y}%;width:${h.w}%;height:${h.h}%`; };
+
   /* ---------- Build ---------- */
-  /* Blinking text and arrow that point at the hidden petal (scenes with petalHint) */
   function petalHintHTML(s) {
     if (!s.petalHint) return "";
-    if (!s.petalPoint)                                     /* challenge only, no arrow */
+    if (!s.petalPoint)
       return `<div class="petal-hint-text" style="left:50%;top:${s.petalHintY || 16}%">${s.petalHint}</div>`;
-    const cx = s.petal.x + 2;                              /* petal is 4% wide */
-    const tx = Math.min(Math.max(cx, 15), 85);             /* keep the text on screen */
+    const cx = s.petal.x + 2, tx = Math.min(Math.max(cx, 15), 85);
     return `<div class="petal-hint-text" style="left:${tx}%;top:${Math.max(s.petal.y - 18, 14)}%">${s.petalHint}</div>
             <div class="petal-hint-arrow" style="left:${cx}%;top:${s.petal.y - 10}%">&#9660;</div>`;
   }
@@ -53,7 +63,7 @@ const Game = (() => {
     el.id = "scene-" + s.id;
     el.className = "screen scene";
     el.innerHTML =
-      `<div class="bg" style="background-image:url('${s.background}')"></div>
+      `<div class="bg"></div>
        <div class="fx-layer"></div>
        <div class="scene-name">${s.title}</div>
        <div class="hud">
@@ -74,8 +84,11 @@ const Game = (() => {
       const b = document.createElement("button");
       b.className = "hotspot";
       b.setAttribute("aria-label", h.id);
-      b.style.cssText = `left:${h.x}%;top:${h.y}%;width:${h.w}%;height:${h.h}%`;
-      b.addEventListener("click", e => onHotspot(s, h, b, e));
+      place(b, h);
+      b.addEventListener("click", e => {
+        const p = pos(e);
+        discover(s, h, b, p.x, p.y);
+      });
       el.appendChild(b);
     });
 
@@ -83,9 +96,18 @@ const Game = (() => {
     p.className = "petal";
     p.setAttribute("aria-label", "Silver petal");
     p.style.cssText = `left:${s.petal.x}%;top:${s.petal.y}%`;
-    p.addEventListener("click", () => onPetal(i, p));
+    p.addEventListener("click", e => onPetal(i, p, pos(e)));
     petalEls[i] = p;
     el.appendChild(p);
+
+    /* Taps on empty scenery: acknowledged, and counted as a Missed Search */
+    el.addEventListener("click", e => {
+      if (e.target.closest(".hotspot, .petal, .next-btn")) return;
+      const q = pos(e);
+      const old = foundAt(e);
+      fx("touch", el, q.x, q.y, "explore", old);   /* old = softer repeat touch */
+      if (!old) Guidance.miss();
+    });
 
     el.querySelector(".next-btn").addEventListener("click", () => {
       i === TOTAL - 1 ? goTitle() : goTo(i + 1);
@@ -101,6 +123,18 @@ const Game = (() => {
   const scene = () => SCENES[current];
   const el = () => sceneEls[current];
 
+  function pos(e) {                              /* tap position in % of the stage */
+    const r = stage.getBoundingClientRect();
+    return { x: (e.clientX - r.left) / r.width * 100, y: (e.clientY - r.top) / r.height * 100 };
+  }
+
+  function foundAt(e) {                          /* did the tap land on an already-found hotspot? */
+    return [...el().querySelectorAll(".hotspot.found")].some(b => {
+      const r = b.getBoundingClientRect();
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    });
+  }
+
   function whisper(text) {
     if (!text) return;
     const w = el().querySelector(".whisper");
@@ -108,6 +142,16 @@ const Game = (() => {
     w.classList.add("show");
     clearTimeout(whisper.t);
     whisper.t = setTimeout(() => w.classList.remove("show"), 3500);
+  }
+
+  let hintHide;
+  function showHint(text, ms) {
+    if (current < 0 || !text) return;
+    const h = el().querySelector(".hint");
+    h.textContent = text;
+    h.classList.add("show");
+    clearTimeout(hintHide);
+    if (ms) hintHide = setTimeout(() => h.classList.remove("show"), ms);
   }
 
   function updateMeter() {
@@ -125,66 +169,41 @@ const Game = (() => {
 
   function shimmer() {
     const sprite = el().querySelector(".lunelle");
-    if (sprite && sprite.classList.contains("gone")) return;  /* she has left, no crest to shimmer */
+    if (sprite && sprite.classList.contains("gone")) return;
     const c = el().querySelector(".crest");
     c.classList.remove("shimmer");
-    void c.offsetWidth;            /* restart the animation */
+    void c.offsetWidth;
     c.classList.add("shimmer");
   }
 
-  /* ---------- Lunelle vanish (optional, set per scene with vanishAfter) ---------- */
+  /* ---------- Lunelle vanish ---------- */
   let vanishTimer;
-
   function startVanishTimer() {
     clearTimeout(vanishTimer);
     const sprite = el().querySelector(".lunelle");
     if (!sprite) return;
     sprite.classList.remove("gone");
     const ms = scene().lunelle.vanishAfter;
-    if (!ms) return;
-    vanishTimer = setTimeout(() => sprite.classList.add("gone"), ms);
-  }
-  
-    /* ---------- Tutorial (Scenes with a hint, once per scene per session) ---------- */
-  let tutorialDone = SCENES.map(() => false), hintTimer, glowTimer, hintHide;
-
-  function showHint(text, ms) {
-    const h = el().querySelector(".hint");
-    h.textContent = text;
-    h.classList.add("show");
-    clearTimeout(hintHide);
-    if (ms) hintHide = setTimeout(() => h.classList.remove("show"), ms);
+    if (ms) vanishTimer = setTimeout(() => sprite.classList.add("gone"), ms);
   }
 
-  function stopTutorialTimers() {
-    clearTimeout(hintTimer);
-    clearTimeout(glowTimer);
-  }
-
-  function startTutorial() {
-    stopTutorialTimers();
+  /* ---------- First-time intro text (no glow) ---------- */
+  let introTimer;
+  function startIntro() {
+    clearTimeout(introTimer);
     const s = scene();
-    if (!s.hint || tutorialDone[current]) return;
-    hintTimer = setTimeout(() => showHint(s.hint), 2500);
-    glowTimer = setTimeout(() => {
-      el().querySelectorAll(".hotspot:not(.found)")
-        .forEach(b => b.classList.add("hint-glow"));
-    }, 8000);
+    if (s.hint && !tutorialDone[current]) introTimer = setTimeout(() => showHint(s.hint), 2500);
   }
-
-  function endTutorial() {
+  function endIntro() {
     if (tutorialDone[current] || !scene().hint) return;
     tutorialDone[current] = true;
-    stopTutorialTimers();
-    el().querySelectorAll(".hint-glow")
-      .forEach(b => b.classList.remove("hint-glow"));
+    clearTimeout(introTimer);
     if (scene().hint2) showHint(scene().hint2, 4500);
     else el().querySelector(".hint").classList.remove("show");
   }
 
-  /* ---------- Petal hint (after the meter is full and the petal is still hidden) ---------- */
+  /* ---------- Petal hint (after the meter is full) ---------- */
   let petalHintTimer;
-
   function hidePetalHint() {
     clearTimeout(petalHintTimer);
     sceneEls.forEach((e, n) => {
@@ -192,7 +211,6 @@ const Game = (() => {
       petalEls[n].classList.remove("hinted");
     });
   }
-
   function checkPetalHint() {
     clearTimeout(petalHintTimer);
     if (current < 0) return;
@@ -202,87 +220,86 @@ const Game = (() => {
       if (current < 0 || petalsGot[current]) return;
       el().querySelectorAll(".petal-hint-text, .petal-hint-arrow").forEach(x => x.classList.add("show"));
       if (s.petalPoint) petalEls[current].classList.add("hinted");
-    }, 1000);                                  /* one second after the meter fills */
-  }
-
-  /* ---------- Idle reminder (every scene with hotspots) ---------- */
-  let idleTimer;
-
-  function resetIdle() {
-    clearTimeout(idleTimer);
-    if (current < 0) return;
-    const left = el().querySelectorAll(".hotspot:not(.found)").length;
-    if (!left) return;                          /* everything found, no reminder needed */
-    idleTimer = setTimeout(idleNudge, IDLE_MS);
-  }
-
-  function idleNudge() {
-    if (current < 0 || moving) return resetIdle();
-    el().querySelectorAll(".hotspot:not(.found)").forEach(b => {
-      b.classList.remove("hint-glow");
-      void b.offsetWidth;                       /* restart the glow animation */
-      b.classList.add("hint-glow");
-    });
-    if (scene().hint) showHint(scene().hint, 4500);
-    resetIdle();                                /* repeat in another 30 seconds */
+    }, 1000);
   }
 
   /* ---------- Interaction ---------- */
-  function onHotspot(s, h, btn, e) {
+  function discover(s, h, btn, x, y) {
     if (btn.classList.contains("found")) return;
-    btn.classList.add("found");
+    btn.classList.add("found", "touched");
+    setTimeout(() => btn.classList.remove("touched"), 160);
     foundIds[current].push(h.id);
-    const r = stage.getBoundingClientRect();
-    const rip = document.createElement("div");
-    rip.className = "hotspot-ripple";
-    rip.style.left = ((e.clientX - r.left) / r.width * 100) + "%";
-    rip.style.top = ((e.clientY - r.top) / r.height * 100) + "%";
-    el().appendChild(rip);
-    setTimeout(() => rip.remove(), 1300);
     courage += h.courage;
     updateMeter();
+    const last = courage === s.courageRequired;
+    fx("touch", el(), x, y, last ? "discovery" : "interactive");
     au("discover", h.kind);
-    if (courage === s.courageRequired) { au("ready"); checkPetalHint(); }
+    if (last) { au("ready"); checkPetalHint(); }
     whisper(h.whisper);
-    endTutorial();
+    endIntro();
     shimmer();
-    resetIdle();
+    Guidance.discovery();
     sv();
   }
 
-  function onPetal(i, btn) {
+  function onPetal(i, btn, p) {
     if (petalsGot[i]) return;
     petalsGot[i] = true;
     btn.classList.add("collected");
+    fx("touch", el(), p.x, p.y, "discovery");
     au("petal");
     hidePetalHint();
     updatePetals();
     shimmer();
-    resetIdle();
+    Guidance.discovery();
     sv();
   }
 
-  /* Show saved/found state on a scene's hotspots and petal */
+  /* Guidance reveals a hidden spot by itself */
+  function reveal(id) {
+    const s = scene(), h = spots(s).find(x => x.id === id);
+    const b = el().querySelector(`.hotspot[aria-label="${id}"]`);
+    if (h && b) discover(s, h, b, h.x + h.w / 2, h.y + h.h / 2);
+  }
+
   function applyFound(i) {
     sceneEls[i].querySelectorAll(".hotspot").forEach(b =>
       b.classList.toggle("found", foundIds[i].includes(b.getAttribute("aria-label"))));
     petalEls[i].classList.toggle("collected", petalsGot[i]);
   }
-  
-    /* ---------- Navigation ---------- */
+
+  /* ---------- Format (wide or tablet) ---------- */
+  function applyFormat() {
+    const t = innerWidth / innerHeight < 1.7;
+    if (t === tablet) return;
+    tablet = t;
+    stage.style.setProperty("--stage-ratio", t ? "4 / 3" : "20 / 9");
+    stage.style.setProperty("--stage-ratio-num", t ? TABLET_RATIO : 2.2222);
+    SCENES.forEach((s, i) => {
+      const bg = t && s.tabletBackground ? s.tabletBackground : s.background;
+      sceneEls[i].querySelector(".bg").style.backgroundImage = `url('${bg}')`;
+      sceneEls[i].querySelectorAll(".hotspot").forEach(b => {
+        const h = spots(s).find(x => x.id === b.getAttribute("aria-label"));
+        if (h) place(b, h);
+      });
+      const pt = (t && s.tabletPetal) || s.petal;
+      petalEls[i].style.cssText = `left:${pt.x}%;top:${pt.y}%`;
+    });
+  }
+  applyFormat();
+  addEventListener("resize", applyFormat);
+
+  /* ---------- Navigation ---------- */
   function swap(fn) {
     if (moving) return;
     moving = true;
     fade.classList.add("on");
-    setTimeout(() => {
-      fn();
-      fade.classList.remove("on");
-      moving = false;
-    }, 1200);
+    setTimeout(() => { fn(); fade.classList.remove("on"); moving = false; }, 1200);
   }
 
   function goTo(i, keep) {
     swap(() => {
+      Guidance.stop();
       titleEl.classList.remove("active");
       sceneEls.forEach(s => s.classList.remove("active"));
       hidePetalHint();
@@ -294,20 +311,24 @@ const Game = (() => {
       updatePetals();
       fx("start", el());
       au("scene", scene().id);
-      startTutorial();
+      startIntro();
       startVanishTimer();
-      resetIdle();
       checkPetalHint();
+      Guidance.start({
+        el: el(),
+        scene: Object.assign({}, scene(), { hotspots: spots(scene()) }),
+        say: showHint, reveal, busy: () => moving
+      });
       sv();
     });
   }
 
   function goTitle() {
     swap(() => {
+      Guidance.stop();
       hidePetalHint();
-      stopTutorialTimers();
+      clearTimeout(introTimer);
       clearTimeout(vanishTimer);
-      clearTimeout(idleTimer);
       sceneEls.forEach(s => s.classList.remove("active"));
       current = -1;
       titleEl.classList.add("active");
@@ -342,18 +363,18 @@ const Game = (() => {
     petalsGot = new Array(TOTAL).fill(false);
     foundIds = SCENES.map(() => []);
     courage = 0;
-    tutorialDone = SCENES.map(() => false);    /* a new journey shows the hints again */
+    tutorialDone = SCENES.map(() => false);
     sceneEls.forEach((_, n) => applyFound(n));
     goTo(0);
   }
 
   function resume(s) {
     petalsGot = [...s.petalsGot];
-    foundIds = s.foundIds.map(a => [...a]);
-    courage = s.courage;
+    /* keep only hotspot ids that still exist (old saves had 7 on Scene 1) */
+    foundIds = s.foundIds.map((a, n) => a.filter(id => SCENES[n].hotspots.some(h => h.id === id)));
+    courage = foundIds[s.current].length;
     sceneEls.forEach((_, n) => applyFound(n));
-    /* earlier scenes are done; the current one is done if they already found something */
-    tutorialDone = SCENES.map((_, n) => n < s.current || (n === s.current && s.foundIds[n].length > 0));
+    tutorialDone = SCENES.map((_, n) => n < s.current || (n === s.current && foundIds[n].length > 0));
     goTo(s.current, true);
   }
 
@@ -365,7 +386,6 @@ const Game = (() => {
   document.getElementById("btn-settings").addEventListener("click", () => settingsPanel.classList.add("show"));
   document.getElementById("btn-credits").addEventListener("click", () => creditsPanel.classList.add("show"));
 
-  /* Public hooks for save.js and effects.js (later Parts) */
   return {
     goTo, newGame, resume,
     getState: () => ({ current, courage, petalsGot: [...petalsGot],
