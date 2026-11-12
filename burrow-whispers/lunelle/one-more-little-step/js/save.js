@@ -1,9 +1,16 @@
 /* One More Little Step — save.js V1.0
-   Part 1 of 1 (JavaScript Part 4)
-   Saves progress in the browser (localStorage) and powers the Continue button.
-   Needs game.js loaded first. Saves: current scene, courage, found hotspots,
-   and collected Silver Petals. Game calls Save.save() after every discovery
-   and scene change. If storage is blocked, the game still plays normally. */
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (JavaScript)
+
+   V1.0: NEW BEGINNING. Versions restart at 1.0. Save code unchanged.
+         The storage key stays "omls-save-v1" so players keep their
+         progress. game.js now cleans old hotspot ids when it loads a save.
+   Saves progress in the browser (localStorage) and powers the Continue
+   button. Needs game.js loaded first. Saves: current scene, courage,
+   found hotspots, and collected Silver Petals. If storage is blocked,
+   the game still plays normally. */
+
+
 
 const Save = (() => {
   const KEY = "omls-save-v1";
