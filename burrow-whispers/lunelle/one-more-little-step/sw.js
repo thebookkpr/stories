@@ -1,11 +1,17 @@
-/* One More Little Step — sw.js V1.6
-   V1.4: site moved to the stories repository; cache name bumped to omls-v4. No path changes needed (all paths are relative).
-   V1.3: game moved into the one-more-little-step/ folder; cache name bumped to omls-v3. No path changes needed (all paths are relative).
-   V1.1: cache name bumped to omls-v2 so old saved files are replaced (scene.css fade fix for Lunelle).
-   V1.0: network-first: online = newest files, offline = cached copy.
-   Bump VERSION when you update the game (good habit, not required). */
+/* One More Little Step — sw.js V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (JavaScript)
 
-const VERSION = "omls-v6";
+   V1.0: NEW BEGINNING. Versions restart at 1.0.
+         Cache name is now "omls-1.0" so every file saved by the old
+         builds (omls-v1 to omls-v6) is deleted on activation.
+         Added js/guidance.js and the three tablet pictures
+         (scenepond-tablet, scenesilverlight-tablet, sceneclearing-tablet).
+         If a picture is not uploaded yet, it is simply skipped.
+   Strategy: network-first. Online = newest files, offline = cached copy.
+   All paths are relative. Bump VERSION when you update the game. */
+
+const VERSION = "omls-1.0";
 
 const FILES = [
   "./",
@@ -21,6 +27,7 @@ const FILES = [
   "js/scenes.js",
   "js/effects.js",
   "js/audio.js",
+  "js/guidance.js",
   "js/game.js",
   "js/save.js",
   "images/title-screen.jpg",
@@ -29,6 +36,9 @@ const FILES = [
   "images/scene-clearing.jpg",
   "images/scene-moth.jpg",
   "images/scene-hilltop.jpg",
+  "images/scenepond-tablet.jpg",
+  "images/scenesilverlight-tablet.jpg",
+  "images/sceneclearing-tablet.jpg",
   "assets/lunelle-blinking.gif",
   "images/sprites/lunelle-light.png",
   "images/sprites/lunelle-clearing.png",
