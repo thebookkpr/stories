@@ -1,4 +1,10 @@
-/* One More Little Step — base.css V1.1 */
+/* One More Little Step — base.css V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (CSS)
+   V1.0: NEW BEGINNING. Versions restart at 1.0. Styles unchanged. */
+
+
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
