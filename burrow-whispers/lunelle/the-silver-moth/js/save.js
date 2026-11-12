@@ -1,12 +1,13 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/save.js
-  VERSION: 0.6.0
+  VERSION: 0.8.0
   PART: 1 of 1
   LOAD ORDER: 3rd script (after data.js and mysteries.js)
   NOTE: Saves progress in the browser (localStorage).
         If saving is blocked (private mode), the game still works,
         it just forgets when the page closes.
+        v0.8.0: adds settings.guidance ("off", "gentle", "assisted").
 */
 
 (function () {
@@ -14,6 +15,8 @@
 
   const KEY = "bw-silver-moth-save";
   const VERSION = 1;
+
+  const GUIDANCE_MODES = ["off", "gentle", "assisted"];
 
   function defaults() {
     return {
@@ -27,7 +30,8 @@
       journal: [],           // ids from BW.JOURNAL
       stickers: [],          // ids from BW.STICKERS
       achievements: [],      // ids from BW.ACHIEVEMENTS
-      daily: { date: "", clues: 0, claimed: false }
+      daily: { date: "", clues: 0, claimed: false },
+      settings: { guidance: "off" }   // Accessibility Discovery Mode
     };
   }
 
@@ -50,6 +54,7 @@
         if (saved && saved.version === VERSION) {
           state = Object.assign(defaults(), saved);
           state.daily = Object.assign(defaults().daily, saved.daily);
+          state.settings = Object.assign(defaults().settings, saved.settings);
         }
       }
     } catch (err) {
@@ -135,6 +140,17 @@
     return earned;
   }
 
+  // ---------- Guidance setting (Accessibility Discovery Mode) ----------
+  function getGuidance() {
+    return state.settings.guidance;
+  }
+
+  function setGuidance(mode) {
+    if (GUIDANCE_MODES.indexOf(mode) === -1) return;
+    state.settings.guidance = mode;
+    save();
+  }
+
   window.BW = window.BW || {};
   BW.Save = {
     get state() { return state; },
@@ -147,6 +163,8 @@
     recordClue: recordClue,
     nextMystery: nextMystery,
     markIntroSeen: markIntroSeen,
-    countDailyClue: countDailyClue
+    countDailyClue: countDailyClue,
+    getGuidance: getGuidance,
+    setGuidance: setGuidance
   };
 })();
