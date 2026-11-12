@@ -1,12 +1,13 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/data.js
-  VERSION: 0.6.0
+  VERSION: 0.8.0
   PART: 1 of 1
   LOAD ORDER: 1st script (before mysteries.js, save.js, game.js)
   NOTE: Items, rewards, and achievements live here.
         soon: true = art not created yet, shown as "Coming soon".
         When art arrives: add the file path and delete "soon".
+        Journal entries are text only: put each line in "text".
 */
 
 window.BW = window.BW || {};
@@ -52,10 +53,11 @@ BW.KEEPSAKES = [
   { id: "key",    number: "005", name: "Lantern Key",        soon: true }
 ];
 
-// ---------- Journal entries (one per mystery) ----------
+// ---------- Journal entries (text only, one per mystery) ----------
 BW.JOURNAL = [
   { id: "moth",    number: "001", name: "The Silver Moth",
-    image: "assets/moonroot-journalentry-001.png" },
+    text: ["Sometimes courage doesn't roar.",
+           "Sometimes it simply takes one more little step."] },
   { id: "frog",    number: "002", name: "Entry #002", soon: true },
   { id: "cricket", number: "003", name: "Entry #003", soon: true },
   { id: "pearl",   number: "004", name: "Entry #004", soon: true },
