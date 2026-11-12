@@ -1,13 +1,17 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/variables.css
-  VERSION: 0.4.0
+  VERSION: 0.4.1
   PART: 1 of 1
   LOAD ORDER: 1st (before base, panels, effects)
   SOURCE: Burrow Whispers Typography Style Guide v1.0 (Moonroot Canon)
+  NOTE: v0.4.1 tells browsers not to auto-darken the page (Opera dark theme).
 */
 
 :root {
+  /* ---------- Keep colors as designed (no browser auto dark mode) ---------- */
+  color-scheme: only light;
+
   /* ---------- Guide colors ---------- */
   --ink: #2D2A37;            /* Moon Ink: main reading text */
   --violet: #433768;         /* Moon Violet: headers */
