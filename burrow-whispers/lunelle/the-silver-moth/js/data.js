@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/data.js
-  VERSION: 0.8.0
+  VERSION: 0.8.1
   PART: 1 of 1
   LOAD ORDER: 1st script (before mysteries.js, save.js, game.js)
   NOTE: Items, rewards, and achievements live here.
@@ -29,7 +29,7 @@ BW.DISCOVERIES = [
     sprite: "assets/silvermoon-moth.png",
     card: "assets/silvermoonmoth-card.jpg" },
   { id: "frog", number: "002", name: "Moonroot Frog", rarity: "common",
-    sprite: "assets/moonroot-frog.png",
+    sprite: "assets/moonrootfrog-female.png",
     card: "assets/moonrootfrog-card.jpg" },
   { id: "cricket", number: "003", name: "Nightfire Cricket", rarity: "common",
     sprite: "assets/nightfire-cricket.png",
