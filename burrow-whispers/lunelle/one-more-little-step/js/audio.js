@@ -1,8 +1,8 @@
-/* One More Little Step — audio.js V1.2
-   V1.2: crickets slowed down further
-   V1.1
-   V1.1: crickets made much softer, lower and rarer (the old ones sounded like beeps)
-   Part 1 of 1 (JavaScript Part 5)
+/* One More Little Step — audio.js V1.0
+   Project: One More Little Step (Burrow Whispers, Lunelle)
+   Part 1 of 1 (JavaScript)
+
+   V1.0: NEW BEGINNING. Versions restart at 1.0. Sound code unchanged.
    Gentle night sounds made live with the Web Audio API (no sound files):
    wind, water, crickets and soft chimes, mixed differently per scene,
    plus small chime sounds for discoveries and petals.
