@@ -1,17 +1,20 @@
-/* One More Little Step — sw.js V1.0
+/* One More Little Step — sw.js V1.1
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.1: Added the two new tablet pictures (scenemoth-tablet,
+         scenehilltop-tablet). All 5 tablet pictures are now cached.
+         Cache name bumped to "omls-1.1" so devices replace the files
+         saved by V1.0.
    V1.0: NEW BEGINNING. Versions restart at 1.0.
-         Cache name is now "omls-1.0" so every file saved by the old
-         builds (omls-v1 to omls-v6) is deleted on activation.
-         Added js/guidance.js and the three tablet pictures
-         (scenepond-tablet, scenesilverlight-tablet, sceneclearing-tablet).
+         Cache name "omls-1.0" removed every file saved by the old
+         builds (omls-v1 to omls-v6).
+         Added js/guidance.js and the first three tablet pictures.
          If a picture is not uploaded yet, it is simply skipped.
    Strategy: network-first. Online = newest files, offline = cached copy.
    All paths are relative. Bump VERSION when you update the game. */
 
-const VERSION = "omls-1.0";
+const VERSION = "omls-1.1";
 
 const FILES = [
   "./",
@@ -39,6 +42,8 @@ const FILES = [
   "images/scenepond-tablet.jpg",
   "images/scenesilverlight-tablet.jpg",
   "images/sceneclearing-tablet.jpg",
+  "images/scenemoth-tablet.jpg",
+  "images/scenehilltop-tablet.jpg",
   "assets/lunelle-blinking.gif",
   "images/sprites/lunelle-light.png",
   "images/sprites/lunelle-clearing.png",
