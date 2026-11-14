@@ -1,11 +1,23 @@
-/* One More Little Step — title.css V1.0
+/* One More Little Step — title.css V1.1
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (CSS)
-   V1.0: NEW BEGINNING. Versions restart at 1.0. Styles unchanged. */
 
-/* Title screen background art (Asset BW-OMLS-002) */
+   V1.1: Logo (assets/onemorelittlestep-logo.png) replaces the
+         plain title text. New title pictures:
+           images/titlescreen.jpg          phone 20:9 and tablet
+           images/titlescreen-desktop.jpg  desktop 16:9
+         game.js sets data-format on #game ("desktop", "wide",
+         "tablet"). With no value, "wide" is used.
+         Logo sits between Lunelle and the moon on every format.
+   V1.0: NEW BEGINNING. Versions restart at 1.0. */
+
+/* Title screen background art: phone 20:9 (also used on tablet) */
 #title-screen .bg {
-  background-image: url("../images/title-screen.jpg");
+  background-image: url("../images/titlescreen.jpg");
+}
+/* Desktop 16:9 */
+#game[data-format="desktop"] #title-screen .bg {
+  background-image: url("../images/titlescreen-desktop.jpg");
 }
 
 /* Soft haze so text stays readable over the art */
@@ -24,36 +36,41 @@
   pointer-events: none;
 }
 
-/* Title block: top third, centered */
+/* Title block: top, between Lunelle and the moon (phone default) */
 .title-block {
   position: absolute;
-  top: 5%;
-  left: 0;
-  right: 0;
+  top: 3%;
+  left: 29%;
+  width: 32%;
   z-index: 2;
   text-align: center;
-  padding: 0 var(--pad);
+  padding: 0;
 }
+#game[data-format="desktop"] .title-block { left: 27%; width: 36%; }
+#game[data-format="tablet"]  .title-block { left: 22%; width: 56%; }
 
 .game-title {
   margin: 0;
-  font-family: var(--font-story);
-  font-weight: normal;
-  font-size: clamp(1.6rem, 6vw, 4rem);
-  letter-spacing: 0.18em;
-  color: var(--ivory);
-  text-shadow:
-    0 0 18px var(--silver-glow),
-    0 2px 8px rgba(27, 24, 48, 0.6);
+  line-height: 0;
+}
+
+.game-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter:
+    drop-shadow(0 0 18px var(--silver-glow))
+    drop-shadow(0 2px 8px rgba(27, 24, 48, 0.6));
 }
 
 .game-subtitle {
-  margin: 0.6em 0 0;
+  margin: 0.3em 0 0;
   font-family: var(--font-ui);
-  font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+  font-size: clamp(0.6rem, 1.5vw, 1rem);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--lavender);
+  text-shadow: 0 1px 6px rgba(27, 24, 48, 0.8);
   opacity: 0.9;
 }
 
