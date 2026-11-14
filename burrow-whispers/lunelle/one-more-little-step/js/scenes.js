@@ -1,11 +1,22 @@
-/* One More Little Step — scenes.js V1.1
+/* One More Little Step — scenes.js V1.2
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.2: Desktop 16:9 format added for Scene 1 (Moonroot Pond).
+         New optional fields, used only when the screen is desktop
+         shaped (game.js V1.2):
+           desktopBackground   the 16:9 picture
+           desktopHotspots     id and position only (game.js fills in
+                               kind, courage and clue from the main
+                               hotspot with the same id)
+           desktopPetal        petal position
+           desktopLunelle      x, bottom, w (the rest comes from lunelle)
+         Scenes 2 to 5 have no desktop art yet, so they keep the
+         20:9 picture even on a desktop screen.
+         Desktop positions were placed by eye from the picture:
+         test them and adjust.
    V1.1: Tablet format finished for all 5 scenes. Every scene now has
          tabletBackground, tabletHotspots and tabletPetal.
-         Tablet hotspots list only id and position; game.js fills in
-         kind, courage and clue from the main hotspot of the same id.
    V1.0: NEW BEGINNING. Versions restart at 1.0.
          Exactly 5 hotspots per scene.
          Per-scene "mood" (Hint Stage 4) and per-hotspot "clue"
@@ -21,6 +32,16 @@ const SCENES = [
     title: "Moonroot Pond",
     background: "images/scene-pond.jpg",
     tabletBackground: "images/scenepond-tablet.jpg",
+    desktopBackground: "images/scenepond-desktop.jpg",
+    desktopHotspots: [
+      { id: "lotus-left",  x: 22.5, y: 52.7, w: 7,   h: 9 },
+      { id: "reflection",  x: 52,   y: 50,   w: 7,   h: 16 },
+      { id: "lotus",       x: 62.2, y: 64.7, w: 9,   h: 12 },
+      { id: "fireflies",   x: 20.8, y: 33.3, w: 14,  h: 12 },
+      { id: "lotus-right", x: 81.2, y: 58.3, w: 8,   h: 11 }
+    ],
+    desktopPetal: { x: 78, y: 81 },
+    desktopLunelle: { x: 4, bottom: 14, w: 12 },
     tabletHotspots: [
       { id: "lotus-left",  x: 21.7, y: 56.4, w: 8,   h: 11 },
       { id: "reflection",  x: 53.5, y: 50,   w: 8,   h: 20 },
