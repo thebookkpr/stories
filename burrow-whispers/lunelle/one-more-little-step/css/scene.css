@@ -1,7 +1,9 @@
-/* One More Little Step — scene.css V1.0
+/* One More Little Step — scene.css V1.1
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (CSS)
 
+   V1.1: Silver petal sprite now loads from assets/silver-petal.png
+         (it moved out of images/sprites/). Nothing else changed.
    V1.0: NEW BEGINNING. Versions restart at 1.0.
          Removed: the hover glow on hotspots (it showed the answers
          to mouse players), the hint-glow animation, and the circle
@@ -103,7 +105,7 @@
   width: 4%;
   min-width: 36px;
   aspect-ratio: 1;
-  background: url("../images/sprites/silver-petal.png") center / contain no-repeat;
+  background: url("../assets/silver-petal.png") center / contain no-repeat;
   border: 0;
   opacity: 0.35;
   cursor: pointer;
