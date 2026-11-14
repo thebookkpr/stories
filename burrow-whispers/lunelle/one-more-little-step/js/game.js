@@ -1,22 +1,30 @@
-/* One More Little Step — game.js V1.1
+/* One More Little Step — game.js V1.2
    Project: One More Little Step (Burrow Whispers, Lunelle)
-   Part 1 of 1 (JavaScript)
+   Part 1 of 2 (JavaScript)
+   Paste Part 2 directly after this part: they are one file.
 
-   V1.1: Tablet format finished.
-         Tablet hotspots in scenes.js list only id and position; this
-         file fills in kind, courage and clue from the main hotspot.
-         Fixed: the petal hint arrow and text now follow the petal on
-         tablet screens (before, they used the wide-screen position).
-         TABLET_RATIO confirmed as 4:3 (all tablet pictures are 1448 x 1086).
+   V1.2: Desktop 16:9 format added. There are now three screen shapes,
+         read from width / height:
+           under 1.7     "tablet"   (4:3)
+           1.7 to 1.95   "desktop"  (16:9)
+           1.95 and up   "wide"     (20:9, phones)
+         A scene uses the desktop picture only if scenes.js gives it
+         desktopBackground (so far Scene 1). Other scenes fall back to
+         the 20:9 picture, and the stage switches to 20:9 for them.
+         The stage shape now changes per screen (title or scene) while
+         the fade is black. data-format on #game ("tablet", "desktop",
+         "wide") is set for title.css.
+         Desktop scenes can also move Lunelle (desktopLunelle) and the
+         petal (desktopPetal).
+   V1.1: Tablet format finished. Tablet hotspots list only id and
+         position; kind, courage and clue come from the main hotspot.
+         The petal hint arrow and text follow the petal on tablet.
    V1.0: NEW BEGINNING. Rebuilt around the new help system.
          Guidance (guidance.js) runs in every scene (hints, auto-reveal).
          Every tap gets particle feedback (Effects.touch):
            "explore" = empty area, "interactive" = hotspot,
            "discovery" = petal or last hotspot.
          Taps that find nothing count as Missed Searches.
-         No hotspot glow timers, no circle ripple.
-         Narrow screens (under 1.7:1) use the tablet picture, hotspots
-         and petal of each scene when the scene has them.
          First-time intro text, petal hint, Lunelle vanish, Sound
          button, save and resume are kept.
          Resume ignores old hotspot ids that no longer exist.
@@ -27,8 +35,12 @@
 const Game = (() => {
   const stage = document.getElementById("game");
   const TOTAL = SCENES.length;
-  const TABLET_RATIO = 4 / 3;
-  let current = -1, courage = 0, moving = false, tablet = null;
+  const RATIOS = {                       /* [CSS ratio, number] per format */
+    tablet:  ["4 / 3",  "1.3333"],
+    desktop: ["16 / 9", "1.7778"],
+    wide:    ["20 / 9", "2.2222"]
+  };
+  let current = -1, courage = 0, moving = false;
   let petalsGot = new Array(TOTAL).fill(false);
   let foundIds = SCENES.map(() => []);
   let tutorialDone = SCENES.map(() => false);
@@ -43,12 +55,48 @@ const Game = (() => {
   fade.className = "fade-overlay";
   stage.appendChild(fade);
 
-  /* Hotspots for the current format. Tablet entries borrow kind, courage
-     and clue from the main hotspot with the same id. */
-  const spots = s => (tablet && s.tabletHotspots)
-    ? s.tabletHotspots.map(t => Object.assign({}, s.hotspots.find(h => h.id === t.id), t))
-    : s.hotspots;
+  /* ---------- Formats ---------- */
+  const shape = () => {
+    const r = innerWidth / innerHeight;
+    return r < 1.7 ? "tablet" : r < 1.95 ? "desktop" : "wide";
+  };
+
+  /* The format a scene really uses (falls back to wide without art) */
+  const fmtOf = s => {
+    const f = shape();
+    if (f === "tablet" && !s.tabletBackground) return "wide";
+    if (f === "desktop" && !s.desktopBackground) return "wide";
+    return f;
+  };
+
+  const bgOf = (s, f) => f === "tablet" ? s.tabletBackground
+    : f === "desktop" ? s.desktopBackground : s.background;
+
+  /* Hotspots for a format. Tablet and desktop entries borrow kind,
+     courage and clue from the main hotspot with the same id. */
+  const spots = (s, f = fmtOf(s)) => {
+    const list = f === "tablet" ? s.tabletHotspots
+      : f === "desktop" ? s.desktopHotspots : null;
+    return list
+      ? list.map(t => Object.assign({}, s.hotspots.find(h => h.id === t.id), t))
+      : s.hotspots;
+  };
+
+  const petalAt = (s, f = fmtOf(s)) =>
+    (f === "tablet" && s.tabletPetal) || (f === "desktop" && s.desktopPetal) || s.petal;
+
+  const lunelleAt = (s, f = fmtOf(s)) =>
+    f === "desktop" && s.desktopLunelle
+      ? Object.assign({}, s.lunelle, s.desktopLunelle) : s.lunelle;
+
   const place = (b, h) => { b.style.cssText = `left:${h.x}%;top:${h.y}%;width:${h.w}%;height:${h.h}%`; };
+
+  /* Stage shape for the screen being shown */
+  function setStageFormat(f) {
+    stage.dataset.format = f;
+    stage.style.setProperty("--stage-ratio", RATIOS[f][0]);
+    stage.style.setProperty("--stage-ratio-num", RATIOS[f][1]);
+  }
 
   /* ---------- Build ---------- */
   function petalHintHTML(s) {
@@ -70,6 +118,17 @@ const Game = (() => {
     t.style.top = Math.max(pt.y - 18, 14) + "%";
     a.style.left = cx + "%";
     a.style.top = (pt.y - 10) + "%";
+  }
+
+  /* Move Lunelle and her crest glow for a format */
+  function placeLunelle(i, f) {
+    const L = lunelleAt(SCENES[i], f), e = sceneEls[i];
+    const sp = e.querySelector(".lunelle"), c = e.querySelector(".crest");
+    sp.style.left = L.x + "%";
+    sp.style.bottom = L.bottom + "%";
+    sp.style.width = L.w + "%";
+    c.style.left = (L.x + L.w * 0.4) + "%";
+    c.style.bottom = (L.bottom + 30 * (L.w / 28)) + "%";
   }
 
   function buildScene(s, i) {
@@ -192,6 +251,10 @@ const Game = (() => {
     c.classList.add("shimmer");
   }
 
+  /* ---- Part 2 of 2 continues below: paste it right here ---- */
+
+                /* ---------- Part 2 of 2 of game.js V1.2 starts here ---------- */
+
   /* ---------- Lunelle vanish ---------- */
   let vanishTimer;
   function startVanishTimer() {
@@ -284,24 +347,27 @@ const Game = (() => {
     petalEls[i].classList.toggle("collected", petalsGot[i]);
   }
 
-  /* ---------- Format (wide or tablet) ---------- */
+  /* ---------- Format (tablet, desktop or wide) ---------- */
+  /* Every scene is laid out for its own format. The stage shape follows
+     the screen being shown (the title, or the current scene). */
+  let lastShape = null;
   function applyFormat() {
-    const t = innerWidth / innerHeight < 1.7;
-    if (t === tablet) return;
-    tablet = t;
-    stage.style.setProperty("--stage-ratio", t ? "4 / 3" : "20 / 9");
-    stage.style.setProperty("--stage-ratio-num", t ? TABLET_RATIO : 2.2222);
+    const sh = shape();
+    if (sh === lastShape) return;
+    lastShape = sh;
     SCENES.forEach((s, i) => {
-      const bg = t && s.tabletBackground ? s.tabletBackground : s.background;
-      sceneEls[i].querySelector(".bg").style.backgroundImage = `url('${bg}')`;
+      const f = fmtOf(s);
+      sceneEls[i].querySelector(".bg").style.backgroundImage = `url('${bgOf(s, f)}')`;
       sceneEls[i].querySelectorAll(".hotspot").forEach(b => {
-        const h = spots(s).find(x => x.id === b.getAttribute("aria-label"));
+        const h = spots(s, f).find(x => x.id === b.getAttribute("aria-label"));
         if (h) place(b, h);
       });
-      const pt = (t && s.tabletPetal) || s.petal;
+      const pt = petalAt(s, f);
       petalEls[i].style.cssText = `left:${pt.x}%;top:${pt.y}%`;
       placePetalHint(i, pt);
+      placeLunelle(i, f);
     });
+    setStageFormat(current < 0 ? sh : fmtOf(scene()));
   }
   applyFormat();
   addEventListener("resize", applyFormat);
@@ -321,6 +387,7 @@ const Game = (() => {
       sceneEls.forEach(s => s.classList.remove("active"));
       hidePetalHint();
       current = i;
+      setStageFormat(fmtOf(scene()));            /* while the screen is black */
       if (!keep) { courage = 0; foundIds[i] = []; }
       applyFound(i);
       el().classList.add("active");
@@ -348,6 +415,7 @@ const Game = (() => {
       clearTimeout(vanishTimer);
       sceneEls.forEach(s => s.classList.remove("active"));
       current = -1;
+      setStageFormat(shape());                   /* title art exists for every shape */
       titleEl.classList.add("active");
       au("scene", "title");
     });
