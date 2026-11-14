@@ -5,8 +5,8 @@
 
    V1.2: Desktop 16:9 format added. There are now three screen shapes,
          read from width / height:
-           under 1.7     "tablet"   (4:3)
-           1.7 to 1.95   "desktop"  (16:9)
+           under 1.55     "tablet"   (4:3)
+           1.55 to 1.95   "desktop"  (16:9)
            1.95 and up   "wide"     (20:9, phones)
          A scene uses the desktop picture only if scenes.js gives it
          desktopBackground (so far Scene 1). Other scenes fall back to
@@ -58,7 +58,7 @@ const Game = (() => {
   /* ---------- Formats ---------- */
   const shape = () => {
     const r = innerWidth / innerHeight;
-    return r < 1.7 ? "tablet" : r < 1.95 ? "desktop" : "wide";
+    return r < 1.55 ? "tablet" : r < 1.95 ? "desktop" : "wide";
   };
 
   /* The format a scene really uses (falls back to wide without art) */
