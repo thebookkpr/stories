@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<!-- One More Little Step — index.html V1.0
+<!-- One More Little Step — index.html V1.1
      Project: One More Little Step (Burrow Whispers, Lunelle)
      Part 1 of 1 (HTML)
 
-     V1.0: NEW BEGINNING. Versions restart at 1.0.
-           Added js/guidance.js (the new help system). It loads after
-           effects.js and before game.js.
-           Script and stylesheet cache-busting reset to ?v=1.0
-           (bump it whenever a file changes).
-           Service worker (sw.js) registered for offline play and install.
-           Manifest linked. -->
+     V1.1: Title logo image replaces the title text (the h1 stays
+           for screen readers through the image alt text).
+           Title picture preload now matches the screen shape:
+           desktop 16:9 or phone/tablet.
+           Script and stylesheet cache-busting set to ?v=1.1.
+     V1.0: NEW BEGINNING. Versions restart at 1.0. -->
 <html lang="en">
 <head>
 
@@ -22,16 +21,20 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
-  <link rel="preload" as="image" href="images/title-screen.jpg">
+  <link rel="preload" as="image" href="images/titlescreen-desktop.jpg"
+        media="(min-aspect-ratio: 17/10) and (max-aspect-ratio: 39/20)">
+  <link rel="preload" as="image" href="images/titlescreen.jpg"
+        media="(max-aspect-ratio: 169/100), (min-aspect-ratio: 39/20)">
+  <link rel="preload" as="image" href="assets/onemorelittlestep-logo.png">
   <title>One More Little Step</title>
 
-  <link rel="stylesheet" href="css/variables.css?v=1.0">
-  <link rel="stylesheet" href="css/base.css?v=1.0">
-  <link rel="stylesheet" href="css/title.css?v=1.0">
-  <link rel="stylesheet" href="css/scene.css?v=1.0">
-  <link rel="stylesheet" href="css/ui.css?v=1.0">
-  <link rel="stylesheet" href="css/effects.css?v=1.0">
-  <link rel="stylesheet" href="css/responsive.css?v=1.0">
+  <link rel="stylesheet" href="css/variables.css?v=1.1">
+  <link rel="stylesheet" href="css/base.css?v=1.1">
+  <link rel="stylesheet" href="css/title.css?v=1.1">
+  <link rel="stylesheet" href="css/scene.css?v=1.1">
+  <link rel="stylesheet" href="css/ui.css?v=1.1">
+  <link rel="stylesheet" href="css/effects.css?v=1.1">
+  <link rel="stylesheet" href="css/responsive.css?v=1.1">
 </head>
 
 <body>
@@ -41,7 +44,10 @@
     <section id="title-screen" class="screen active">
       <div class="bg"></div>
       <div class="title-block">
-        <h1 class="game-title">ONE MORE LITTLE STEP</h1>
+        <h1 class="game-title">
+          <img class="game-logo" src="assets/onemorelittlestep-logo.png"
+               alt="One More Little Step">
+        </h1>
         <p class="game-subtitle">A Burrow Whispers Story</p>
       </div>
       <nav class="menu">
@@ -51,18 +57,18 @@
         <button class="menu-btn" id="btn-credits">Credits</button>
       </nav>
 
-      <p class="version">V1.0</p>
+      <p class="version">V1.1</p>
 
     </section>
 
   </div>
 
-  <script src="js/scenes.js?v=1.0"></script>
-  <script src="js/effects.js?v=1.0"></script>
-  <script src="js/audio.js?v=1.0"></script>
-  <script src="js/guidance.js?v=1.0"></script>
-  <script src="js/game.js?v=1.0"></script>
-  <script src="js/save.js?v=1.0"></script>
+  <script src="js/scenes.js?v=1.1"></script>
+  <script src="js/effects.js?v=1.1"></script>
+  <script src="js/audio.js?v=1.1"></script>
+  <script src="js/guidance.js?v=1.1"></script>
+  <script src="js/game.js?v=1.1"></script>
+  <script src="js/save.js?v=1.1"></script>
 
   <script>
   if ("serviceWorker" in navigator) {
