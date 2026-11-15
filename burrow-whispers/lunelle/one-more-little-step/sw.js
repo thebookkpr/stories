@@ -1,15 +1,19 @@
-/* One More Little Step — sw.js V1.2
+/* One More Little Step — sw.js V1.3
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.3: Desktop pictures for Scenes 2 to 4 added to the cache list:
+         images/scenesilverlight-desktop.jpg,
+         images/sceneclearing-desktop.jpg,
+         images/scenemoth-desktop.jpg.
+         Cache name bumped to "omls-1.3" so devices replace the
+         files saved by V1.2.
    V1.2: Desktop format files added to the cache list:
          images/titlescreen-desktop.jpg, images/scenepond-desktop.jpg.
          Title picture renamed images/titlescreen.jpg (was
          images/title-screen.jpg). Logo added:
          assets/onemorelittlestep-logo.png. The silver petal now
          lives in assets/silver-petal.png (was images/sprites/).
-         Cache name bumped to "omls-1.2" so devices replace the
-         files saved by V1.1.
    V1.1: Added the two new tablet pictures (scenemoth-tablet,
          scenehilltop-tablet). Cache name "omls-1.1".
    V1.0: NEW BEGINNING. Versions restart at 1.0.
@@ -18,7 +22,7 @@
    Strategy: network-first. Online = newest files, offline = cached copy.
    All paths are relative. Bump VERSION when you update the game. */
 
-const VERSION = "omls-1.2";
+const VERSION = "omls-1.3";
 
 const FILES = [
   "./",
@@ -45,6 +49,9 @@ const FILES = [
   "images/scene-moth.jpg",
   "images/scene-hilltop.jpg",
   "images/scenepond-desktop.jpg",
+  "images/scenesilverlight-desktop.jpg",
+  "images/sceneclearing-desktop.jpg",
+  "images/scenemoth-desktop.jpg",
   "images/scenepond-tablet.jpg",
   "images/scenesilverlight-tablet.jpg",
   "images/sceneclearing-tablet.jpg",
