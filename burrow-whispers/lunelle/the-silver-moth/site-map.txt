@@ -1,0 +1,54 @@
+PROJECT: Burrow Whispers #001 — The Silver Moth
+FILE: SITE MAP — THE SILVER MOTH
+VERSION: 0.9.2
+PART: 1 of 1
+
+stories/burrow-whispers/lunelle/the-silver-moth/
+├── index.html            (v0.9.0)
+├── manifest.json         (v0.7.0)
+├── sw.js                 (v0.9.0, must stay next to index.html)
+│
+├── css/  (load order: variables, base, panels, effects, guidance)
+│   ├── variables.css     (v0.9.0, loads 1st)
+│   ├── base.css          (v0.9.0)
+│   ├── panels.css        (v0.8.0)
+│   ├── effects.css       (v0.6.0)
+│   └── guidance.css      (v0.9.0, loads last)
+│
+├── js/  (load order: data, mysteries, save, scrapbook, stage, guidance, game)
+│   ├── data.js           (v0.8.1)
+│   ├── mysteries.js      (v0.6.0)
+│   ├── save.js           (v0.8.0)
+│   ├── scrapbook.js      (v0.8.0)
+│   ├── stage.js          (v0.9.2, NEW)
+│   ├── guidance.js       (v0.8.0)
+│   └── game.js           (v0.9.0)
+│
+├── images/
+│   ├── silvermoth-bg.jpg        (841 x 1870, tall phone)
+│   ├── silvermoth-916.jpg       (841 x 1494, older phone)
+│   ├── silvermoth-tablet.jpg    (1586 x 992, tablet)
+│   ├── silvermoth-desktop.jpg   (1672 x 941, desktop, NEW)
+│   ├── icon-192.png
+│   ├── icon-512.png
+│   └── icon-512-maskable.png
+│
+└── assets/
+    ├── Sprites: moon-petal.png, silvermoon-moth.png, moonrootfrog-female.png,
+    │            nightfire-cricket.png, pond-pearl.png, lantern-seed.png
+    └── Cards:   silvermoonmoth-card.jpg, moonrootfrog-card.jpg,
+                 nightfirecricket-card.jpg, pondpearl-card.jpg,
+                 lanternseed-card.jpg, moonpetal-card.jpg
+
+SCREEN ART (Odd-Ratio Screen Rule, chosen by js/stage.js)
+- Closest art by shape. Cut-off = (ratio A + ratio B) / 2 for neighbors.
+- Squarer art below the cut-off, wider art above it.
+- Letterbox leftover space. Never stretch or crop.
+- No special cases for any one device.
+- Art ratios live in ONE place: the ARTS list in js/stage.js.
+
+Screen width / height     Art used
+below 0.51                silvermoth-bg.jpg
+0.51 to 1.08              silvermoth-916.jpg
+1.08 to 1.69              silvermoth-tablet.jpg
+above 1.69                silvermoth-desktop.jpg
