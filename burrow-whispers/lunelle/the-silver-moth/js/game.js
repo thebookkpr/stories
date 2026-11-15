@@ -1,12 +1,14 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.8.0
+  VERSION: 0.9.0
   PART: 1 of 1
-  LOAD ORDER: 6th script (last)
+  LOAD ORDER: 7th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
         items and rewards in data.js, saving in save.js.
         v0.8.0: guidance hooks (guidance.js), journal text from data.js.
+        v0.9.0: moth and petal sprites are drawn through stage.js (canvas),
+        so Opera night mode cannot turn them black.
 */
 
 (function () {
@@ -42,6 +44,13 @@
   const disc = () => BW.DISCOVERIES.find((d) => d.id === mystery.id);
   const total = () => mystery.clues.length;
   const allFound = () => S.state.found.length >= total();
+
+  // Sprites go through stage.js (canvas). A plain <img> still works without it.
+  function paint(el, src, label) {
+    if (BW.Stage) return BW.Stage.paint(el, src, label);
+    el.src = src;
+    el.alt = label || "";
+  }
 
   function showStory(title, lines, label) {
     storyTitle.textContent = title;
@@ -122,8 +131,7 @@
     silverLight.hidden = false;
 
     moth.hidden = true;
-    moth.src = disc().sprite;
-    moth.alt = disc().name;
+    paint(moth, disc().sprite, disc().name);
     revealed = false;
     updateClueCount();
     G.start();
@@ -316,6 +324,7 @@
   // ---------- Init ----------
   S.load();
   G.applyMode();
+  paint(petalFx, "assets/moon-petal.png", "");
   makeFireflies(14);
   startMystery();
 })();
