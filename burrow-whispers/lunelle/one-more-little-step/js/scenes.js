@@ -1,20 +1,22 @@
-/* One More Little Step — scenes.js V1.2
+/* One More Little Step — scenes.js V1.3
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.3: Desktop 16:9 format added for Scenes 2, 3 and 4
+         (The Silver Light, The Clearing, The Moth):
+         desktopBackground, desktopHotspots, desktopPetal and
+         desktopLunelle. Scene 5 still has no desktop art and uses
+         the 20:9 picture. Desktop positions were placed by eye from
+         the pictures: test them and adjust. The desktop pictures
+         have no Lunelle, so desktopLunelle sets where her sprite sits.
    V1.2: Desktop 16:9 format added for Scene 1 (Moonroot Pond).
-         New optional fields, used only when the screen is desktop
-         shaped (game.js V1.2):
+         Optional fields used only on desktop-shaped screens:
            desktopBackground   the 16:9 picture
            desktopHotspots     id and position only (game.js fills in
                                kind, courage and clue from the main
                                hotspot with the same id)
            desktopPetal        petal position
            desktopLunelle      x, bottom, w (the rest comes from lunelle)
-         Scenes 2 to 5 have no desktop art yet, so they keep the
-         20:9 picture even on a desktop screen.
-         Desktop positions were placed by eye from the picture:
-         test them and adjust.
    V1.1: Tablet format finished for all 5 scenes. Every scene now has
          tabletBackground, tabletHotspots and tabletPetal.
    V1.0: NEW BEGINNING. Versions restart at 1.0.
@@ -81,6 +83,16 @@ const SCENES = [
     title: "The Silver Light",
     background: "images/scene-silver-light.jpg",
     tabletBackground: "images/scenesilverlight-tablet.jpg",
+    desktopBackground: "images/scenesilverlight-desktop.jpg",
+    desktopHotspots: [
+      { id: "orb",       x: 54.4, y: 39,   w: 7,  h: 13 },
+      { id: "flowers",   x: 63.3, y: 67,   w: 8,  h: 12 },
+      { id: "fireflies", x: 8,    y: 13,   w: 10, h: 13 },
+      { id: "petals",    x: 27,   y: 84,   w: 13, h: 12 },
+      { id: "roots",     x: 23,   y: 43,   w: 14, h: 20 }
+    ],
+    desktopPetal: { x: 87, y: 57 },
+    desktopLunelle: { x: 5, bottom: 3, w: 30 },
     tabletHotspots: [
       { id: "orb",       x: 61.6, y: 33.5, w: 10, h: 14 },
       { id: "flowers",   x: 74.5, y: 62,   w: 11, h: 20 },
@@ -119,6 +131,16 @@ const SCENES = [
     title: "The Clearing",
     background: "images/scene-clearing.jpg",
     tabletBackground: "images/sceneclearing-tablet.jpg",
+    desktopBackground: "images/sceneclearing-desktop.jpg",
+    desktopHotspots: [
+      { id: "boulder",   x: 9,    y: 50.5, w: 9.5, h: 11.5 },
+      { id: "petals",    x: 47,   y: 75,   w: 14,  h: 11 },
+      { id: "fireflies", x: 63.5, y: 36,   w: 9.5, h: 14 },
+      { id: "glow",      x: 54,   y: 43,   w: 9,   h: 16 },
+      { id: "log",       x: 76,   y: 66,   w: 18,  h: 12 }
+    ],
+    desktopPetal: { x: 92, y: 52 },
+    desktopLunelle: { x: 5, bottom: 3, w: 30 },
     tabletHotspots: [
       { id: "boulder",   x: 16.5, y: 46,   w: 11, h: 11 },
       { id: "petals",    x: 45.5, y: 78.5, w: 14, h: 14 },
@@ -157,6 +179,16 @@ const SCENES = [
     title: "The Moth",
     background: "images/scene-moth.jpg",
     tabletBackground: "images/scenemoth-tablet.jpg",
+    desktopBackground: "images/scenemoth-desktop.jpg",
+    desktopHotspots: [
+      { id: "fireflies", x: 10.5, y: 29, w: 9,  h: 13 },
+      { id: "stones",    x: 56.8, y: 58, w: 12, h: 9 },
+      { id: "moth",      x: 59.3, y: 26, w: 10, h: 16 },
+      { id: "boulder",   x: 76,   y: 73, w: 16, h: 15 },
+      { id: "blossoms",  x: 87.5, y: 57, w: 8,  h: 13 }
+    ],
+    desktopPetal: { x: 37, y: 82 },
+    desktopLunelle: { x: 5, bottom: 3, w: 30 },
     tabletHotspots: [
       { id: "fireflies", x: 11.3, y: 15,   w: 12, h: 14 },
       { id: "stones",    x: 22.7, y: 79.6, w: 14, h: 14 },
