@@ -1,9 +1,11 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.8.1
+  VERSION: 0.9.0
   PART: 1 of 1
   LOCATION: /stories/burrow-whispers/lunelle/the-silver-moth/
+  NOTE: v0.9.0 desktop edition. The scene picture is chosen by js/stage.js
+        (Odd-Ratio Screen Rule). Moth and petal are canvas sprites.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +16,7 @@
   <!-- Keep scene colors as designed: stops browser auto dark mode (Opera) from recoloring them -->
   <meta name="color-scheme" content="only light">
   <meta name="darkreader-lock">
+  <meta name="supported-color-schemes" content="light only">
 
   <title>The Silver Moth — Burrow Whispers #001</title>
 
@@ -44,23 +47,20 @@
 
   <!-- SCENE: Moonroot Pond -->
   <section id="scene" aria-label="Moonroot Pond">
-    <picture>
-      <source media="(min-width: 768px)" srcset="images/silvermoth-tablet.jpg">
-      <source media="(max-width: 767px) and (min-aspect-ratio: 1/2)" srcset="images/silvermoth-916.jpg">
-      <img id="bg" src="images/silvermoth-bg.jpg" alt="Moonroot Pond under a full moon">
-    </picture>
+    <!-- v0.9.0: js/stage.js picks the picture (phone, tablet or desktop) by screen shape -->
+    <img id="bg" alt="Moonroot Pond under a full moon">
 
     <div id="fireflies" aria-hidden="true"></div>
 
     <!-- Hotspots are built by game.js from mysteries.js -->
     <div id="hotspots"></div>
 
-    <!-- Petal that floats up on the moth's petal clue (position set by game.js) -->
-    <img id="petal-fx" src="assets/moon-petal.png" alt="" hidden>
+    <!-- Petal that floats up on the moth's petal clue (canvas since v0.9.0, painted by game.js) -->
+    <canvas id="petal-fx" aria-hidden="true" hidden></canvas>
 
     <!-- The target: silver light, then the discovery sprite (set by game.js) -->
     <button id="silver-light" type="button" aria-label="The silver light"></button>
-    <img id="moth" alt="" hidden>
+    <canvas id="moth" hidden></canvas>
 
     <!-- Guidance effects layer (v0.8.0): dust, whispers, crest particles -->
     <div id="guide-fx" aria-hidden="true"></div>
@@ -160,11 +160,12 @@
 
 </main>
 
-<!-- Script order matters: data, story, saving, scrapbook, guidance, then the game -->
+<!-- Script order matters: data, story, saving, scrapbook, stage, guidance, then the game -->
 <script src="js/data.js"></script>
 <script src="js/mysteries.js"></script>
 <script src="js/save.js"></script>
 <script src="js/scrapbook.js"></script>
+<script src="js/stage.js"></script>
 <script src="js/guidance.js"></script>
 <script src="js/game.js"></script>
 
