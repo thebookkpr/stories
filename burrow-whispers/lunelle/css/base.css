@@ -1,170 +1,197 @@
-/* PROJECT: Burrow Whispers — Book Keeper Website
-   FILE: Moonlit Reverie, Lunelle's Home Region · css/base.css
-   VERSION: V1.0 · Part 1 of 1
-   Lives at stories/burrow-whispers/lunelle/css/base.css
-   Layout, hot spot places and the reading panel.
-   Colors, fonts, sizes and timings come from css/variables.css.
-   Motion lives in css/effects.css.
-   The picture breakpoints here must match css/variables.css. */
+/*
+  PROJECT: Burrow Whispers #001 — The Silver Moth
+  FILE: css/base.css
+  VERSION: 0.9.0
+  PART: 1 of 1
+  LOAD ORDER: 2nd (after variables)
+  NOTE: v0.9.0 adds the art-shaped stage (.staged, Odd-Ratio Screen Rule),
+        night-mode-proof effect colors, and canvas-ready sprites.
+*/
 
-/* ---------- RESET ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
-body {
-  background: var(--night); color: var(--moon-ink);
-  font-family: var(--font-read); font-size: var(--size-body);
-  overflow: hidden; -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%;
-}
-button { font: inherit; color: inherit; cursor: pointer; }
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* ---------- RETURN LINK ---------- */
-.return-link {
-  position: fixed; z-index: 6;
-  top: calc(var(--safe-top) + 0.6rem); left: calc(var(--safe-left) + 0.6rem);
-  padding: 0.5em 1em; min-height: 2.75rem; display: inline-flex; align-items: center;
-  font-size: var(--size-tiny); font-weight: 600;
-  color: var(--ivory-moonlight); text-decoration: none;
-  background: rgba(27, 24, 48, 0.62); border-radius: 999px;
-}
-.return-link:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 3px; }
-
-/* ---------- SCENE AND STAGE ----------
-   The stage is the picture, scaled to cover the screen, so hot spot
-   percentages stay on the same place in the art on every device. */
-.scene { position: fixed; inset: 0; overflow: hidden; }
-
-:root { --stage-ratio: 841 / 1842; }                       /* main picture */
-@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
-  :root { --stage-ratio: 841 / 1494; }                     /* older phones, portrait tablets */
-}
-@media (min-aspect-ratio: 99/100) {
-  :root { --stage-ratio: 1448 / 1086; }                    /* landscape tablet picture */
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--night);
+  color: var(--ink);
+  font-family: var(--font-read);
+  font-size: var(--text-body);
+  overflow: hidden;
 }
 
-.stage {
-  position: absolute; left: 50%; top: 50%;
-  aspect-ratio: var(--stage-ratio);
-  width:  max(100vw, calc(100dvh * (var(--stage-ratio))));
-  height: max(100dvh, calc(100vw / (var(--stage-ratio))));
-  transform: translate(-50%, -50%);
-  background: var(--scene-image) center / 100% 100% no-repeat, var(--night);
-}
+button { font-family: inherit; }
 
-/* ---------- HOT SPOTS ----------
-   Invisible. --x --y is the top left corner; --w --h the size,
-   all in percent of the picture. */
-.spot {
+#game { position: relative; width: 100%; height: 100%; }
+
+/* ---------- Scene ---------- */
+#scene {
   position: absolute;
-  left: calc(var(--x) * 1%); top: calc(var(--y) * 1%);
-  width: calc(var(--w) * 1%); height: calc(var(--h) * 1%);
-  min-width: 2.75rem; min-height: 2.75rem;
-  padding: 0; border: 0; border-radius: 50%;
-  background: transparent; touch-action: manipulation;
-}
-.spot:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 2px; }
-
-/* Order matters: later spots sit on top of earlier ones. */
-
-/* Main picture (tall, moonlitreverie-bg.jpg) */
-[data-spot="moonroot"]   { --x:  5; --y:  2; --w: 50; --h: 14; }
-[data-spot="hollow"]     { --x:  8; --y: 19; --w: 14; --h:  6; }
-[data-spot="rootpath"]   { --x:  8; --y: 34; --w: 18; --h:  6; }
-[data-spot="roothollow"] { --x: 42; --y: 29; --w: 10; --h:  5; }
-[data-spot="grove"]      { --x: 63; --y: 23; --w: 37; --h: 11; }
-[data-spot="trail"]      { --x: 24; --y: 40; --w: 28; --h: 11; }
-[data-spot="meadow"]     { --x: 45; --y: 42; --w: 50; --h:  8; }
-[data-spot="pond"]       { --x: 20; --y: 54; --w: 45; --h: 13; }
-[data-spot="shore"]      { --x:  3; --y: 52; --w: 28; --h: 11; }
-[data-spot="stone"]      { --x:  8; --y: 68; --w: 44; --h: 11; }
-[data-spot="reflection"] { --x: 68; --y: 57; --w: 18; --h: 15; }
-[data-spot="petals"]     { --x: 52; --y: 63; --w: 12; --h:  5; }
-[data-spot="lotus"]      { --x: 66; --y: 83; --w: 34; --h: 14; }
-[data-spot="moth"]       { --x: 72; --y: 49; --w:  8; --h:  4; }
-
-/* Older phones and portrait tablets (moonlitreverie-916.jpg) */
-@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
-  [data-spot="moonroot"]   { --x:  5; --y:  2; --w: 50; --h: 15; }
-  [data-spot="hollow"]     { --x:  8; --y: 16; --w: 14; --h:  6; }
-  [data-spot="rootpath"]   { --x:  8; --y: 34; --w: 18; --h:  6; }
-  [data-spot="roothollow"] { --x: 42; --y: 31; --w: 10; --h:  5; }
-  [data-spot="grove"]      { --x: 63; --y: 21; --w: 37; --h: 12; }
-  [data-spot="trail"]      { --x: 22; --y: 40; --w: 30; --h: 12; }
-  [data-spot="meadow"]     { --x: 50; --y: 43; --w: 48; --h:  8; }
-  [data-spot="pond"]       { --x: 20; --y: 58; --w: 45; --h: 14; }
-  [data-spot="shore"]      { --x:  3; --y: 56; --w: 28; --h: 10; }
-  [data-spot="stone"]      { --x:  8; --y: 76; --w: 44; --h: 14; }
-  [data-spot="reflection"] { --x: 68; --y: 60; --w: 18; --h: 18; }
-  [data-spot="petals"]     { --x: 52; --y: 72; --w: 12; --h:  4; }
-  [data-spot="lotus"]      { --x: 80; --y: 84; --w: 20; --h:  8; }
-  [data-spot="moth"]       { --x: 71; --y: 53; --w:  8; --h:  4; }
+  inset: 0;
+  overflow: hidden;
 }
 
-/* Landscape tablets and wide screens (moonlitreverie-tablet.jpg) */
-@media (min-aspect-ratio: 99/100) {
-  [data-spot="moonroot"]   { --x: 22; --y:  4; --w: 38; --h: 24; }
-  [data-spot="hollow"]     { --x: 28; --y: 26; --w: 13; --h:  8; }
-  [data-spot="rootpath"]   { --x:  8; --y: 22; --w: 14; --h: 14; }
-  [data-spot="roothollow"] { --x: 52; --y: 31; --w:  9; --h:  6; }
-  [data-spot="grove"]      { --x: 72; --y: 22; --w: 28; --h: 20; }
-  [data-spot="trail"]      { --x: 20; --y: 40; --w: 20; --h:  9; }
-  [data-spot="meadow"]     { --x: 40; --y: 43; --w: 35; --h:  8; }
-  [data-spot="pond"]       { --x: 30; --y: 58; --w: 40; --h: 20; }
-  [data-spot="shore"]      { --x: 27; --y: 52; --w: 13; --h: 22; }
-  [data-spot="stone"]      { --x:  5; --y: 52; --w: 21; --h: 22; }
-  [data-spot="reflection"] { --x: 69; --y: 66; --w: 12; --h: 15; }
-  [data-spot="petals"]     { --x: 66; --y: 84; --w: 12; --h:  5; }
-  [data-spot="lotus"]      { --x: 83; --y: 76; --w: 16; --h: 14; }
-  [data-spot="moth"]       { --x: 57; --y: 72; --w:  8; --h:  5; }
+#bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-/* ---------- READING PANEL ----------
-   Docked to the bottom. A translucent card, never bare text on the art.
-   It never closes by itself. */
-.panel {
-  position: fixed; z-index: 5; left: 50%; transform: translateX(-50%);
-  bottom: calc(var(--safe-bottom) + 0.75rem);
-  width: min(34rem, calc(100vw - 1.5rem - var(--safe-left) - var(--safe-right)));
-  max-height: 62dvh; overflow-y: auto;
-  padding: 1.25rem 1.4rem 1.1rem;
-  background: var(--panel-bg); border: 1px solid var(--panel-edge);
-  border-radius: var(--panel-radius); box-shadow: var(--panel-shadow);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+/* Stage (v0.9.0): once js/stage.js runs, the scene takes the art's own
+   shape, centered. Leftover screen space stays night-blue (letterbox). */
+#game.staged #scene {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  transform: translate(-50%, -50%);
 }
-.panel[hidden] { display: none; }
-.panel-title {
-  margin: 0 0 0.5rem; font-family: var(--font-title); font-weight: 700;
-  font-size: var(--size-title); line-height: 1.15; color: var(--moon-violet);
-}
-.panel-text { margin: 0; font-size: var(--size-body); line-height: 1.55; white-space: pre-line; }
-.panel-text em, .panel-quote {
-  font-family: var(--font-title); font-style: italic; font-weight: 500; color: var(--soft-lavender);
-}
-.panel-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
-.panel-actions button {
-  min-height: var(--button-min-h); padding: 0.6em 1.2em;
-  font-family: var(--font-read); font-weight: 600; font-size: var(--size-button);
-  color: #fff; background: var(--lotus-purple); border: 0; border-radius: 999px;
-}
-.panel-actions button.quiet {
-  color: var(--moon-violet); background: transparent; border: 1.5px solid var(--panel-edge);
-}
-.panel-actions button:focus-visible { outline: 3px solid var(--moon-violet); outline-offset: 3px; }
+#game.staged #bg { object-fit: contain; }
 
-/* ---------- WHISPER (own soft card, not on the bare art) ---------- */
-.whisper {
-  position: fixed; z-index: 4; left: 50%; transform: translateX(-50%);
-  bottom: calc(var(--safe-bottom) + 1.25rem);
-  width: min(30rem, calc(100vw - 2rem)); margin: 0; padding: 0.7em 1.2em; text-align: center;
-  font-family: var(--font-title); font-style: italic; font-weight: 500;
-  font-size: var(--size-body); line-height: 1.4; color: var(--ivory-moonlight);
-  background: rgba(27, 24, 48, 0.6); border-radius: 999px;
-  opacity: 0; pointer-events: none;
+/* ---------- Fireflies (created by JS) ---------- */
+#fireflies { position: absolute; inset: 0; pointer-events: none; }
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fx-gold);
+  filter: brightness(var(--fx-lift));
+  box-shadow: 0 0 10px 3px rgba(255, 217, 138, 0.8);
+  opacity: 0.8;
 }
 
-/* ---------- TRAVEL VEIL ---------- */
-.travel-veil { position: fixed; inset: 0; z-index: 8; background: var(--night); opacity: 0; pointer-events: none; }
+/* ---------- Hotspots (% positions) ---------- */
+.hotspot {
+  position: absolute;
+  width: 16vmin;
+  height: 16vmin;
+  max-width: 120px;
+  max-height: 120px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 184, 255, 0.22), transparent 70%);
+  cursor: pointer;
+}
+.hotspot.found { opacity: 0; pointer-events: none; }
+
+/* Hotspots are built by game.js, which sets each left/top from mysteries.js */
+#hotspots { position: absolute; inset: 0; pointer-events: none; }
+#hotspots .hotspot { pointer-events: auto; }
+#hotspots .hotspot.found { pointer-events: none; }
+
+/* ---------- Petal that floats away after its clue is tapped ---------- */
+/* v0.9.0: becomes a <canvas> in index.html; height:auto keeps its shape */
+#petal-fx {
+  position: absolute;
+  width: 12vw;
+  max-width: 80px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px var(--glow-silver));
+}
+#petal-fx[hidden] { display: none; }
+
+/* ---------- Silver light ---------- */
+#silver-light {
+  position: absolute;
+  left: var(--light-x);
+  top: var(--light-y);
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  border: 0;
+  border-radius: 50%;
+  background: var(--fx-silver);
+  filter: brightness(var(--fx-lift));
+  box-shadow: 0 0 14px 6px rgba(232, 240, 255, 0.85);
+  cursor: pointer;
+}
+#silver-light::after { content: ""; position: absolute; inset: -22px; }
+#silver-light.ready { box-shadow: 0 0 22px 10px rgba(232, 240, 255, 1); }
+#silver-light[hidden] { display: none; }
+
+/* ---------- Moth ---------- */
+/* v0.9.0: becomes a <canvas> in index.html; height:auto keeps its shape */
+#moth {
+  position: absolute;
+  left: var(--light-x);
+  top: var(--light-y);
+  width: var(--moth-size);
+  max-width: var(--moth-max);
+  height: auto;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 0 14px var(--glow-silver));
+}
+#moth[hidden] { display: none; }
+
+/* ---------- HUD (tiny UI: Nunito SemiBold) ---------- */
+#hud-left, #hud-scrapbook, #hud-clues, #crest-menu {
+  position: absolute;
+  z-index: 5;
+  background: var(--hud-bg);
+  border: 1px solid var(--border-panel);
+  backdrop-filter: blur(4px);
+  color: var(--ink);
+  font-family: var(--font-read);
+  font-weight: 600;
+  font-size: var(--text-tiny);
+  letter-spacing: 0.04em;
+}
+
+#hud-left {
+  top: calc(var(--safe-top) + 10px);
+  left: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+#hud-left strong {
+  color: var(--violet);
+  font-family: var(--font-world);
+  font-weight: 700;
+  font-size: calc(var(--text-tiny) + 6px);
+  letter-spacing: 0.08em;
+}
+
+#hud-scrapbook {
+  top: calc(var(--safe-top) + 10px);
+  right: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+#crest-menu {
+  bottom: calc(var(--safe-bottom) + 12px);
+  left: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+#hud-clues {
+  bottom: calc(var(--safe-bottom) + 12px);
+  right: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+}
+#hud-clues strong { color: var(--violet); margin-left: 6px; }
