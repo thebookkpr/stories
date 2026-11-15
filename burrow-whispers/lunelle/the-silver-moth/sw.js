@@ -1,14 +1,15 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: sw.js
-  VERSION: 0.8.1
+  VERSION: 0.9.0
   PART: 1 of 1
   LOCATION: /stories/burrow-whispers/lunelle/the-silver-moth/ (same folder as index.html)
   NOTE: Offline play. Game files are saved at install.
         Images and fonts are saved the first time they are seen.
+        v0.9.0: adds js/stage.js to the saved game files.
 */
 
-const VERSION = "0.8.1";
+const VERSION = "0.9.0";
 const SHELL_CACHE = "bw-silver-moth-shell-" + VERSION;
 const SEEN_CACHE = "bw-silver-moth-seen";   // kept between versions
 
@@ -26,6 +27,7 @@ const SHELL_FILES = [
   "./js/mysteries.js",
   "./js/save.js",
   "./js/scrapbook.js",
+  "./js/stage.js",
   "./js/guidance.js",
   "./js/game.js",
   "./images/icon-192.png",
