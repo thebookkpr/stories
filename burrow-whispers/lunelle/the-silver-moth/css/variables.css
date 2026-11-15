@@ -1,11 +1,13 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/variables.css
-  VERSION: 0.4.1
+  VERSION: 0.9.0
   PART: 1 of 1
-  LOAD ORDER: 1st (before base, panels, effects)
+  LOAD ORDER: 1st (before base, panels, effects, guidance)
   SOURCE: Burrow Whispers Typography Style Guide v1.0 (Moonroot Canon)
-  NOTE: v0.4.1 tells browsers not to auto-darken the page (Opera dark theme).
+  NOTE: v0.9.0 adds --fx-silver, --fx-gold, --fx-lift (effect colors Opera
+        night mode cannot turn black) and --stage-w / --stage-h (the
+        art-shaped stage that js/stage.js sizes).
 */
 
 :root {
@@ -24,6 +26,13 @@
   --gold: #ffd98a;
   --silver: #e8f0ff;
   --glow-silver: rgba(232, 240, 255, 0.9);
+
+  /* ---------- Effect colors (v0.9.0) ----------
+     Night mode turns light backgrounds black. These cores are darker
+     than its cut-off; --fx-lift brightens them back up on screen. */
+  --fx-silver: #a9bbe6;
+  --fx-gold: #e2b455;
+  --fx-lift: 1.3;
 
   /* ---------- Panels (translucent light, so dark text stays readable) ---------- */
   --panel: rgba(250, 247, 255, 0.95);
@@ -62,6 +71,10 @@
   /* ---------- Silver light / moth position ---------- */
   --light-x: 88%;
   --light-y: 52%;
+
+  /* ---------- Stage (v0.9.0): art-shaped box, sized by js/stage.js ---------- */
+  --stage-w: 100%;
+  --stage-h: 100%;
 
   /* ---------- Moth size ---------- */
   --moth-size: 26vw;
