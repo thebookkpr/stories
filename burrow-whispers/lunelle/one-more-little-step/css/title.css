@@ -1,14 +1,19 @@
-/* One More Little Step — title.css V1.1
+/* One More Little Step — title.css V1.2
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (CSS)
 
+   V1.2: New title picture (images/titlescreen.jpg). The moon now sits
+         at the top center, so the logo moves to the clear sky to the
+         right of the moon (phone 20:9 and tablet). The menu moves left
+         and up to sit over the open lake, clear of the dock and the
+         far-right lotuses. Desktop 16:9 positions are unchanged.
+         Positions were placed by eye: test them and adjust.
    V1.1: Logo (assets/onemorelittlestep-logo.png) replaces the
          plain title text. New title pictures:
            images/titlescreen.jpg          phone 20:9 and tablet
            images/titlescreen-desktop.jpg  desktop 16:9
          game.js sets data-format on #game ("desktop", "wide",
          "tablet"). With no value, "wide" is used.
-         Logo sits between Lunelle and the moon on every format.
    V1.0: NEW BEGINNING. Versions restart at 1.0. */
 
 /* Title screen background art: phone 20:9 (also used on tablet) */
@@ -36,18 +41,20 @@
   pointer-events: none;
 }
 
-/* Title block: top, between Lunelle and the moon (phone default) */
+/* Title block: top, in the sky to the right of the moon (phone default) */
 .title-block {
   position: absolute;
   top: 3%;
-  left: 29%;
-  width: 32%;
+  left: 58%;
+  width: 28%;
   z-index: 2;
   text-align: center;
   padding: 0;
 }
 #game[data-format="desktop"] .title-block { left: 27%; width: 36%; }
-#game[data-format="tablet"]  .title-block { left: 22%; width: 56%; }
+/* Tablet crops the sides of the 20:9 picture, so the moon sits nearer
+   the middle and the clear sky is on the right */
+#game[data-format="tablet"]  .title-block { left: 62%; width: 34%; }
 
 .game-title {
   margin: 0;
@@ -74,16 +81,28 @@
   opacity: 0.9;
 }
 
-/* Menu: right side, lower area, clear of Lunelle's face, crest and ears */
+/* Menu: over the open lake, clear of Lunelle and the dock (phone default) */
 .menu {
   position: absolute;
-  right: 6%;
-  bottom: 8%;
+  right: 17%;
+  bottom: 7%;
   z-index: 2;
   display: flex;
   flex-direction: column;
   gap: var(--gap);
+  width: clamp(150px, 22%, 240px);
+}
+/* Desktop keeps its original spot */
+#game[data-format="desktop"] .menu {
+  right: 6%;
+  bottom: 8%;
   width: clamp(150px, 24%, 260px);
+}
+/* Tablet: the crop moves the lake toward the right edge */
+#game[data-format="tablet"] .menu {
+  right: 6%;
+  bottom: 8%;
+  width: clamp(170px, 32%, 280px);
 }
 
 .menu-btn {
