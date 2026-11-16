@@ -1,6 +1,6 @@
 PROJECT: Burrow Whispers #001 — The Silver Moth
 FILE: SITE MAP — THE SILVER MOTH
-VERSION: 0.9.2
+VERSION: 0.10.0
 PART: 1 of 1
 
 stories/burrow-whispers/lunelle/the-silver-moth/
@@ -13,22 +13,22 @@ stories/burrow-whispers/lunelle/the-silver-moth/
 │   ├── base.css          (v0.9.0)
 │   ├── panels.css        (v0.8.0)
 │   ├── effects.css       (v0.6.0)
-│   └── guidance.css      (v0.9.0, loads last)
+│   └── guidance.css      (v0.10.0, loads last)
 │
 ├── js/  (load order: data, mysteries, save, scrapbook, stage, guidance, game)
 │   ├── data.js           (v0.8.1)
 │   ├── mysteries.js      (v0.6.0)
 │   ├── save.js           (v0.8.0)
 │   ├── scrapbook.js      (v0.8.0)
-│   ├── stage.js          (v0.9.2, NEW)
-│   ├── guidance.js       (v0.8.0)
-│   └── game.js           (v0.9.0)
+│   ├── stage.js          (v0.10.0)
+│   ├── guidance.js       (v0.10.0)
+│   └── game.js           (v0.10.0)
 │
 ├── images/
 │   ├── silvermoth-bg.jpg        (841 x 1870, tall phone)
 │   ├── silvermoth-916.jpg       (841 x 1494, older phone)
 │   ├── silvermoth-tablet.jpg    (1586 x 992, tablet)
-│   ├── silvermoth-desktop.jpg   (1672 x 941, desktop, NEW)
+│   ├── silvermoth-desktop.jpg   (1672 x 941, desktop)
 │   ├── icon-192.png
 │   ├── icon-512.png
 │   └── icon-512-maskable.png
@@ -52,3 +52,11 @@ below 0.51                silvermoth-bg.jpg
 0.51 to 1.08              silvermoth-916.jpg
 1.08 to 1.69              silvermoth-tablet.jpg
 above 1.69                silvermoth-desktop.jpg
+
+SILVER LIGHT (one spot per picture, same in every discovery, set in js/stage.js)
+Picture                   Across / down
+silvermoth-bg.jpg         70.5% / 44.0%
+silvermoth-916.jpg        70.5% / 42.4%
+silvermoth-tablet.jpg     58.8% / 41.8%
+silvermoth-desktop.jpg    59.5% / 50.7%
+The x / y in the mysteries.js targets are no longer used.
