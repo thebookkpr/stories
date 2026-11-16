@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.9.0
+  VERSION: 0.10.0
   PART: 1 of 1
   LOAD ORDER: 7th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
@@ -9,6 +9,9 @@
         v0.8.0: guidance hooks (guidance.js), journal text from data.js.
         v0.9.0: moth and petal sprites are drawn through stage.js (canvas),
         so Opera night mode cannot turn them black.
+        v0.10.0: the silver light and moth sit at ONE spot per picture
+        (set by stage.js), the same in every discovery. The x / y in
+        the mysteries.js targets are no longer used.
 */
 
 (function () {
@@ -121,12 +124,8 @@
       box.appendChild(b);
     });
 
-    const t = mystery.target;
-    [silverLight, moth].forEach(function (el) {
-      el.style.left = t.x + "%";
-      el.style.top = t.y + "%";
-    });
-    silverLight.setAttribute("aria-label", t.label);
+    // The light and moth sit at the spot stage.js picked for this picture
+    silverLight.setAttribute("aria-label", mystery.target.label);
     silverLight.classList.toggle("ready", allFound());
     silverLight.hidden = false;
 
