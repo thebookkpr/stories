@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/stage.js
-  VERSION: 0.9.2
+  VERSION: 0.10.0
   PART: 1 of 1
   LOAD ORDER: 5th script (after scrapbook.js, before guidance.js and game.js)
   NOTE: Odd-Ratio Screen Rule. Picks the art whose shape is closest to the
@@ -9,6 +9,7 @@
         never stretched or cropped). No special cases for any device.
         Also draws sprites on a <canvas>, because Opera night mode
         recolors <img> sprites but leaves canvas alone.
+        v0.10.0: each picture has ONE light spot, used by every discovery.
 */
 
 (function () {
@@ -16,11 +17,12 @@
 
   // ---------- Art list ----------
   // ratio = width / height of the picture file. Edit here if a file changes.
+  // light = where the silver light sits (% of the picture), same every round.
   const ARTS = [
-    { src: "images/silvermoth-bg.jpg",      ratio: 841 / 1870 },   // tall phone
-    { src: "images/silvermoth-916.jpg",     ratio: 841 / 1494 },   // older phone
-    { src: "images/silvermoth-tablet.jpg",  ratio: 1586 / 992 },   // tablet
-    { src: "images/silvermoth-desktop.jpg", ratio: 1672 / 941 }    // desktop
+    { src: "images/silvermoth-bg.jpg",      ratio: 841 / 1870,  light: { x: 70.5, y: 44.0 } },   // tall phone
+    { src: "images/silvermoth-916.jpg",     ratio: 841 / 1494,  light: { x: 70.5, y: 42.4 } },   // older phone
+    { src: "images/silvermoth-tablet.jpg",  ratio: 1586 / 992,  light: { x: 58.8, y: 41.8 } },   // tablet
+    { src: "images/silvermoth-desktop.jpg", ratio: 1672 / 941,  light: { x: 59.5, y: 50.7 } }    // desktop
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -36,6 +38,17 @@
       if (screen < cutoff) return list[i];
     }
     return list[list.length - 1];
+  }
+
+  // The silver light and the moth share ONE spot per picture,
+  // so every discovery uses the same place.
+  function placeLight(spot) {
+    ["silver-light", "moth"].forEach(function (id) {
+      const el = $(id);
+      if (!el) return;
+      el.style.left = spot.x + "%";
+      el.style.top = spot.y + "%";
+    });
   }
 
   // Biggest box with the art's own shape that fits the screen
@@ -57,6 +70,7 @@
     if (art !== current) {
       current = art;
       bg.src = art.src;
+      placeLight(art.light);
     }
     game.classList.add("staged");
   }
