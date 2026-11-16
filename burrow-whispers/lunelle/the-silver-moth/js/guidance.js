@@ -1,13 +1,14 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/guidance.js
-  VERSION: 0.8.0
+  VERSION: 0.10.0
   PART: 1 of 1
-  LOAD ORDER: 5th script (after scrapbook.js, before game.js)
+  LOAD ORDER: 6th script (after stage.js, before game.js)
   NOTE: Exploration Guidance System v1.0. Reads the scene from the page
         (hotspots, silver light), so it works for every mystery.
         game.js calls: start, stop, noteProgress, clueTouched, tooFar.
         scrapbook.js calls: setMode.
+        v0.10.0: rings and sparkles around the silver light once ready.
 */
 
 (function () {
@@ -31,10 +32,11 @@
   // ---------- State ----------
   let running = false;
   let clock = 0, idle = 0;          // seconds (only counted while playable)
-  let nextGlimmer = 0, nextStrong = 0, nextDust = 0, whisperReady = 0;
+  let nextGlimmer = 0, nextStrong = 0, nextDust = 0, nextMagic = 0, whisperReady = 0;
   let stage2Done = false;
   let sparks = 0, glimmering = false, guided = false, whispering = false;
   let nextSpark = new Map();
+  let ringGold = false;
 
   // ---------- Helpers ----------
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -47,6 +49,7 @@
   const openSpots = () =>
     Array.from(document.querySelectorAll("#hotspots .hotspot:not(.found)"));
   const at = (el) => ({ left: el.style.left, top: el.style.top });
+  const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function center(el) {
     const f = $("guide-fx").getBoundingClientRect();
@@ -106,6 +109,20 @@
       l.classList.remove("glimmer");
       glimmering = false;
     }, 1100);
+  }
+
+  // ---------- Ready (v0.10.0): rings and sparkles around the silver light ----------
+  function magic() {
+    const p = at(light());
+    put("magic-ring" + (ringGold ? " gold" : ""), p.left, p.top, null, 2500);
+    ringGold = !ringGold;
+    for (let i = 0; i < 5; i++) {
+      setTimeout(function () {
+        const a = rand(0, 6.283), d = rand(24, 64);
+        put("magic-p" + (Math.random() < 0.4 ? " gold" : ""), p.left, p.top,
+          { "--mx": Math.cos(a) * d + "px", "--my": Math.sin(a) * d + "px" }, 2300);
+      }, i * 300);
+    }
   }
 
   function spark(btn, strong) {
@@ -173,6 +190,13 @@
       nextGlimmer = clock + rand(8, 12) * r;
     }
 
+    // Ready (v0.10.0): larger, magical animation around the silver light
+    if (lightShown() && light().classList.contains("ready") &&
+        !reduced() && clock >= nextMagic) {
+      magic();
+      nextMagic = clock + 3;
+    }
+
     // Tier II: Discovery Spark (paused while a more important cue plays)
     const busy = glimmering || guided || whispering;
     openSpots().forEach(function (btn) {
@@ -238,6 +262,7 @@
     nextGlimmer = rand(3, 6);
     nextStrong = 0;
     nextDust = rand(3, 6);
+    nextMagic = 0;
     whisperReady = 0;
     stage2Done = false;
     nextSpark = new Map();
