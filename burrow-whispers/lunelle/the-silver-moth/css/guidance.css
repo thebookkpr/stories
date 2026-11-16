@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: css/guidance.css
-  VERSION: 0.9.0
+  VERSION: 0.10.0
   PART: 1 of 1
   LOAD ORDER: 5th (last, after effects.css)
   NOTE: Exploration Guidance System v1.0. Styles only: guidance.js
@@ -9,6 +9,7 @@
         handled by the rule at the bottom of effects.css.
         v0.9.0: effect cores use --fx-silver / --fx-gold with --fx-lift,
         so Opera night mode cannot turn them black.
+        v0.10.0: big magical animation once all clues are found (.ready).
 */
 
 /* ---------- Particle layer (inside #scene, created in index.html) ---------- */
@@ -35,9 +36,6 @@
 #silver-light.glimmer {
   animation: flicker 2.8s ease-in-out infinite, glimmer-shift 1s ease-in-out;
 }
-#silver-light.ready.glimmer {
-  animation: flicker-ready 1.8s ease-in-out infinite, glimmer-shift 1s ease-in-out;
-}
 
 @keyframes halo {
   0%, 100% { opacity: 0; }
@@ -46,6 +44,67 @@
 @keyframes glimmer-shift {
   0%, 100% { filter: brightness(var(--fx-lift));             translate: 0 0; }
   40%      { filter: brightness(calc(var(--fx-lift) * 1.2)); translate: 2px -2px; }
+}
+
+/* ---------- Ready (v0.10.0): all clues found, time to look again ----------
+   A larger, magical pulse. guidance.js adds rings and sparkles around it. */
+#silver-light.ready { animation: magic-aura 2.6s ease-in-out infinite; }
+#silver-light.ready.glimmer {
+  animation: magic-aura 2.6s ease-in-out infinite, glimmer-shift 1s ease-in-out;
+}
+
+@keyframes magic-aura {
+  0%, 100% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 22px 10px rgba(232, 240, 255, 1),
+                0 0 44px 18px rgba(201, 184, 255, 0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.6);
+    box-shadow: 0 0 34px 16px rgba(232, 240, 255, 1),
+                0 0 80px 36px rgba(201, 184, 255, 0.65);
+  }
+}
+
+.magic-ring {
+  width: 20px;
+  height: 20px;
+  margin: -10px;
+  border: 2px solid var(--fx-silver);
+  border-radius: 50%;
+  filter: brightness(var(--fx-lift));
+  box-shadow: 0 0 16px var(--glow-silver);
+  animation: magic-ring-out 2.4s ease-out forwards;
+}
+.magic-ring.gold { border-color: var(--fx-gold); }
+
+@keyframes magic-ring-out {
+  from { transform: scale(1);   opacity: 0.8; }
+  to   { transform: scale(10);  opacity: 0; }
+}
+
+.magic-p {
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-radius: 50%;
+  background: var(--fx-silver);
+  filter: brightness(var(--fx-lift));
+  box-shadow: 0 0 10px 3px var(--glow-silver);
+  animation: magic-rise 2.2s ease-out forwards;
+}
+.magic-p.gold {
+  background: var(--fx-gold);
+  box-shadow: 0 0 10px 3px rgba(255, 217, 138, 0.8);
+}
+
+@keyframes magic-rise {
+  0%   { transform: translate(0, 0) scale(0.4);                 opacity: 0; }
+  20%  { opacity: 1; }
+  60%  { transform: translate(var(--mx), var(--my)) scale(1);   opacity: 1; }
+  100% { transform: translate(calc(var(--mx) * 1.5), calc(var(--my) * 1.5 - 30px)) scale(0.3); opacity: 0; }
 }
 
 /* ---------- Touch State A: first contact (105% + soft glow) ---------- */
