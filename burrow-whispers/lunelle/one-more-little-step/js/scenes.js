@@ -1,12 +1,17 @@
-/* One More Little Step — scenes.js V1.3
+/* One More Little Step — scenes.js V1.4
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.4: Desktop 16:9 format added for Scene 5 (Farther From the
+         Burrow): desktopBackground (images/scenehilltop-desktop.jpg),
+         desktopHotspots, desktopPetal and desktopLunelle. All five
+         scenes now have desktop art. Positions were placed by eye
+         from the picture: test them and adjust. The desktop picture
+         has no Lunelle, so desktopLunelle sets where her sprite sits.
    V1.3: Desktop 16:9 format added for Scenes 2, 3 and 4
          (The Silver Light, The Clearing, The Moth):
          desktopBackground, desktopHotspots, desktopPetal and
-         desktopLunelle. Scene 5 still has no desktop art and uses
-         the 20:9 picture. Desktop positions were placed by eye from
+         desktopLunelle. Desktop positions were placed by eye from
          the pictures: test them and adjust. The desktop pictures
          have no Lunelle, so desktopLunelle sets where her sprite sits.
    V1.2: Desktop 16:9 format added for Scene 1 (Moonroot Pond).
@@ -225,6 +230,16 @@ const SCENES = [
     title: "Farther From the Burrow",
     background: "images/scene-hilltop.jpg",
     tabletBackground: "images/scenehilltop-tablet.jpg",
+    desktopBackground: "images/scenehilltop-desktop.jpg",
+    desktopHotspots: [
+      { id: "trail",     x: 30,   y: 70,   w: 13, h: 8 },
+      { id: "fireflies", x: 27,   y: 52,   w: 10, h: 16 },
+      { id: "meadow",    x: 34,   y: 84,   w: 14, h: 12 },
+      { id: "lake",      x: 55.5, y: 41,   w: 9.5, h: 7 },
+      { id: "boulder",   x: 74,   y: 60,   w: 18, h: 15 }
+    ],
+    desktopPetal: { x: 54, y: 83.5 },
+    desktopLunelle: { x: 5, bottom: 3, w: 30 },
     tabletHotspots: [
       { id: "trail",     x: 49,   y: 29,   w: 12, h: 10 },
       { id: "fireflies", x: 36,   y: 52,   w: 10, h: 12 },
