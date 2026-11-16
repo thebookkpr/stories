@@ -1,7 +1,11 @@
-/* One More Little Step — sw.js V1.4
+/* One More Little Step — sw.js V1.5
    Project: One More Little Step (Burrow Whispers, Lunelle)
    Part 1 of 1 (JavaScript)
 
+   V1.5: Desktop picture for Scene 5 added to the cache list:
+         images/scenehilltop-desktop.jpg. All five scenes now have
+         desktop art. Cache name bumped to "omls-1.5" so devices
+         replace the files saved by V1.4.
    V1.4: New title picture (images/titlescreen.jpg) and title.css V1.2.
          Cache name bumped to "omls-1.4" so devices replace the
          files saved by V1.3. The file list is unchanged.
@@ -25,7 +29,7 @@
    Strategy: network-first. Online = newest files, offline = cached copy.
    All paths are relative. Bump VERSION when you update the game. */
 
-const VERSION = "omls-1.4";
+const VERSION = "omls-1.5";
 
 const FILES = [
   "./",
@@ -55,6 +59,7 @@ const FILES = [
   "images/scenesilverlight-desktop.jpg",
   "images/sceneclearing-desktop.jpg",
   "images/scenemoth-desktop.jpg",
+  "images/scenehilltop-desktop.jpg",
   "images/scenepond-tablet.jpg",
   "images/scenesilverlight-tablet.jpg",
   "images/sceneclearing-tablet.jpg",
