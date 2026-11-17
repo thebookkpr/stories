@@ -1,13 +1,14 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/data.js
-  VERSION: 0.8.1
+  VERSION: 0.11.0
   PART: 1 of 1
   LOAD ORDER: 1st script (before mysteries.js, save.js, game.js)
   NOTE: Items, rewards, and achievements live here.
         soon: true = art not created yet, shown as "Coming soon".
         When art arrives: add the file path and delete "soon".
         Journal entries are text only: put each line in "text".
+        v0.11.0: art moved to images/discovery-cards, images/sprites, images/stickers.
 */
 
 window.BW = window.BW || {};
@@ -26,27 +27,27 @@ BW.REGION_BONUS = { petals: 100, frame: "moonroot-frame" };
 // ---------- Discoveries (one per mystery) ----------
 BW.DISCOVERIES = [
   { id: "moth", number: "001", name: "Silver Moon Moth", rarity: "common",
-    sprite: "assets/silvermoon-moth.png",
-    card: "assets/silvermoonmoth-card.jpg" },
+    sprite: "images/sprites/silvermoon-moth.png",
+    card: "images/discovery-cards/silvermoonmoth-card.jpg" },
   { id: "frog", number: "002", name: "Moonroot Frog", rarity: "common",
-    sprite: "assets/moonrootfrog-female.png",
-    card: "assets/moonrootfrog-card.jpg" },
+    sprite: "images/sprites/moonrootfrog-female.png",
+    card: "images/discovery-cards/moonrootfrog-card.jpg" },
   { id: "cricket", number: "003", name: "Nightfire Cricket", rarity: "common",
-    sprite: "assets/nightfire-cricket.png",
-    card: "assets/nightfirecricket-card.jpg" },
+    sprite: "images/sprites/nightfire-cricket.png",
+    card: "images/discovery-cards/nightfirecricket-card.jpg" },
   { id: "pearl", number: "004", name: "Pond Pearl", rarity: "uncommon",
-    sprite: "assets/pond-pearl.png",
-    card: "assets/pondpearl-card.jpg" },
+    sprite: "images/sprites/pond-pearl.png",
+    card: "images/discovery-cards/pondpearl-card.jpg" },
   { id: "seed", number: "005", name: "Lantern Seed", rarity: "uncommon",
-    sprite: "assets/lantern-seed.png",
-    card: "assets/lanternseed-card.jpg" }
+    sprite: "images/sprites/lantern-seed.png",
+    card: "images/discovery-cards/lanternseed-card.jpg" }
 ];
 
 // ---------- Keepsakes ----------
 BW.KEEPSAKES = [
   { id: "petal", number: "001", name: "Moon Petal",
-    sprite: "assets/moon-petal.png",
-    card: "assets/moonpetal-card.jpg" },
+    sprite: "images/sprites/moon-petal.png",
+    card: "images/discovery-cards/moonpetal-card.jpg" },
   { id: "lotus",  number: "002", name: "Pressed Moon Lotus", soon: true },
   { id: "acorn",  number: "003", name: "Acorn Charm",        soon: true },
   { id: "ribbon", number: "004", name: "Silver Ribbon",      soon: true },
@@ -66,7 +67,8 @@ BW.JOURNAL = [
 
 // ---------- Stickers (one per discovery) ----------
 BW.STICKERS = [
-  { id: "moth",    name: "Silver Moon Moth Sticker",   soon: true },
+  { id: "moth",    name: "Silver Moon Moth Sticker",
+    card: "images/stickers/silvermoonmoth-sticker.png" },
   { id: "frog",    name: "Moonroot Frog Sticker",      soon: true },
   { id: "cricket", name: "Nightfire Cricket Sticker",  soon: true },
   { id: "pearl",   name: "Pond Pearl Sticker",         soon: true },
