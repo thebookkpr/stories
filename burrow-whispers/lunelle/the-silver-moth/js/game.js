@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.10.0
+  VERSION: 0.11.0
   PART: 1 of 1
   LOAD ORDER: 7th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
@@ -12,6 +12,7 @@
         v0.10.0: the silver light and moth sit at ONE spot per picture
         (set by stage.js), the same in every discovery. The x / y in
         the mysteries.js targets are no longer used.
+        v0.11.0: the petal sprite now lives in images/sprites/.
 */
 
 (function () {
@@ -323,7 +324,7 @@
   // ---------- Init ----------
   S.load();
   G.applyMode();
-  paint(petalFx, "assets/moon-petal.png", "");
+  paint(petalFx, "images/sprites/moon-petal.png", "");
   makeFireflies(14);
   startMystery();
 })();
