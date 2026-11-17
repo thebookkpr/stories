@@ -1,55 +1,75 @@
 /* PROJECT: Burrow Whispers — Book Keeper Website
    FILE: Moonlit Reverie, Lunelle's Home Region · css/effects.css
-   VERSION: V1.0 · Part 1 of 1
+   VERSION: V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/lunelle/css/effects.css
    Touch-State Animation Specification:
    AMBIENT → FOCUS → TOUCH → SETTLE → AMBIENT.
    Gentle, slow, nothing snaps back. Timings and curves
    come from css/variables.css.
-   js/lunelle.js adds the elements and classes used here:
-     .mist .speck .firefly .ripple .star .petal .moth
+   js/effects.js and js/panel.js add the elements and classes used here:
+     .mist .shimmer .speck .ripple .star .petal .moth .reflection-break
      .is-touched (on a spot)   .is-reverie (on .stage)
      .is-open (on .panel)      .is-whispering (on .whisper)
-     .is-leaving (on .travel-veil) */
+     .is-leaving (on .travel-veil)
+   The drifting particles (.motes), the moth's flight and the magic
+   bursts are animated by js/effects.js itself. This file only gives
+   them their look, so it must not put animations on .moth. */
 
 /* ---------- STATE 01 · AMBIENT ----------
-   Extremely slow. The world is alive even when untouched. */
+   Extremely slow. Each layer drifts one way and fades in and out,
+   so its restart is never seen. Layers use different lengths so
+   they never line up. */
 .mist {
   position: absolute; left: -10%; width: 120%; height: 18%;
   background: radial-gradient(ellipse at center, rgba(238,241,248,0.22), transparent 70%);
-  filter: blur(14px); pointer-events: none;
-  animation: mist-drift 70s var(--ease-sine) infinite alternate;
+  pointer-events: none; will-change: transform, opacity;
+  filter: opacity(1); transition: filter 2500ms var(--ease-sine);
+  animation: mist-drift 83s linear -30s infinite;
 }
-.mist:nth-of-type(2) { animation-duration: 95s; animation-direction: alternate-reverse; }
+.mist:nth-of-type(2) { animation-duration: 117s; animation-delay: -70s; }
 @keyframes mist-drift {
-  from { transform: translateX(-4%); opacity: 0.55; }
-  to   { transform: translateX(4%);  opacity: 0.9;  }
+  0%   { transform: translateX(-6%); opacity: 0;    }
+  50%  { opacity: 0.85; }
+  100% { transform: translateX(6%);  opacity: 0;    }
 }
 
-.speck, .firefly {
-  position: absolute; border-radius: 50%; pointer-events: none;
-  animation: float-up var(--dur, 18s) var(--ease-sine) var(--delay, 0s) infinite;
-}
-.speck   { width: 3px; height: 3px; background: var(--silver-glow);
-           box-shadow: 0 0 6px var(--silver-glow); }
-.firefly { width: 4px; height: 4px; background: #f5e9b8;
-           box-shadow: 0 0 10px rgba(245,233,184,0.8); }
-@keyframes float-up {
-  0%   { transform: translate(0, 0);          opacity: 0; }
-  15%  { opacity: 0.9; }
-  85%  { opacity: 0.7; }
-  100% { transform: translate(var(--drift, 12px), -60px); opacity: 0; }
+/* Drifting particles: made and moved by js/effects.js (.motes).
+   This only keeps them on the graphics layer so they stay smooth. */
+.motes > div { will-change: transform, opacity; }
+
+/* Specks: tiny silver lights, used for trails and bursts */
+.speck {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  pointer-events: none; background: var(--silver-glow);
+  box-shadow: 0 0 6px var(--silver-glow);
 }
 
-/* Water shimmer over the pond (a soft band, placed by JS) */
+/* Water shimmer over the pond (placed by JS). Two soft sweeps of
+   different lengths cross it, fading at the ends. A soft mask keeps
+   the box edge from showing. */
 .shimmer {
   position: absolute; pointer-events: none; mix-blend-mode: screen;
-  background: linear-gradient(100deg, transparent 30%, rgba(201,216,255,0.16) 50%, transparent 70%);
-  animation: shimmer-slide 14s var(--ease-sine) infinite alternate;
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 72%);
+          mask-image: radial-gradient(ellipse at center, #000 40%, transparent 72%);
+  filter: opacity(1); transition: filter 2500ms var(--ease-sine);
 }
-@keyframes shimmer-slide {
-  from { transform: translateX(-6%); opacity: 0.4; }
-  to   { transform: translateX(6%);  opacity: 0.9; }
+.shimmer::before, .shimmer::after {
+  content: ""; position: absolute; inset: 0; will-change: transform, opacity;
+}
+.shimmer::before {
+  background: linear-gradient(100deg, transparent 30%, rgba(201,216,255,0.16) 50%, transparent 70%);
+  animation: shimmer-sweep 23s linear infinite;
+}
+.shimmer::after {
+  background: linear-gradient(80deg, transparent 35%, rgba(238,241,248,0.12) 50%, transparent 65%);
+  animation: shimmer-sweep 31s linear -11s infinite;
+}
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-60%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateX(60%);  opacity: 0; }
 }
 
 /* ---------- STATE 02 · FOCUS ----------
@@ -89,8 +109,6 @@
   transform: translate(-50%, -50%) scale(0.2); opacity: 0;
   animation: ripple-out var(--ripple-time) var(--ease-quint) both;
 }
-.ripple:nth-child(2) { animation-delay: 160ms; }
-.ripple:nth-child(3) { animation-delay: 320ms; }
 @keyframes ripple-out {
   0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0.9; }
   100% { transform: translate(-50%, -50%) scale(5);   opacity: 0;   }
@@ -132,24 +150,27 @@
   100% { transform: translate(var(--dx, 60px), var(--dy, 40px)) rotate(200deg); opacity: 0; }
 }
 
-/* Silver Moth: wings open (300 ms), takeoff (200 ms), circle (1 s),
-   land (1 s). JS moves the left/top; CSS gives the flutter and trail. */
+/* Silver Moth: CSS only draws it (a body and two wings).
+   js/effects.js sets where it is, when it shows, how its wings beat,
+   how it rests and the glow when it lands. No animation or transition
+   here, or it would override the script. */
 .moth {
-  position: absolute; width: 14px; height: 14px; pointer-events: none;
-  background: radial-gradient(circle, var(--silver-glow), transparent 70%);
-  border-radius: 50%; box-shadow: 0 0 12px var(--silver-glow);
-  transition: left 1000ms var(--ease-sine), top 1000ms var(--ease-sine);
-  animation: moth-flutter 6s var(--ease-sine) infinite;
+  position: absolute; width: 24px; height: 16px; pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(var(--silvery-white), var(--silvery-white)) center / 2px 12px no-repeat;
+  filter: drop-shadow(0 0 6px var(--silver-glow));
 }
-@keyframes moth-flutter {
-  0%, 80%, 100% { transform: scale(1);   opacity: 0.85; }
-  88%           { transform: scale(1.5); opacity: 1;    }
+.moth::before, .moth::after {
+  content: ""; position: absolute; top: 0; width: 11px; height: 16px;
+  background: radial-gradient(ellipse at 70% 45%, #fff 0%, var(--silver-glow) 55%, rgba(201,216,255,0) 78%);
 }
-.moth.is-flying { animation: moth-circle 1000ms var(--ease-sine) both; }
-@keyframes moth-circle {
-  0%   { transform: translate(0, 0); }
-  50%  { transform: translate(-14px, -18px) scale(1.3); }
-  100% { transform: translate(0, 0); }
+.moth::before {
+  left: 0; border-radius: 80% 20% 70% 30%;
+  transform: rotate(-14deg); transform-origin: right center;
+}
+.moth::after {
+  right: 0; border-radius: 20% 80% 30% 70%;
+  transform: rotate(14deg); transform-origin: left center;
 }
 
 /* ---------- STATE 04 · SETTLE ----------
@@ -160,11 +181,11 @@
                            transform var(--settle-time) var(--ease-quint); }
 
 /* ---------- REVERIE MOMENT (20–30 s idle, about 5 s long) ----------
-   Wind slows, particles thin, pond stills, moon sharpens. */
-.stage.is-reverie .speck,
-.stage.is-reverie .firefly { animation-duration: 40s; opacity: 0.4; }
+   Particles thin (js/effects.js), mist and shimmer dim, moon sharpens.
+   Dimming uses filter, so no running animation changes length and
+   nothing jumps. */
 .stage.is-reverie .mist,
-.stage.is-reverie .shimmer { animation-duration: 160s; }
+.stage.is-reverie .shimmer { filter: opacity(0.45); }
 .stage.is-reverie [data-spot="reflection"]::before {
   opacity: 0.6; transition: opacity 1500ms var(--ease-sine);
 }
@@ -191,7 +212,8 @@
 
 /* ---------- RESTFUL MOTION ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .mist, .speck, .firefly, .shimmer, .moth { animation: none; }
+  .mist, .shimmer::before, .shimmer::after { animation: none; }
+  .shimmer::before, .shimmer::after { opacity: 0.5; }
   .spot, .spot::before { transition: none; }
   .spot:hover, .spot:focus-visible { transform: none; }
   .ripple, .petal { animation-duration: 1ms; }
