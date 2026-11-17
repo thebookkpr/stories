@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <!-- PROJECT: Burrow Whispers — Book Keeper Website
      FILE: Moonlit Reverie, Lunelle's Home Region · index.html
-     VERSION: V1.0 · Part 1 of 1
+     VERSION: V1.1 · Part 1 of 1
      Lives at stories/burrow-whispers/lunelle/index.html
      Uses css/variables.css, css/base.css, css/effects.css
-     and js/lunelle.js, all from this same folder.
-     The three pictures are set in css/variables.css:
+     and three scripts, all from this same folder, loaded in this order:
+       js/lore.js      places, lore text and game addresses
+       js/panel.js     reading panel, tap levels, game routes
+       js/effects.js   particles, moth, stone magic, touch effects
+     The pictures are set in css/variables.css:
        images/moonlitreverie-bg.jpg      (main)
        images/moonlitreverie-tablet.jpg  (tablet)
        images/moonlitreverie-916.jpg     (older cellphones)
+       images/moonlitreverie-desktop.jpg (desktop, not wired in yet;
+                                          it is added in the CSS step)
      Hot spot places are set in css/base.css.
-     Lore, routes and game addresses are set in js/lunelle.js.
+     Lore, routes and game addresses are set in js/lore.js.
      Lunelle is not shown on this page yet. If she is added later,
      she will be a separate sprite picture over the background. -->
 <html lang="en">
@@ -48,7 +53,7 @@
 
     <!-- The picture. Hot spots sit on it in percentages.
          Mist, particles, ripples and the Silver Moth
-         are added here by js/lunelle.js -->
+         are added here by js/effects.js -->
     <div class="stage">
 
       <!-- Type C: places (tap, read, read more, then travel) -->
@@ -72,20 +77,20 @@
       <!-- Type B: discovery object -->
       <button class="spot" type="button" data-spot="roothollow"  aria-label="A small dark hollow under the roots"></button>
 
-      <!-- Story: the Silver Moth (flown by js/lunelle.js, leads to its game) -->
+      <!-- Story: the Silver Moth (visits every 40 s via js/effects.js, leads to its game) -->
       <button class="spot" type="button" data-spot="moth"        aria-label="Silver Moth"></button>
 
     </div>
 
     <!-- Reading panel. Never closes by itself.
-         Filled in by js/lunelle.js -->
+         Filled in by js/panel.js -->
     <section class="panel" role="dialog" aria-labelledby="panel-title" aria-live="polite" hidden>
       <h2 class="panel-title" id="panel-title"></h2>
       <p class="panel-text"></p>
       <div class="panel-actions"></div>
     </section>
 
-    <!-- Idle whisper, filled in by js/lunelle.js -->
+    <!-- Idle whisper, filled in by js/effects.js -->
     <p class="whisper" aria-hidden="true"></p>
 
     <!-- Soft fade before travel -->
@@ -107,7 +112,10 @@
     </nav>
   </noscript>
 
-  <script src="./js/lunelle.js" defer></script>
+  <!-- Scripts: order matters. lore first, panel second, effects last. -->
+  <script src="./js/lore.js" defer></script>
+  <script src="./js/panel.js" defer></script>
+  <script src="./js/effects.js" defer></script>
 
 </body>
 </html>
