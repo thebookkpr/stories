@@ -1,23 +1,23 @@
 /* PROJECT: Burrow Whispers — Book Keeper Website
    FILE: Moonlit Reverie, Lunelle's Home Region · css/variables.css
-   VERSION: V1.0 · Part 1 of 1
+   VERSION: V1.1 · Part 1 of 1
    Lives at stories/burrow-whispers/lunelle/css/variables.css
-   Holds the three pictures, colors, fonts, sizes and timings.
-   Everything else in css/base.css and css/effects.css
-   reads from here, so change a value once, here.
-   The picture breakpoints at the bottom must match css/base.css. */
+   Holds the four pictures, their shapes, colors, fonts, sizes
+   and timings. Everything else in css/base.css and css/effects.css
+   reads from here, so change a value once, here. */
 
 :root {
 
   /* ---------- THE PICTURES ----------
-     Main (tall, modern phones) is the default. The media queries at
-     the bottom swap it for older 9:16 phones and portrait tablets,
-     and for landscape tablets and wide screens.
-     Paths are relative to this css folder. */
-  --img-main:   url("../images/moonlitreverie-bg.jpg");
-  --img-916:    url("../images/moonlitreverie-916.jpg");
-  --img-tablet: url("../images/moonlitreverie-tablet.jpg");
+     Default (9:20, modern phones) is set here. The media queries
+     at the bottom swap the picture AND its shape together, for older
+     9:16 phones, tablets and desktop. Paths are relative to this css folder. */
+  --img-main:    url("../images/moonlitreverie-bg.jpg");
+  --img-916:     url("../images/moonlitreverie-916.jpg");
+  --img-tablet:  url("../images/moonlitreverie-tablet.jpg");
+  --img-desktop: url("../images/moonlitreverie-desktop.jpg");
   --scene-image: var(--img-main);
+  --stage-ratio: 9 / 20;                /* shape of the picture showing */
 
   /* ---------- SCENE COLORS (Home Region palette) ---------- */
   --night:           #1b1830;   /* page behind the picture */
@@ -76,12 +76,20 @@
   --safe-right:  env(safe-area-inset-right, 0px);
 }
 
-/* ---------- OLDER PHONES AND PORTRAIT TABLETS (9:16 picture) ---------- */
-@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 99/100) {
-  :root { --scene-image: var(--img-916); }
+/* ---------- OLDER CELLPHONES (about 9:16) ---------- */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-916); --stage-ratio: 9 / 16; }
 }
 
-/* ---------- LANDSCAPE TABLETS AND WIDE SCREENS (4:3 picture) ---------- */
-@media (min-aspect-ratio: 99/100) {
-  :root { --scene-image: var(--img-tablet); }
+/* ---------- TABLETS (wider than about 5:8) ----------
+   The ratio below is a placeholder. Set it to the real tablet picture. */
+@media (min-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-tablet); --stage-ratio: 3 / 4; }
+}
+
+/* ---------- DESKTOP (landscape, wider than 7:5) ----------
+   Comes last so it wins over the tablet rule on wide screens.
+   1672 x 941 picture. */
+@media (min-aspect-ratio: 14/10) {
+  :root { --scene-image: var(--img-desktop); --stage-ratio: 1672 / 941; }
 }
