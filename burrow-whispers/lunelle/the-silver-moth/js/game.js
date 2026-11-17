@@ -1,9 +1,9 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.11.0
+  VERSION: 0.12.0
   PART: 1 of 1
-  LOAD ORDER: 7th script (last)
+  LOAD ORDER: 8th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
         items and rewards in data.js, saving in save.js.
         v0.8.0: guidance hooks (guidance.js), journal text from data.js.
@@ -13,6 +13,8 @@
         (set by stage.js), the same in every discovery. The x / y in
         the mysteries.js targets are no longer used.
         v0.11.0: the petal sprite now lives in images/sprites/.
+        v0.12.0: the reward screen no longer prints the journal entry
+        (the text lives in journal.js); players read it in the scrapbook.
 */
 
 (function () {
@@ -231,7 +233,7 @@
     S.unlock("journal", j.id);
     S.unlock("stickers", st.id);
     lines.push((j.soon ? "📖 " : "✅ ") + "Journal Entry #" + d.number +
-               (j.soon ? " — Coming soon" : ""));
+               (j.soon ? " — Coming soon" : " — read it in the scrapbook"));
     lines.push((st.soon ? "🎟 " : "✅ ") + st.name +
                (st.soon ? " — Coming soon" : ""));
 
@@ -265,9 +267,6 @@
     });
 
     $("reward-quote").textContent = "“" + mystery.quote + "”";
-    const jt = j.text;                 // journal text now lives in data.js
-    $("reward-journal").hidden = !jt;
-    $("reward-journal").innerHTML = jt ? jt.join("<br>") : "";
 
     reward.hidden = false;
   }
