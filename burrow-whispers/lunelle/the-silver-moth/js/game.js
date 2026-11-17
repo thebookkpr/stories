@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/game.js
-  VERSION: 0.12.0
+  VERSION: 0.13.0
   PART: 1 of 1
   LOAD ORDER: 8th script (last)
   NOTE: Runs the mysteries in order. Content is in mysteries.js,
@@ -15,6 +15,7 @@
         v0.11.0: the petal sprite now lives in images/sprites/.
         v0.12.0: the reward screen no longer prints the journal entry
         (the text lives in journal.js); players read it in the scrapbook.
+        v0.13.0: each discovery also earns the keepsake with the same number.
 */
 
 (function () {
@@ -221,8 +222,9 @@
       "Discovery #" + d.number + "<br>" + d.name));
 
     S.unlock("discoveries", d.id);
-    const k = BW.KEEPSAKES.find((i) => i.id === "petal");
-    if (S.unlock("keepsakes", k.id)) {
+    // Each discovery also earns the keepsake with the same number (once its art exists)
+    const k = BW.KEEPSAKES.find((i) => i.number === d.number);
+    if (k && !k.soon && S.unlock("keepsakes", k.id)) {
       cards.appendChild(figure(k.card, k.name + " keepsake card",
         "Keepsake #" + k.number + "<br>" + k.name));
     }
