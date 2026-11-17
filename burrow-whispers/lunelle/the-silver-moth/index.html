@@ -1,12 +1,13 @@
 <!--
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: index.html
-  VERSION: 0.11.0
+  VERSION: 0.12.0
   PART: 1 of 1
   LOCATION: /stories/burrow-whispers/lunelle/the-silver-moth/
   NOTE: v0.9.0 desktop edition. The scene picture is chosen by js/stage.js
         (Odd-Ratio Screen Rule). Moth and petal are canvas sprites.
         v0.11.0: scrapbook petal icon now loads from images/sprites/.
+        v0.12.0: loads js/journal.js; the reward screen no longer holds journal text.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -108,7 +109,6 @@
       <p class="eyebrow">NEW COLLECTIBLES</p>
       <div id="reward-cards" class="reward-cards"></div>
       <p id="reward-quote" class="quote"></p>
-      <p id="reward-journal" class="journal" hidden></p>
       <ul id="reward-list"></ul>
       <button id="reward-btn" type="button">Open the Scrapbook</button>
     </div>
@@ -161,8 +161,9 @@
 
 </main>
 
-<!-- Script order matters: data, story, saving, scrapbook, stage, guidance, then the game -->
+<!-- Script order matters: data, journal text, story, saving, scrapbook, stage, guidance, then the game -->
 <script src="js/data.js"></script>
+<script src="js/journal.js"></script>
 <script src="js/mysteries.js"></script>
 <script src="js/save.js"></script>
 <script src="js/scrapbook.js"></script>
