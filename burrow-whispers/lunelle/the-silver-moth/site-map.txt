@@ -1,12 +1,12 @@
 PROJECT: Burrow Whispers #001 — The Silver Moth
 FILE: SITE MAP — THE SILVER MOTH
-VERSION: 0.10.0
+VERSION: 0.13.0
 PART: 1 of 1
 
 stories/burrow-whispers/lunelle/the-silver-moth/
-├── index.html            (v0.9.0)
+├── index.html            (v0.12.0)
 ├── manifest.json         (v0.7.0)
-├── sw.js                 (v0.9.0, must stay next to index.html)
+├── sw.js                 (v0.12.0, must stay next to index.html)
 │
 ├── css/  (load order: variables, base, panels, effects, guidance)
 │   ├── variables.css     (v0.9.0, loads 1st)
@@ -15,30 +15,49 @@ stories/burrow-whispers/lunelle/the-silver-moth/
 │   ├── effects.css       (v0.6.0)
 │   └── guidance.css      (v0.10.0, loads last)
 │
-├── js/  (load order: data, mysteries, save, scrapbook, stage, guidance, game)
-│   ├── data.js           (v0.8.1)
+├── js/  (load order: data, journal, mysteries, save, scrapbook, stage, guidance, game)
+│   ├── data.js           (v0.13.0)
+│   ├── journal.js        (v0.12.0, the text of the 5 journal entries)
 │   ├── mysteries.js      (v0.6.0)
 │   ├── save.js           (v0.8.0)
 │   ├── scrapbook.js      (v0.8.0)
 │   ├── stage.js          (v0.10.0)
 │   ├── guidance.js       (v0.10.0)
-│   └── game.js           (v0.10.0)
+│   └── game.js           (v0.13.0)
 │
-├── images/
-│   ├── silvermoth-bg.jpg        (841 x 1870, tall phone)
-│   ├── silvermoth-916.jpg       (841 x 1494, older phone)
-│   ├── silvermoth-tablet.jpg    (1586 x 992, tablet)
-│   ├── silvermoth-desktop.jpg   (1672 x 941, desktop)
-│   ├── icon-192.png
-│   ├── icon-512.png
-│   └── icon-512-maskable.png
-│
-└── assets/
-    ├── Sprites: moon-petal.png, silvermoon-moth.png, moonrootfrog-female.png,
-    │            nightfire-cricket.png, pond-pearl.png, lantern-seed.png
-    └── Cards:   silvermoonmoth-card.jpg, moonrootfrog-card.jpg,
-                 nightfirecricket-card.jpg, pondpearl-card.jpg,
-                 lanternseed-card.jpg, moonpetal-card.jpg
+└── images/
+    ├── silvermoth-bg.jpg        (841 x 1870, tall phone)
+    ├── silvermoth-916.jpg       (841 x 1494, older phone)
+    ├── silvermoth-tablet.jpg    (1586 x 992, tablet)
+    ├── silvermoth-desktop.jpg   (1672 x 941, desktop)
+    ├── icon-192.png
+    ├── icon-512.png
+    ├── icon-512-maskable.png
+    │
+    ├── discovery-cards/
+    │   ├── silvermoonmoth-card.jpg
+    │   ├── moonrootfrog-card.jpg
+    │   ├── nightfirecricket-card.jpg
+    │   ├── pondpearl-card.jpg
+    │   ├── lanternseed-card.jpg
+    │   ├── moonpetal-card.jpg
+    │   ├── pressedmoonlotus-card.jpg
+    │   └── acorncharm-card.jpg
+    │
+    ├── sprites/
+    │   ├── silvermoon-moth.png
+    │   ├── moonrootfrog-female.png
+    │   ├── nightfire-cricket.png
+    │   ├── pond-pearl.png
+    │   ├── lantern-seed.png
+    │   ├── moon-petal.png
+    │   ├── pressed-moonlotus.png
+    │   ├── acorn-charm.png
+    │   ├── moonroot-charm.png            (not wired in yet)
+    │   └── silverdusted-lotuspetal.png   (not wired in yet)
+    │
+    └── stickers/
+        └── silvermoonmoth-sticker.png
 
 SCREEN ART (Odd-Ratio Screen Rule, chosen by js/stage.js)
 - Closest art by shape. Cut-off = (ratio A + ratio B) / 2 for neighbors.
@@ -60,3 +79,20 @@ silvermoth-916.jpg        70.5% / 42.4%
 silvermoth-tablet.jpg     58.8% / 41.8%
 silvermoth-desktop.jpg    59.5% / 50.7%
 The x / y in the mysteries.js targets are no longer used.
+
+JOURNAL (entries listed in js/data.js, text in js/journal.js)
+#001 The Silver Moth      Courage
+#002 Moonroot Frog        Listening
+#003 Nightfire Cricket    Wonder
+#004 Pond Pearl           Perception
+#005 Lantern Seed         Hope
+Each entry is paired by number with the discovery of the same number.
+The reward screen only lists the entry. Players read it in the scrapbook.
+
+KEEPSAKES (listed in js/data.js, earned in js/game.js)
+#001 Moon Petal           with discovery #001 Silver Moon Moth
+#002 Pressed Moon Lotus   with discovery #002 Moonroot Frog
+#003 Acorn Charm          with discovery #003 Nightfire Cricket
+#004 Silver Ribbon        Coming soon (no art yet)
+#005 Lantern Key          Coming soon (no art yet)
+Each discovery earns the keepsake with the same number once its art exists.
