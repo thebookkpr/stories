@@ -1,14 +1,15 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/data.js
-  VERSION: 0.11.0
+  VERSION: 0.12.0
   PART: 1 of 1
-  LOAD ORDER: 1st script (before mysteries.js, save.js, game.js)
+  LOAD ORDER: 1st script (before journal.js, mysteries.js, save.js, game.js)
   NOTE: Items, rewards, and achievements live here.
         soon: true = art not created yet, shown as "Coming soon".
         When art arrives: add the file path and delete "soon".
-        Journal entries are text only: put each line in "text".
+        Journal entries are listed here; their text is in js/journal.js.
         v0.11.0: art moved to images/discovery-cards, images/sprites, images/stickers.
+        v0.12.0: journal entries #001-#005 named; text moved to js/journal.js.
 */
 
 window.BW = window.BW || {};
@@ -54,15 +55,13 @@ BW.KEEPSAKES = [
   { id: "key",    number: "005", name: "Lantern Key",        soon: true }
 ];
 
-// ---------- Journal entries (text only, one per mystery) ----------
+// ---------- Journal entries (the text is added by js/journal.js) ----------
 BW.JOURNAL = [
-  { id: "moth",    number: "001", name: "The Silver Moth",
-    text: ["Sometimes courage doesn't roar.",
-           "Sometimes it simply takes one more little step."] },
-  { id: "frog",    number: "002", name: "Entry #002", soon: true },
-  { id: "cricket", number: "003", name: "Entry #003", soon: true },
-  { id: "pearl",   number: "004", name: "Entry #004", soon: true },
-  { id: "seed",    number: "005", name: "Entry #005", soon: true }
+  { id: "moth",    number: "001", name: "The Silver Moth" },
+  { id: "frog",    number: "002", name: "Moonroot Frog" },
+  { id: "cricket", number: "003", name: "Nightfire Cricket" },
+  { id: "pearl",   number: "004", name: "Pond Pearl" },
+  { id: "seed",    number: "005", name: "Lantern Seed" }
 ];
 
 // ---------- Stickers (one per discovery) ----------
