@@ -1,7 +1,7 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: js/data.js
-  VERSION: 0.12.0
+  VERSION: 0.13.0
   PART: 1 of 1
   LOAD ORDER: 1st script (before journal.js, mysteries.js, save.js, game.js)
   NOTE: Items, rewards, and achievements live here.
@@ -10,6 +10,7 @@
         Journal entries are listed here; their text is in js/journal.js.
         v0.11.0: art moved to images/discovery-cards, images/sprites, images/stickers.
         v0.12.0: journal entries #001-#005 named; text moved to js/journal.js.
+        v0.13.0: Pressed Moon Lotus and Acorn Charm keepsakes have their art.
 */
 
 window.BW = window.BW || {};
@@ -49,8 +50,12 @@ BW.KEEPSAKES = [
   { id: "petal", number: "001", name: "Moon Petal",
     sprite: "images/sprites/moon-petal.png",
     card: "images/discovery-cards/moonpetal-card.jpg" },
-  { id: "lotus",  number: "002", name: "Pressed Moon Lotus", soon: true },
-  { id: "acorn",  number: "003", name: "Acorn Charm",        soon: true },
+  { id: "lotus",  number: "002", name: "Pressed Moon Lotus",
+    sprite: "images/sprites/pressed-moonlotus.png",
+    card: "images/discovery-cards/pressedmoonlotus-card.jpg" },
+  { id: "acorn",  number: "003", name: "Acorn Charm",
+    sprite: "images/sprites/acorn-charm.png",
+    card: "images/discovery-cards/acorncharm-card.jpg" },
   { id: "ribbon", number: "004", name: "Silver Ribbon",      soon: true },
   { id: "key",    number: "005", name: "Lantern Key",        soon: true }
 ];
