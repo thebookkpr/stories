@@ -1,15 +1,17 @@
 /*
   PROJECT: Burrow Whispers #001 — The Silver Moth
   FILE: sw.js
-  VERSION: 0.9.0
+  VERSION: 0.12.0
   PART: 1 of 1
   LOCATION: /stories/burrow-whispers/lunelle/the-silver-moth/ (same folder as index.html)
   NOTE: Offline play. Game files are saved at install.
         Images and fonts are saved the first time they are seen.
         v0.9.0: adds js/stage.js to the saved game files.
+        v0.11.0: moon petal sprite path moved to images/sprites/.
+        v0.12.0: adds js/journal.js to the saved game files.
 */
 
-const VERSION = "0.9.0";
+const VERSION = "0.12.0";
 const SHELL_CACHE = "bw-silver-moth-shell-" + VERSION;
 const SEEN_CACHE = "bw-silver-moth-seen";   // kept between versions
 
@@ -24,6 +26,7 @@ const SHELL_FILES = [
   "./css/effects.css",
   "./css/guidance.css",
   "./js/data.js",
+  "./js/journal.js",
   "./js/mysteries.js",
   "./js/save.js",
   "./js/scrapbook.js",
@@ -33,7 +36,7 @@ const SHELL_FILES = [
   "./images/icon-192.png",
   "./images/icon-512.png",
   "./images/icon-512-maskable.png",
-  "./assets/moon-petal.png"
+  "./images/sprites/moon-petal.png"
 ];
 
 const FONT_HOSTS = ["fonts.googleapis.com", "fonts.gstatic.com"];
