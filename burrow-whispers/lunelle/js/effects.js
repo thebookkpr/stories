@@ -1,10 +1,13 @@
+**effects.js, Part 1 of 2.** This is the full V1.3. Only the version and three comments changed, so they no longer say "40 s moth visit". Paste Part 2 directly under its last line.
+
+```js
 /* PROJECT: Burrow Whispers — Book Keeper Website
    FILE: Moonlit Reverie, Lunelle's Home Region · js/effects.js
-   VERSION: V1.2 · Part 1 of 2
+   VERSION: V1.3 · Part 1 of 2
    Lives at stories/burrow-whispers/lunelle/js/effects.js
 
    WHAT THIS FILE IS: everything that moves on the picture. Particles,
-   mist, idle moment, touch effects, the 40 s moth visit, the magic
+   mist, idle moment, touch effects, the moth's visit, the magic
    around Moonwatch Stone and the memory scene.
    It needs js/lore.js and js/panel.js loaded first.
 
@@ -15,14 +18,14 @@
    PART 1 holds the helpers, whisper, layout, smooth particles,
    ambient start and the idle moment.
    PART 2 defines these, which Part 1 calls:
-     startMoth()   the 40 s moth visit
+     startMoth()   the moth's visit (30 s wait, lands, rests 12 s, leaves)
      startStone()  magic around Moonwatch Stone
    PART 2 also hands these to js/panel.js through window.Lunelle:
      Lunelle.markActivity, Lunelle.fx, Lunelle.noteVisit
    and it starts everything on its last lines.
 
-   NEW in V1.2: split out of lunelle.js. Reads the panel, found places
-   and leaving state from panel.js instead of holding its own copies. */
+   NEW in V1.3: the moth comes in from the top-left of the screen,
+   after 30 s, and leaves 12 s after landing. */
 
 (function () {
   "use strict";
@@ -133,7 +136,7 @@
     }
     put("moth", 0, 0);
     layout();
-    startMoth();                                  /* Part 2: the 40 s moth visit */
+    startMoth();                                  /* Part 2: the moth's visit */
     startStone();                                 /* Part 2: magic around the stone */
     window.addEventListener("resize", function () {
       clearTimeout(layout.t); layout.t = setTimeout(layout, 300);
@@ -166,10 +169,10 @@
   /* ===== PART 2 OF 2 · continues directly below Part 1 =====
      PROJECT: Burrow Whispers — Book Keeper Website
      FILE: Moonlit Reverie, Lunelle's Home Region · js/effects.js
-     VERSION: V1.2 · Part 2 of 2
+     VERSION: V1.3 · Part 2 of 2
      Paste under Part 1. This part closes the file.
      It holds the touch effects, the moth's flight and landing magic,
-     the 40 s moth visit, the magic around Moonwatch Stone and the
+     the moth's visit, the magic around Moonwatch Stone and the
      memory scene. It then hands three functions to js/panel.js and
      starts everything on its last lines. */
 
@@ -256,15 +259,23 @@
                { filter: "drop-shadow(0 0 0 rgba(238,241,248,0))" }], { duration: 2600 });
   }
 
-  /* ---------- SILVER MOTH: the 40 s visit ----------
-     0 s  hidden · 12 s flutters down (6.5 s) · ~18.5 s lands + magic (2.6 s)
-     · rests 10 s · ~31 s flutters away (6 s) · hidden · repeats at 40 s.
+  /* ---------- SILVER MOTH: the visit ----------
+     Waits 30 s, flutters in from the top-left of the screen (6.5 s),
+     lands on its lotus with a burst of magic, rests 12 s after landing,
+     flutters away to the top-left (6 s), then waits 30 s again.
+     One visit takes about 55 s. Change WAIT and REST to retime it.
      It can only be tapped while it is perched. */
   function startMoth() {
-    var m = $(".moth"), sp = $('[data-spot="moth"]'), rest;
+    var WAIT = 30000, REST = 12000,
+        m = $(".moth"), sp = $('[data-spot="moth"]'), rest;
     m.style.opacity = 0; sp.style.pointerEvents = "none"; sp.tabIndex = -1;
 
-    function settle() {                           /* perched: inline position, gentle wing breathing */
+    function corner(fy) {                         /* just off the screen's top-left, in % of the picture */
+      var r = stg().getBoundingClientRect();
+      return { x: (-30 - r.left) / r.width * 100,
+               y: (window.innerHeight * fy - r.top) / r.height * 100 };
+    }
+    function settle() {                           /* perched: gentle wing breathing, then leave after REST */
       m.style.left = home.x + "%"; m.style.top = home.y + "%"; m.style.opacity = 1;
       m.style.transform = "translate(-50%,-50%)";
       perched = true; sp.style.pointerEvents = ""; sp.tabIndex = 0;
@@ -273,9 +284,10 @@
                          { duration: 2600, iterations: Infinity, direction: "alternate", easing: "ease-in-out" });
         magic(home);
       }
+      setTimeout(leave, REST);
     }
     function arrive() {
-      var from = { x: home.x + rnd(-22, 22), y: home.y - rnd(42, 55) }, tr, a;
+      var from = corner(0.05), tr, a;
       if (calm) { settle(); return; }
       m.style.left = from.x + "%"; m.style.top = from.y + "%";
       tr = setInterval(function () { var q = at(m); specks(q.x, q.y, 1); }, 380);   /* silver trail */
@@ -283,20 +295,15 @@
       a.onfinish = function () { clearInterval(tr); settle(); a.cancel(); };
     }
     function leave() {
-      var to = { x: home.x + rnd(-30, 30), y: home.y - rnd(45, 60) }, tr, a;
+      var to = corner(0.12), tr, a;
       perched = false; sp.style.pointerEvents = "none"; sp.tabIndex = -1;
       if (rest) rest.cancel();
-      if (calm) { m.style.opacity = 0; return; }
+      if (calm) { m.style.opacity = 0; setTimeout(arrive, WAIT); return; }
       tr = setInterval(function () { var q = at(m); specks(q.x, q.y, 1); }, 380);
       a = m.animate(flight(home, to, 6000, 5, false), { duration: 6000, easing: "linear", fill: "forwards" });
-      a.onfinish = function () { clearInterval(tr); m.style.opacity = 0; a.cancel(); };
+      a.onfinish = function () { clearInterval(tr); m.style.opacity = 0; a.cancel(); setTimeout(arrive, WAIT); };
     }
-    function visit() {
-      setTimeout(arrive, 12000);
-      setTimeout(leave, 12000 + 6500 + 2600 + 10000);
-    }
-    visit();
-    setInterval(visit, 40000);
+    setTimeout(arrive, WAIT);
   }
 
   /* ---------- MOONWATCH STONE: magic gathers every 40 s ----------
