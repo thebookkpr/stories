@@ -1,193 +1,89 @@
 /* PROJECT: Burrow Whispers — Book Keeper Website
-   FILE: Moonlit Reverie, Lunelle's Home Region · css/base.css
-   VERSION: V1.1 · Part 1 of 1
-   Lives at stories/burrow-whispers/lunelle/css/base.css
-   Layout, hot spot places and the reading panel.
-   Colors, fonts, sizes, timings, the picture and its shape
-   (--scene-image, --stage-ratio) come from css/variables.css.
-   Motion lives in css/effects.css. The panel and whisper are centered
-   with transform, so effects.css must keep translateX(-50%) if it
-   animates their transform. */
+   FILE: Moonlit Reverie, Lunelle's Home Region · css/variables.css
+   VERSION: V1.3 · Part 1 of 1
+   Lives at stories/burrow-whispers/lunelle/css/variables.css
+   Holds the three pictures, their shapes, colors, fonts, sizes
+   and timings. Everything else in css/base.css and css/effects.css
+   reads from here, so change a value once, here. */
 
-/* ---------- RESET ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
-body {
-  background: var(--night);
-  color: var(--moon-ink);
-  font-family: var(--font-read);
-  font-size: var(--size-body);
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%;
-}
-button { font: inherit; color: inherit; cursor: pointer; }
+:root {
 
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
+  /* ---------- THE PICTURES ----------
+     Phone (9:20) is the default. The media queries at the bottom swap
+     the picture AND its shape together for older 9:16 phones and
+     landscape screens (desktop).
+     Paths are relative to this css folder. */
+  --img-phone:   url("../images/moonlitreverie-bg.jpg");
+  --img-916:     url("../images/moonlitreverie-916.jpg");
+  --img-desktop: url("../images/moonlitreverie-desktop.jpg");
+  --scene-image: var(--img-phone);
+  --stage-ratio: 9 / 20;                /* shape of the picture showing */
 
-/* ---------- RETURN LINK ---------- */
-.return-link {
-  position: fixed; z-index: 6;
-  top: calc(var(--safe-top) + 0.6rem);
-  left: calc(var(--safe-left) + 0.6rem);
-  padding: 0.5em 1em;
-  min-height: 2.75rem; display: inline-flex; align-items: center;
-  font-size: var(--size-tiny); font-weight: 600;
-  color: var(--ivory-moonlight); text-decoration: none;
-  background: rgba(27, 24, 48, 0.62);
-  border-radius: 999px;
-}
-.return-link:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 3px; }
+  /* ---------- SCENE COLORS (Home Region palette) ---------- */
+  --night:           #1b1830;   /* page behind the picture */
+  --ivory-moonlight: #f7f3ea;
+  --moss-green:      #6f8f6a;
+  --bark-brown:      #5b4636;
+  --moon-lavender:   #b9a9e6;
+  --soft-violet:     #8f7fd0;
+  --misty-blue:      #a9bfd9;
+  --silvery-white:   #eef1f8;
+  --leaf-green:      #9cc98f;
+  --cream-floral:    #fbf6ec;
 
-/* ---------- SCENE AND STAGE ----------
-   The stage is the picture. It always covers the screen and keeps the
-   picture's shape, so hot spot percentages stay on the same place in
-   the art. The shape (--stage-ratio) and the picture (--scene-image)
-   are swapped together in css/variables.css. */
-.scene { position: fixed; inset: 0; overflow: hidden; }
+  /* ---------- TEXT COLORS (Typography Guide) ---------- */
+  --moon-ink:        #2d2a37;   /* main reading text */
+  --moon-violet:     #433768;   /* headers, used sparingly */
+  --soft-lavender:   #6e5c96;   /* quotes and whispers */
+  --lotus-purple:    #7d6dd8;   /* buttons */
+  --silver-glow:     #c9d8ff;   /* rare discoveries */
 
-.stage {
-  position: absolute; left: 50%; top: 50%;
-  aspect-ratio: var(--stage-ratio);
-  width:  max(100vw, calc(100vh * (var(--stage-ratio))));    /* fallback */
-  height: max(100vh, calc(100vw / (var(--stage-ratio))));    /* fallback */
-  width:  max(100vw, calc(100dvh * (var(--stage-ratio))));
-  height: max(100dvh, calc(100vw / (var(--stage-ratio))));
-  transform: translate(-50%, -50%);
-  background: var(--scene-image) center / 100% 100% no-repeat, var(--night);
-}
+  /* ---------- PANEL (translucent, never on bare artwork) ---------- */
+  --panel-bg:        rgba(247, 243, 234, 0.93);
+  --panel-edge:      rgba(125, 109, 216, 0.35);
+  --panel-shadow:    0 10px 40px rgba(27, 24, 48, 0.45);
+  --panel-radius:    1.25rem;
 
-/* ---------- HOT SPOTS ----------
-   Each spot is invisible. Place and size are percentages of the picture.
-   Tune --x --y --w --h to match the art (x, y = top left corner).
-   Later spots sit on top of earlier ones where they overlap. */
-.spot {
-  position: absolute;
-  left: calc(var(--x) * 1%);  top: calc(var(--y) * 1%);
-  width: calc(var(--w) * 1%); height: calc(var(--h) * 1%);
-  min-width: 2.75rem; min-height: 2.75rem;   /* always easy to tap */
-  padding: 0; border: 0; border-radius: 50%;
-  background: transparent;
-  touch-action: manipulation;
-}
-.spot:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 2px; }
+  /* ---------- FONTS ---------- */
+  --font-title: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-read:  "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-/* Phones and tablets (first guesses, to be tuned against the pictures) */
-[data-spot="moonroot"]   { --x: 28; --y:  4; --w: 44; --h: 14; border-radius: 40%; }
-[data-spot="hollow"]     { --x:  8; --y: 20; --w: 24; --h: 10; }
-[data-spot="meadow"]     { --x: 30; --y: 34; --w: 44; --h: 10; border-radius: 40%; }
-[data-spot="stone"]      { --x: 10; --y: 50; --w: 20; --h:  8; }
-[data-spot="pond"]       { --x: 22; --y: 62; --w: 56; --h: 14; border-radius: 40%; }
-[data-spot="shore"]      { --x:  4; --y: 70; --w: 24; --h: 10; }
-[data-spot="trail"]      { --x: 72; --y: 70; --w: 24; --h: 10; }
-[data-spot="grove"]      { --x: 40; --y: 48; --w: 22; --h:  8; }
+  /* ---------- SIZES (minimum 18px for reading and buttons) ---------- */
+  --size-h1:      2.25rem;      /* 36px */
+  --size-title:   1.75rem;      /* 28px, panel title */
+  --size-body:    1.25rem;      /* 20px */
+  --size-button:  1.25rem;      /* 20px */
+  --size-tiny:    1.125rem;     /* 18px */
+  --button-min-h: 3.25rem;      /* roomy, easy to tap */
 
-/* Hidden Root Path: small, never highlighted */
-[data-spot="rootpath"]   { --x: 72; --y: 24; --w: 12; --h:  6; }
+  /* ---------- TOUCH-STATE TIMINGS (Animation Spec) ---------- */
+  --focus-time:    350ms;       /* focus: 250–400 ms */
+  --focus-scale:   1.03;        /* never above 1.05 */
+  --touch-start:   150ms;       /* initial reaction */
+  --touch-main:    900ms;       /* primary animation: 500–1200 ms */
+  --settle-time:   2000ms;      /* recovery: 1–3 s */
+  --ripple-time:   1200ms;
+  --travel-fade:   1400ms;      /* soft fade before a game opens */
 
-/* Touch objects */
-[data-spot="reflection"] { --x: 38; --y: 66; --w: 24; --h:  9; }
-[data-spot="lotus"]      { --x: 54; --y: 76; --w: 18; --h:  7; }
-[data-spot="petals"]     { --x: 46; --y: 40; --w: 18; --h:  7; }
-[data-spot="roothollow"] { --x: 18; --y: 12; --w: 10; --h:  5; }
-[data-spot="moth"]       { --x: 60; --y: 56; --w: 10; --h:  5; }
+  /* Nothing snaps back. Everything eases. */
+  --ease-quint: cubic-bezier(0.22, 1, 0.36, 1);   /* Ease-Out Quint */
+  --ease-sine:  cubic-bezier(0.37, 0, 0.63, 1);   /* Ease-In-Out Sine */
 
-/* ---------- DESKTOP SPOTS (1672 x 941 picture) ----------
-   Same breakpoint as the desktop picture in css/variables.css.
-   Placed by eye from the art, so expect to nudge them.
-   The moth spot is the lotus it perches on, mid-pond. */
-@media (min-aspect-ratio: 14/10) {
-  [data-spot="moonroot"]   { --x: 17; --y:  8; --w: 20; --h: 24; border-radius: 40%; }
-  [data-spot="hollow"]     { --x:  7; --y: 32; --w: 15; --h: 11; }
-  [data-spot="meadow"]     { --x: 40; --y: 38; --w: 26; --h: 12; border-radius: 40%; }
-  [data-spot="stone"]      { --x: 29; --y: 66; --w: 17; --h: 18; }
-  [data-spot="pond"]       { --x: 46; --y: 53; --w: 40; --h: 18; border-radius: 40%; }
-  [data-spot="shore"]      { --x: 60; --y: 86; --w: 26; --h: 13; }
-  [data-spot="trail"]      { --x: 22; --y: 86; --w: 26; --h: 12; }
-  [data-spot="grove"]      { --x: 71; --y: 25; --w: 25; --h: 17; }
-
-  [data-spot="rootpath"]   { --x: 17; --y: 43; --w:  6; --h:  9; }
-
-  [data-spot="reflection"] { --x: 66; --y: 60; --w: 10; --h: 17; }
-  [data-spot="lotus"]      { --x: 78; --y: 74; --w: 10; --h: 11; }
-  [data-spot="petals"]     { --x: 17; --y: 77; --w: 11; --h:  8; }
-  [data-spot="roothollow"] { --x: 25; --y: 34; --w:  5; --h:  6; }
-  [data-spot="moth"]       { --x: 49; --y: 57; --w:  5; --h:  6; }
+  /* ---------- SAFE AREAS (phones with notches) ---------- */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
 }
 
-/* ---------- READING PANEL ----------
-   Docked to the bottom. A translucent card, never bare text on the art.
-   It never closes by itself. */
-.panel {
-  position: fixed; z-index: 5;
-  left: 50%; transform: translateX(-50%);
-  bottom: calc(var(--safe-bottom) + 0.75rem);
-  width: min(34rem, calc(100vw - 1.5rem - var(--safe-left) - var(--safe-right)));
-  max-height: 62dvh; overflow-y: auto;
-  padding: 1.25rem 1.4rem 1.1rem;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--panel-radius);
-  box-shadow: var(--panel-shadow);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-}
-.panel[hidden] { display: none; }
-.panel:focus { outline: none; }          /* the script focuses the panel for readers */
-
-.panel-title {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-title); font-weight: 700;
-  font-size: var(--size-title); line-height: 1.15;
-  color: var(--moon-violet);
-}
-.panel-text {
-  margin: 0;
-  font-size: var(--size-body); line-height: 1.55;
-  white-space: pre-line;                 /* keeps the lore's line breaks */
-}
-.panel-text em, .panel-quote {
-  font-family: var(--font-title); font-style: italic; font-weight: 500;
-  color: var(--soft-lavender);
+/* ---------- DESKTOP (any landscape screen) ----------
+   1672 x 941 picture. The hot spots for it are in css/base.css,
+   under the same breakpoint. Change both together. */
+@media (min-aspect-ratio: 1/1) {
+  :root { --scene-image: var(--img-desktop); --stage-ratio: 1672 / 941; }
 }
 
-.panel-actions {
-  display: flex; flex-direction: column; gap: 0.6rem;
-  margin-top: 1rem;
-}
-.panel-actions button {
-  min-height: var(--button-min-h);
-  padding: 0.6em 1.2em;
-  font-family: var(--font-read); font-weight: 600; font-size: var(--size-button);
-  color: #fff; background: var(--lotus-purple);
-  border: 0; border-radius: 999px;
-}
-.panel-actions button.quiet {            /* Return / Close */
-  color: var(--moon-violet); background: transparent;
-  border: 1.5px solid var(--panel-edge);
-}
-.panel-actions button:focus-visible { outline: 3px solid var(--moon-violet); outline-offset: 3px; }
-
-/* ---------- WHISPER (own soft card, not on the bare art) ---------- */
-.whisper {
-  position: fixed; z-index: 4;
-  left: 50%; transform: translateX(-50%);
-  bottom: calc(var(--safe-bottom) + 1.25rem);
-  width: min(30rem, calc(100vw - 2rem));
-  margin: 0; padding: 0.7em 1.2em; text-align: center;
-  font-family: var(--font-title); font-style: italic; font-weight: 500;
-  font-size: var(--size-body); line-height: 1.4;
-  color: var(--ivory-moonlight);
-  background: rgba(27, 24, 48, 0.6);
-  border-radius: 999px;
-  opacity: 0; pointer-events: none;
-}
-
-/* ---------- TRAVEL VEIL ---------- */
-.travel-veil {
-  position: fixed; inset: 0; z-index: 8;
-  background: var(--night);
-  opacity: 0; pointer-events: none;
+/* ---------- OLDER CELLPHONES (about 9:16) ---------- */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-916); --stage-ratio: 9 / 16; }
 }
