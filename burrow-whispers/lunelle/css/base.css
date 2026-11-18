@@ -63,7 +63,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 /* ---------- HOT SPOTS ----------
    Each spot is invisible. Place and size are percentages of the picture.
    Tune --x --y --w --h to match the art (x, y = top left corner).
-   Later spots sit on top of earlier ones where they overlap. */
+   Later spots sit on top of earlier ones where they overlap.
+   Three sets: phone (below), older cellphones and desktop (media queries). */
 .spot {
   position: absolute;
   left: calc(var(--x) * 1%);  top: calc(var(--y) * 1%);
@@ -75,25 +76,47 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .spot:focus-visible { outline: 2px solid var(--silver-glow); outline-offset: 2px; }
 
-/* Phones, both pictures (first guesses, to be tuned against the pictures) */
-[data-spot="moonroot"]   { --x: 28; --y:  4; --w: 44; --h: 14; border-radius: 40%; }
-[data-spot="hollow"]     { --x:  8; --y: 20; --w: 24; --h: 10; }
-[data-spot="meadow"]     { --x: 30; --y: 34; --w: 44; --h: 10; border-radius: 40%; }
-[data-spot="stone"]      { --x: 10; --y: 50; --w: 20; --h:  8; }
-[data-spot="pond"]       { --x: 22; --y: 62; --w: 56; --h: 14; border-radius: 40%; }
-[data-spot="shore"]      { --x:  4; --y: 70; --w: 24; --h: 10; }
-[data-spot="trail"]      { --x: 72; --y: 70; --w: 24; --h: 10; }
-[data-spot="grove"]      { --x: 40; --y: 48; --w: 22; --h:  8; }
+/* Phone, 9:20 picture (placed by eye from the art; expect to nudge) */
+[data-spot="moonroot"]   { --x: 14; --y:  3; --w: 36; --h: 16; border-radius: 40%; }
+[data-spot="hollow"]     { --x:  8; --y: 18; --w: 22; --h:  8; }
+[data-spot="meadow"]     { --x:  2; --y: 40; --w: 36; --h:  8; border-radius: 40%; }
+[data-spot="stone"]      { --x:  8; --y: 67; --w: 42; --h: 11; }
+[data-spot="pond"]       { --x: 22; --y: 52; --w: 70; --h: 17; border-radius: 40%; }
+[data-spot="shore"]      { --x: 46; --y: 72; --w: 28; --h:  8; }
+[data-spot="trail"]      { --x: 38; --y: 44; --w: 22; --h:  6; }
+[data-spot="grove"]      { --x: 62; --y: 23; --w: 36; --h: 10; }
 
 /* Hidden Root Path: small, never highlighted */
-[data-spot="rootpath"]   { --x: 72; --y: 24; --w: 12; --h:  6; }
+[data-spot="rootpath"]   { --x: 20; --y: 27; --w:  8; --h:  4; }
 
 /* Touch objects */
-[data-spot="reflection"] { --x: 38; --y: 66; --w: 24; --h:  9; }
-[data-spot="lotus"]      { --x: 54; --y: 76; --w: 18; --h:  7; }
-[data-spot="petals"]     { --x: 46; --y: 40; --w: 18; --h:  7; }
-[data-spot="roothollow"] { --x: 18; --y: 12; --w: 10; --h:  5; }
-[data-spot="moth"]       { --x: 60; --y: 56; --w: 10; --h:  5; }
+[data-spot="reflection"] { --x: 70; --y: 55; --w: 13; --h: 15; }
+[data-spot="lotus"]      { --x: 80; --y: 74; --w: 19; --h:  6; }
+[data-spot="petals"]     { --x: 56; --y: 64; --w: 12; --h:  6; }
+[data-spot="roothollow"] { --x: 12; --y: 32; --w: 16; --h:  6; }
+[data-spot="moth"]       { --x: 40; --y: 57; --w:  7; --h:  4; }
+
+/* Older cellphones, 9:16 picture: the same art cropped top and bottom,
+   so the same places sit at different heights. Same breakpoint as in
+   css/variables.css. */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+  [data-spot="moonroot"]   { --x: 14; --y:  0; --w: 36; --h: 17; }
+  [data-spot="hollow"]     { --x:  8; --y: 15; --w: 22; --h: 10; }
+  [data-spot="meadow"]     { --x:  2; --y: 42; --w: 36; --h:  9; }
+  [data-spot="stone"]      { --x:  8; --y: 76; --w: 42; --h: 14; }
+  [data-spot="pond"]       { --x: 22; --y: 57; --w: 70; --h: 21; }
+  [data-spot="shore"]      { --x: 46; --y: 83; --w: 28; --h: 10; }
+  [data-spot="trail"]      { --x: 38; --y: 47; --w: 22; --h:  7; }
+  [data-spot="grove"]      { --x: 62; --y: 21; --w: 36; --h: 12; }
+
+  [data-spot="rootpath"]   { --x: 20; --y: 27; --w:  8; --h:  5; }
+
+  [data-spot="reflection"] { --x: 70; --y: 61; --w: 13; --h: 19; }
+  [data-spot="lotus"]      { --x: 80; --y: 84; --w: 19; --h:  8; }
+  [data-spot="petals"]     { --x: 56; --y: 72; --w: 12; --h:  6; }
+  [data-spot="roothollow"] { --x: 12; --y: 32; --w: 16; --h:  7; }
+  [data-spot="moth"]       { --x: 40; --y: 64; --w:  7; --h:  5; }
+}
 
 /* ---------- DESKTOP SPOTS (1672 x 941 picture) ----------
    Same breakpoint as the desktop picture in css/variables.css.
