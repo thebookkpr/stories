@@ -1,18 +1,20 @@
 /* PROJECT: Burrow Whispers — Book Keeper Website
    FILE: Moonlit Reverie, Lunelle's Home Region · css/variables.css
-   VERSION: V1.2 · Part 1 of 1
+   VERSION: V1.3 · Part 1 of 1
    Lives at stories/burrow-whispers/lunelle/css/variables.css
-   Holds the two pictures, their shapes, colors, fonts, sizes
+   Holds the three pictures, their shapes, colors, fonts, sizes
    and timings. Everything else in css/base.css and css/effects.css
    reads from here, so change a value once, here. */
 
 :root {
 
   /* ---------- THE PICTURES ----------
-     Phone (9:20) is the default. The media query at the bottom swaps
-     the picture AND its shape together for landscape screens (desktop).
+     Phone (9:20) is the default. The media queries at the bottom swap
+     the picture AND its shape together for older 9:16 phones and
+     landscape screens (desktop).
      Paths are relative to this css folder. */
   --img-phone:   url("../images/moonlitreverie-bg.jpg");
+  --img-916:     url("../images/moonlitreverie-916.jpg");
   --img-desktop: url("../images/moonlitreverie-desktop.jpg");
   --scene-image: var(--img-phone);
   --stage-ratio: 9 / 20;                /* shape of the picture showing */
@@ -79,4 +81,9 @@
    under the same breakpoint. Change both together. */
 @media (min-aspect-ratio: 1/1) {
   :root { --scene-image: var(--img-desktop); --stage-ratio: 1672 / 941; }
+}
+
+/* ---------- OLDER CELLPHONES (about 9:16) ---------- */
+@media (min-aspect-ratio: 52/100) and (max-aspect-ratio: 62/100) {
+  :root { --scene-image: var(--img-916); --stage-ratio: 9 / 16; }
 }
